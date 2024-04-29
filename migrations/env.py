@@ -74,13 +74,8 @@ async def run_async_migrations() -> None:
     from src.settings import get_settings
 
     settings = get_settings()
-    import os
-    logger.info("Running migrations")
-    logger.info(f"Running migrations with {settings.db_url}")
-    logger.info(f"Running migrations with {settings.database_url}")
 
-
-    connectable = create_async_engine(settings.db_url)
+    connectable = create_async_engine(settings.db_url, echo=settings.postgres_echo, connect_args=settings.db_connections_args)
 
     async with connectable.connect() as connection:
         await connection.run_sync(do_run_migrations)
