@@ -28,13 +28,8 @@ def setup_db() -> tuple[AsyncEngine, async_sessionmaker[AsyncSession]]:
 
     settings = get_settings()
 
-    if settings.postgres_host != 'localhost':
-        connect_args = {"sslmode": "require"}
-    else:
-        connect_args = {}
 
-
-    engine = create_async_engine(settings.database_url, echo=settings.postgres_echo, connect_args=connect_args)
+    engine = create_async_engine(settings.database_url, echo=settings.postgres_echo, connect_args=settings.db_connections_args)
 
     session_factory = async_sessionmaker(
         engine,

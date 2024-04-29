@@ -92,7 +92,14 @@ class Settings(BaseSettings):
             port=self.postgres_port,
             database=self.postgres_db,
         )
-
+    
+    @property
+    def db_connections_args(self) -> dict[str, Any]:
+        if self.postgres_host != 'localhost':
+            connect_args = {"sslmode": "require"}
+        else:
+            connect_args = {}
+        return connect_args
 
 @lru_cache
 def get_settings() -> Settings:

@@ -24,6 +24,7 @@ from src.core.model import Base  # noqa: E402
 # itereate in src.models and import all models
 from src.models.user import User  # noqa: E402
 target_metadata = Base.metadata
+from loguru import logger
 # target_metadata = User.metadata
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -73,7 +74,9 @@ async def run_async_migrations() -> None:
     from src.settings import get_settings
 
     settings = get_settings()
-    connectable = create_async_engine(settings.database_url)
+    logger.info(f"Running migrations with {settings.database_url}")
+    
+    connectable = create_async_engine(settings.database_url, connect_args=settings.db_connections_args)
 
     async with connectable.connect() as connection:
         await connection.run_sync(do_run_migrations)
