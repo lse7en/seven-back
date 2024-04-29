@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import (
 )
 from aiogram import Bot, Dispatcher
 from aiogram.enums import ParseMode
-from src.bot.handlers.router import router
+from src.bot.router import router
 from src.settings import get_settings
 
 settings = get_settings()
