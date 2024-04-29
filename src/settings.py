@@ -5,7 +5,7 @@ import hmac
 import hashlib
 from pydantic_settings import BaseSettings
 from sqlalchemy.engine.url import URL
-
+import ssl
 
 class LogLevel(str, enum.Enum):  # noqa: WPS600
     """Possible log levels."""
@@ -95,8 +95,13 @@ class Settings(BaseSettings):
     
     @property
     def db_connections_args(self) -> dict[str, Any]:
+
+        ssl_ctx = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+        ssl_ctx.check_hostname = False
+        ssl_ctx.verify_mode = ssl.CERT_NONE
+
         if self.postgres_host != 'localhost':
-            connect_args = {"ssl": "require"}
+            connect_args = {"ssl": ssl_ctx}
         else:
             connect_args = {}
         return connect_args
