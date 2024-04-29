@@ -96,7 +96,7 @@ class Settings(BaseSettings):
     @property
     def db_connections_args(self) -> dict[str, Any]:
         if self.postgres_host != 'localhost':
-            connect_args = {"sslmode": "require"}
+            connect_args = {"ssl": "require"}
         else:
             connect_args = {}
         return connect_args
