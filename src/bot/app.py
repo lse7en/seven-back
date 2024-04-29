@@ -20,10 +20,10 @@ async def start_application(
     dp = Dispatcher(session_factory=session_factory)
 
     dp.include_router(router)
-    # await bot.set_webhook(
-    #     settings.tg_webhook_url,
-    #     secret_token=settings.tg_wh_secret,
-    # )
+    await bot.set_webhook(
+        settings.tg_webhook_url,
+        secret_token=settings.tg_wh_secret,
+    )
     return dp, bot
 
 
