@@ -1,0 +1,78 @@
+
+version: '3.7'
+
+services:
+  app:
+    container_name: app
+    image: app_image
+    environment:
+      - WYD_BACKEND_DB_USER=app
+      - WYD_BACKEND_DB_PASS=app
+      - WYD_BACKEND_DB_HOST=app_db
+      - WYD_BACKEND_DB_BASE=app
+    build:
+      context: .
+      dockerfile: server.Dockerfile
+    volumes:
+      - ./:/src
+    depends_on:
+      - app_db
+
+  app_db:
+    container_name: app_db
+    hostname: app_db
+    image: postgis/postgis:14-3.4-alpine
+    environment:
+      - POSTGRES_USER=app
+      - POSTGRES_PASSWORD=app
+      - POSTGRES_DB=app
+    volumes:
+      - app_pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  api:
+    image: unchained
+    container_name: api
+    build:
+      context: ../../detached
+      dockerfile: ./Dockerfile
+      target: development
+    env_file: ../../detached/.env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+    restart: always
+
+  database:
+    image: postgres:13
+    container_name: database
+    env_file: ../../detached/.env
+
+    volumes:
+      - db_pg_data:/var/lib/postgresql/data
+  
+  nginx:
+    container_name: nginx
+    image: valian/docker-nginx-auto-ssl:latest
+    ports:
+      - 80:80
+      - 443:443
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+        SITES: 'test.wyd.ing=app:4000;wyd.ing=app:4000;gg.wyd.ing=api:8080'
+    depends_on:
+      - app
+    volumes:
+      - ssl_data:/etc/resty-auto-ssl
+
+
+volumes:
+  app_pg_data:
+    driver: "local"
+  ssl_data:
+    driver: "local"
+  db_pg_data:
+    driver: "local"
