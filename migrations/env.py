@@ -75,6 +75,7 @@ async def run_async_migrations() -> None:
 
     settings = get_settings()
     import os
+    logger.info("Running migrations")
     logger.info(f"Running migrations with {settings.db_url}")
     logger.info(f"Running migrations with {settings.database_url}")
 
