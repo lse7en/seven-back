@@ -6,6 +6,6 @@ set -o nounset
 
 PORT="${PORT:=8080}"
 
-alembic upgrade head
+# alembic upgrade head
 uvicorn --factory --host 0.0.0.0 --port ${PORT} src.main:create_application
 
