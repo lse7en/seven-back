@@ -44,6 +44,7 @@ class Settings(BaseSettings):
     postgres_password: str
     postgres_connection_name: str | None = None
     postgres_echo: bool = False
+    database_url: str = None
 
 
     # tg bot variables
@@ -75,7 +76,7 @@ class Settings(BaseSettings):
         }
 
     @property
-    def database_url(self) -> URL:
+    def db_url(self) -> URL:
         if self.postgres_connection_name:
             return URL.create(
                 drivername="postgresql+asyncpg",

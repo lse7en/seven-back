@@ -49,7 +49,7 @@ def run_migrations_offline() -> None:
     settings = get_settings()
 
     context.configure(
-        url=settings.database_url,
+        url=settings.db_url,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
@@ -74,9 +74,12 @@ async def run_async_migrations() -> None:
     from src.settings import get_settings
 
     settings = get_settings()
+    import os
+    logger.info(f"Running migrations with {settings.db_url}")
     logger.info(f"Running migrations with {settings.database_url}")
-    
-    connectable = create_async_engine(settings.database_url, connect_args=settings.db_connections_args)
+
+
+    connectable = create_async_engine(settings.db_url)
 
     async with connectable.connect() as connection:
         await connection.run_sync(do_run_migrations)
