@@ -16,8 +16,8 @@ def get_admin_rank(chat_id: int) -> int:
     return admin_lvls.get(chat_id, 1000)
 
 
-def is_admin(update, rank: int) -> bool:
-    admin_rank = get_admin_rank(update.message.chat_id)
+def is_admin(chid, rank: int) -> bool:
+    admin_rank = get_admin_rank(chid)
     
     return admin_rank <= rank
 
@@ -31,12 +31,12 @@ class HasPermissions:
         
         @wraps(func)
         async def permission(*args, **kwargs):
-            # update = args[0]
-            return await func(*args, **kwargs)
-            # if is_admin(update, self.level):
-            #     return await func(*args, **kwargs)
-            # else:
-            #     await update.message.reply_text("You do not have permission to do that")
+            message = args[0]
+            bot: Bot = message.bot
+            if is_admin(message.chat.id, self.level):
+                return await func(*args, **kwargs)
+            else:
+                await message.answer("You do not have permission to do that")
             
         return permission
 
