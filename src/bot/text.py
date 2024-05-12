@@ -107,4 +107,4 @@ dictionary = {
 
 
 def get_text(language_code: str, key: str) -> str:
-    return dictionary[key].get(language_code, key)
+    return dictionary.get(key, {}).get(language_code, key)
