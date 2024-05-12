@@ -32,7 +32,7 @@ class HasPermissions:
         @wraps(func)
         async def permission(*args, **kwargs):
             message = args[0]
-            if is_admin(message.chat.id, self.level):
+            if is_admin(message.from_user.id, self.level):
                 return await func(*args, **kwargs)
             else:
                 await message.answer("You do not have permission to do that")

@@ -37,8 +37,8 @@ async def joined_handler(
 
     try:
         await stat_bot.send_message(
-            chat_id=ADMIN_CHAT_ID,
-            # message_thread_id=JOIN_THREAD_ID,
+            chat_id=STAT_CHAT_ID,
+            message_thread_id=JOIN_THREAD_ID,
             text=f"New Sub: {callback.from_user.full_name} (@{callback.from_user.username}) id: {callback.from_user.id}"
         )
     except Exception as e:

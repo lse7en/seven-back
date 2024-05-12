@@ -17,6 +17,7 @@ async def stat_handler(
 
     session = session_factory()
     user_repository = await beans.get_user_repository(session)
+    message.from_user.id
 
     async with session.begin():
         count = await user_repository.count()

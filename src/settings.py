@@ -61,6 +61,11 @@ class Settings(BaseSettings):
         return f"{self.url_address}/api/webhook"
     
 
+    @property
+    def stat_tg_webhook_url(self) -> str:
+        return f"{self.url_address}/api/stat-webhook"
+
+
     @cached_property
     def tg_secret_key_bytes(self) -> bytes:
         return hmac.new("WebAppData".encode(), self.tg_token.encode(), hashlib.sha256).digest()

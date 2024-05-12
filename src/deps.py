@@ -13,16 +13,6 @@ from src.settings import Settings, get_settings
 SettingsDep = Annotated[Settings, Depends(get_settings)]
 
 
-async def get_tg_dp(request: Request) -> Dispatcher:
-    return request.app.state.dp
-
-async def get_tg_bot(request: Request) -> Bot:
-    return request.app.state.bot
-
-
-TGDispatcherDep = Annotated[Dispatcher, Depends(get_tg_dp)]
-
-TGBotDep = Annotated[None, Depends(get_tg_bot)]
 
 # async def get_current_user(
 #     settings: SettingsDep,
