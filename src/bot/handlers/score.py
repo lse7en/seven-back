@@ -5,7 +5,7 @@ from src.bot.constants import COMMUNITY_TID
 from aiogram.utils import formatting
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from src.bot import beans
-
+from src.bot.text import get_text
 
 @IsChannelMember(COMMUNITY_TID)
 async def score_handler(
@@ -17,15 +17,16 @@ async def score_handler(
 
     async with session.begin():
         user = await user_repository.get_user_or_none_by_id(message.from_user.id)
+        lang = user.language
 
     caption = formatting.as_list(
         formatting.Bold("🎉 Congratulations! 🎉"),
         formatting.as_list(
-            f"You have invited {user.invited_users} friends.",
+            get_text(lang, "You have invited {} friends.").format(user.invited_users),
             formatting.as_line(
-                "And now you have gathered",
+                get_text(lang, "And now you have gathered"),
                 formatting.Italic(f"{user.points:.3f}"),
-                "points so far!",
+                get_text(lang, "points so far!"),
                 sep=" ",
             ),
         ),

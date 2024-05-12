@@ -16,6 +16,7 @@ class User(Base):
     invited_by_id: Mapped[int] = mapped_column(BigInteger, nullable=True)
     invited_users: Mapped[int] = mapped_column(Integer, default=0)
     last_check_in: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    language: Mapped[str] = mapped_column(default="en")
 
 
     @property

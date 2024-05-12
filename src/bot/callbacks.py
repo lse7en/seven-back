@@ -6,3 +6,9 @@ class JoinedCallback(CallbackData, prefix="joined"):
 
 
 community_callback = JoinedCallback(tid=COMMUNITY_TID)
+
+
+class LanguageCallback(CallbackData, prefix="lang"):
+    lang: str
+    next: bool = False
+

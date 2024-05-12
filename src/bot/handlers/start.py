@@ -6,30 +6,19 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from src.models.user import User
 from src.bot import beans
-from src.bot.callbacks import community_callback
-from src.bot.constants import START_PHOTO_FILE_ID, ADMIN_CHAT_ID
+from src.bot.callbacks import LanguageCallback
+from src.bot.constants import ADMIN_CHAT_ID
+from src.bot.text import get_text
 
-channel = InlineKeyboardButton(
-    text="The lucky 7 Community", url="https://t.me/the_lucky_7"
-)
-joined = InlineKeyboardButton(text="Joined ✅", callback_data=community_callback.pack())
+fa_lang = InlineKeyboardButton(text="فارسی 🇮🇷", callback_data=LanguageCallback(lang='fa', next=True).pack())
+en_lang = InlineKeyboardButton(text="English 🇺🇸", callback_data=LanguageCallback(lang='en', next=True).pack())
+ru_lang = InlineKeyboardButton(text="Русский 🇷🇺", callback_data=LanguageCallback(lang='ru', next=True).pack())
 
-kb = InlineKeyboardMarkup(inline_keyboard=[[channel], [joined]])
+kb = InlineKeyboardMarkup(inline_keyboard=[[en_lang], [ru_lang], [fa_lang]])
 
 
 caption = formatting.as_list(
-    formatting.Bold("🚀 Exciting News! 🚀"),
-    formatting.as_line(
-        "Starting this month, Telegram has introduced a fantastic new feature allowing channel owners to earn revenue through ads. But here’s the twist: we're giving 100% of our ad revenue back to you, our lovely community!"
-    ),
-    formatting.as_marked_section(
-        "Here's how it works:",
-        "Every month, 100% of our ad revenue will be shared among 7 lucky subscribers.",
-        "The winners will be selected randomly, ensuring that everyone has a fair chance to win.",
-    ),
-    formatting.as_line(
-        "Stay subscribed and active for your chance to be one of the lucky 7! 🤑"
-    ),
+    formatting.Bold("Choose your language 🌐"),
     sep="\n\n",
 )
 
@@ -66,10 +55,9 @@ async def start_handler(
                 referrer.invited_users += 1
                 await user_repository.add_user(referrer)
 
-    await message.answer_photo(
-        photo=START_PHOTO_FILE_ID,
+    await message.answer(
         reply_markup=kb,
-        caption=caption.as_html(),
+        text=caption.as_html(),
     )
 
     if not user:
@@ -80,20 +68,21 @@ async def start_handler(
 
 
     if referrer and not user:
+        lang = referrer.language
         joined_message = formatting.as_list(
-            formatting.Bold("🎉 Congratulations! 🎉"),
+            formatting.Bold(get_text(lang, "🎉 Congratulations! 🎉")),
             formatting.as_line(
-                "Your friend",
+                get_text(lang, "Your friend"),
                 formatting.Bold(message.from_user.first_name),
-                "joined the Bot!",
+                get_text(lang, "joined the Bot!"),
                 sep=" ",
             ),
             formatting.as_list(
-                f"You have invited {referrer.invited_users} friends.",
+                get_text(lang, "You have invited {} friends.").format(referrer.invited_users),
                 formatting.as_line(
-                    "And now you have gathered",
+                    get_text(lang, "And now you have gathered"),
                     formatting.Italic(f"{referrer.points:.3f}"),
-                    "points so far!",
+                    get_text(lang, "points so far!"),
                     sep=" ",
                 ),
             ),

@@ -32,7 +32,6 @@ class HasPermissions:
         @wraps(func)
         async def permission(*args, **kwargs):
             message = args[0]
-            bot: Bot = message.bot
             if is_admin(message.chat.id, self.level):
                 return await func(*args, **kwargs)
             else:
@@ -57,7 +56,7 @@ class IsChannelMember:
             bot: Bot = message.bot
 
             if not await is_member_of(bot, self.tid, message.chat.id):
-                await message.answer("You must be a member of the channel to use this command")
+                await message.answer("You must be a member of the channel to use this command: @the_lucky_7")
                 return
 
             
