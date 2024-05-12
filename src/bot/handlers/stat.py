@@ -23,8 +23,6 @@ async def stat_handler(
         count = await user_repository.count()
 
     
-    print(message.chat.id)
-    print(message.message_thread_id)
-    
+
 
     await message.answer(hbold(f"Total users: {count}"))
