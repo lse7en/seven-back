@@ -7,7 +7,7 @@ from src.bot.callbacks import JoinedCallback
 from src.bot.constants import JOIN_PHOTO_FILE_ID
 from src.bot.text import get_text
 from src.bot.validators import is_member_of
-from src.bot.constants import STAT_CHAT_ID, JOIN_THREAD_ID
+from src.bot.constants import STAT_CHAT_ID, JOIN_THREAD_ID, ADMIN_CHAT_ID
 
 async def joined_handler(
     callback: CallbackQuery,
@@ -37,8 +37,8 @@ async def joined_handler(
 
     try:
         await stat_bot.send_message(
-            chat_id=STAT_CHAT_ID,
-            message_thread_id=JOIN_THREAD_ID,
+            chat_id=ADMIN_CHAT_ID,
+            # message_thread_id=JOIN_THREAD_ID,
             text=f"New Sub: {callback.from_user.full_name} (@{callback.from_user.username}) id: {callback.from_user.id}"
         )
     except Exception as e:
