@@ -62,10 +62,6 @@ async def start_handler(
     )
 
     if not user:
-        await message.bot.send_message(
-            chat_id=ADMIN_CHAT_ID,
-            text=f"New user: {message.from_user.full_name} (@{message.from_user.username})"
-        )
         try:
 
             text = f"New user: {message.from_user.full_name} (@{message.from_user.username}) id: {message.from_user.id}, ref: {referrer.id if referrer else None}"
