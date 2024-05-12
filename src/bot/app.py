@@ -17,7 +17,8 @@ async def start_application(
 
     # Register startup hook to initialize webhook
     bot = Bot(settings.tg_token, parse_mode=ParseMode.HTML)
-    dp = Dispatcher(session_factory=session_factory)
+    stat_bot = Bot(settings.stat_tg_token, parse_mode=ParseMode.HTML)
+    dp = Dispatcher(session_factory=session_factory, stat_bot=stat_bot)
 
     dp.include_router(router)
     await bot.set_webhook(

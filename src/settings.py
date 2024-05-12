@@ -52,13 +52,14 @@ class Settings(BaseSettings):
 
     url_address: str = "https://test.wyd.ing"
 
-
+    stat_tg_token: str
 
 
 
     @property
     def tg_webhook_url(self) -> str:
         return f"{self.url_address}/api/webhook"
+    
 
     @cached_property
     def tg_secret_key_bytes(self) -> bytes:

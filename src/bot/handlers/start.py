@@ -3,11 +3,11 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from aiogram.utils.deep_linking import decode_payload
 from aiogram.utils import formatting
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
-
+from aiogram import Bot
 from src.models.user import User
 from src.bot import beans
 from src.bot.callbacks import LanguageCallback
-from src.bot.constants import ADMIN_CHAT_ID
+from src.bot.constants import ADMIN_CHAT_ID, STAT_CHAT_ID, JOIN_THREAD_ID
 from src.bot.text import get_text
 
 fa_lang = InlineKeyboardButton(text="فارسی 🇮🇷", callback_data=LanguageCallback(lang='fa', next=True).pack())
@@ -26,6 +26,7 @@ caption = formatting.as_list(
 async def start_handler(
     message: Message,
     command: CommandObject,
+    stat_bot: Bot,
     session_factory: async_sessionmaker[AsyncSession],
 ) -> None:
     """
@@ -65,6 +66,17 @@ async def start_handler(
             chat_id=ADMIN_CHAT_ID,
             text=f"New user: {message.from_user.full_name} (@{message.from_user.username})"
         )
+        try:
+
+            text = f"New user: {message.from_user.full_name} (@{message.from_user.username}) id: {message.from_user.id}, ref: {referrer.id if referrer else None}"
+
+            await stat_bot.send_message(
+                chat_id=STAT_CHAT_ID,
+                message_thread_id=JOIN_THREAD_ID,
+                text=text
+            )
+        except Exception as e:
+            print(e)
 
 
     if referrer and not user:

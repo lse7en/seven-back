@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from src.models.user import User
 from src.bot import beans
 from src.bot.callbacks import community_callback, LanguageCallback
-from src.bot.constants import START_PHOTO_FILE_ID, ADMIN_CHAT_ID
+from src.bot.constants import START_PHOTO_FILE_ID
 from src.bot.text import get_text
 
 
