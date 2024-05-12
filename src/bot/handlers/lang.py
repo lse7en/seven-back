@@ -63,12 +63,6 @@ async def lang_handler(
             sep="\n\n",
         )
 
-        await callback.bot.send_message(
-            chat_id=callback.from_user.id,
-            text=caption.as_html(),
-            reply_markup=kb,
-        )
-
         await callback.bot.send_photo(
             chat_id=callback.from_user.id,
             photo=START_PHOTO_FILE_ID,
