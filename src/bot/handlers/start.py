@@ -46,12 +46,15 @@ async def start_handler(
 
     if not user:
         async with session.begin():
-            await user_repository.add_user(
-                User(
+            new_user = User(
                     id=message.from_user.id,
                     invited_by_id=referrer.id if referrer else None,
+                    first_name=message.from_user.first_name,
+                    last_name=message.from_user.last_name,
+                    username=message.from_user.username,
+                    joined=False
                 )
-            )
+            await user_repository.add_user(new_user)
             if referrer:
                 referrer.invited_users += 1
                 await user_repository.add_user(referrer)
@@ -64,7 +67,7 @@ async def start_handler(
     if not user:
         try:
 
-            text = f"New user: {message.from_user.full_name} (@{message.from_user.username}) id: {message.from_user.id}, ref: {referrer.id if referrer else None}"
+            text = f"New Bot join: {new_user.info} \n Referrer: {referrer.info if referrer else 'None'}"
 
             await stat_bot.send_message(
                 chat_id=STAT_CHAT_ID,
@@ -78,7 +81,7 @@ async def start_handler(
     if referrer and not user:
         lang = referrer.language
         joined_message = formatting.as_list(
-            formatting.Bold(get_text(lang, "🎉 Congratulations! 🎉")),
+            formatting.as_line(formatting.Bold(get_text(lang, "Keep going!")), "💪", sep=" "),
             formatting.as_line(
                 get_text(lang, "Your friend"),
                 formatting.Bold(message.from_user.first_name),
@@ -88,8 +91,8 @@ async def start_handler(
             formatting.as_list(
                 get_text(lang, "You have invited {} friends.").format(referrer.invited_users),
                 formatting.as_line(
-                    get_text(lang, "And now you have gathered"),
-                    formatting.Italic(f"{referrer.points:.3f}"),
+                    get_text(lang, "And you have gathered"),
+                    formatting.Italic(f"{referrer.points:.2f}"),
                     get_text(lang, "points so far!"),
                     sep=" ",
                 ),

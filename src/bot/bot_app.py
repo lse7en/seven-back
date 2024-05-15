@@ -15,6 +15,7 @@ from src.bot.handlers.raw import raw_handler
 from src.bot.handlers.score import score_handler
 from src.bot.handlers.start import start_handler
 from src.bot.handlers.stat import stat_handler
+from src.bot.handlers.rank import rank_handler
 from src.settings import get_settings
 
 settings = get_settings()
@@ -26,6 +27,7 @@ def register_handlers(router: Router) -> None:
     router.message.register(invite_handler, Command("invite"))
     router.message.register(score_handler, Command("score"))
     router.message.register(language_handler, Command("lang"))
+    router.message.register(rank_handler, Command("rank"))
     router.callback_query.register(joined_handler, JoinedCallback.filter())
     router.callback_query.register(lang_handler, LanguageCallback.filter())
     router.message.register(raw_handler, F.content_type.in_(["photo", "video", "document"]))

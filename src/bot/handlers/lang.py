@@ -12,7 +12,8 @@ from src.bot.text import get_text
 
 
 async def lang_handler(
-    callback: CallbackQuery, callback_data: LanguageCallback,
+    callback: CallbackQuery,
+    callback_data: LanguageCallback,
     session_factory: async_sessionmaker[AsyncSession],
 ) -> None:
     """
@@ -22,13 +23,11 @@ async def lang_handler(
     session = session_factory()
     user_repository = await beans.get_user_repository(session)
 
-
     async with session.begin():
         user = await user_repository.get_user_or_none_by_id(callback.from_user.id)
         user.language = callback_data.lang
         await user_repository.add_user(user)
         lang = user.language
-    
 
     if not callback_data.next:
         await callback.answer(text="Done!", show_alert=False)
@@ -36,29 +35,39 @@ async def lang_handler(
             chat_id=callback.from_user.id,
             text=get_text(lang, "You have successfully changed your language!"),
         )
-    
 
     else:
-        await callback.answer(text=get_text(lang, "You have successfully changed your language!"), show_alert=False)
-        channel = InlineKeyboardButton(
-        text="The lucky 7 Community", url="https://t.me/the_lucky_7"
+        await callback.answer(
+            text=get_text(lang, "You have successfully changed your language!"),
+            show_alert=False,
         )
-        joined = InlineKeyboardButton(text=get_text(lang, "Joined ✅"), callback_data=community_callback.pack())
+        channel = InlineKeyboardButton(
+            text="The lucky 7 Community", url="https://t.me/the_lucky_7"
+        )
+        joined = InlineKeyboardButton(
+            text=get_text(lang, "Joined ✅"), callback_data=community_callback.pack()
+        )
 
         kb = InlineKeyboardMarkup(inline_keyboard=[[channel], [joined]])
 
-
         caption = formatting.as_list(
-            formatting.Bold(get_text(lang,"🚀 Exciting News! 🚀")),
             formatting.as_line(
-                get_text(lang, "Starting this month, Telegram has introduced a fantastic new feature allowing channel owners to earn revenue through ads. But here’s the twist: we're giving 100% of our ad revenue back to you, our lovely community!")),
-            formatting.as_marked_section(
-                get_text(lang, "Here's how it works:"),
-                get_text(lang, "Every month, 100% of our ad revenue will be shared among 7 lucky subscribers."),
-                get_text(lang, "The winners will be selected randomly, ensuring that everyone has a fair chance to win."),
+                get_text(
+                    lang, "Telegram channel owners can now receive 50% of ads revenue!"
+                )
             ),
             formatting.as_line(
-                get_text(lang, "Stay subscribed and active for your chance to be one of the lucky 7! 🤑")
+                get_text(
+                    lang, "In Lucky 7, we give back 100% of our share to the members!"
+                )
+            ),
+            formatting.as_line(
+                get_text(
+                    lang,
+                    "Join our channel and invite your friends to increase your chance of winning one of the 7 giveaways!",
+                ),
+                "🎁",
+                sep=" ",
             ),
             sep="\n\n",
         )
@@ -69,7 +78,3 @@ async def lang_handler(
             reply_markup=kb,
             caption=caption.as_html(),
         )
-
-
-
-

@@ -27,7 +27,6 @@ def setup_db() -> tuple[AsyncEngine, async_sessionmaker[AsyncSession]]:
     from src.settings import get_settings
 
     settings = get_settings()
-
     engine = create_async_engine(settings.db_url, echo=settings.postgres_echo, connect_args=settings.db_connections_args)
 
     session_factory = async_sessionmaker(

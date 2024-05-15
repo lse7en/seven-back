@@ -8,7 +8,7 @@ from src.bot import beans
 from src.bot.text import get_text
 
 @IsChannelMember(COMMUNITY_TID)
-async def score_handler(
+async def lead_handler(
     message: Message,
     session_factory: async_sessionmaker[AsyncSession],
 ) -> None:

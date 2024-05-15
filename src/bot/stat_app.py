@@ -1,4 +1,4 @@
-from aiogram import Bot, Dispatcher, F, Router
+from aiogram import Bot, Dispatcher, Router
 from aiogram.enums import ParseMode
 from aiogram.filters import Command
 from sqlalchemy.ext.asyncio import (
@@ -6,14 +6,7 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
 )
 
-from src.bot.callbacks import JoinedCallback, LanguageCallback
-from src.bot.handlers.invite import invite_handler
-from src.bot.handlers.join import joined_handler
-from src.bot.handlers.lang import lang_handler
-from src.bot.handlers.language import language_handler
-from src.bot.handlers.raw import raw_handler
-from src.bot.handlers.score import score_handler
-from src.bot.handlers.start import start_handler
+
 from src.bot.handlers.stat import stat_handler
 from src.settings import get_settings
 

@@ -9,6 +9,7 @@ from src.bot.text import get_text
 from src.bot.validators import is_member_of
 from src.bot.constants import STAT_CHAT_ID, JOIN_THREAD_ID, ADMIN_CHAT_ID
 
+
 async def joined_handler(
     callback: CallbackQuery,
     callback_data: JoinedCallback,
@@ -23,9 +24,9 @@ async def joined_handler(
     user_repository = await beans.get_user_repository(session)
 
     async with session.begin():
-        lang = (
-            await user_repository.get_user_or_none_by_id(callback.from_user.id)
-        ).language
+        user = await user_repository.get_user_or_none_by_id(callback.from_user.id)
+        info = user.info
+        lang = user.language
     tid = callback_data.tid
 
     if not await is_member_of(callback.bot, tid, callback.from_user.id):
@@ -39,32 +40,34 @@ async def joined_handler(
         await stat_bot.send_message(
             chat_id=STAT_CHAT_ID,
             message_thread_id=JOIN_THREAD_ID,
-            text=f"New Sub: {callback.from_user.full_name} (@{callback.from_user.username}) id: {callback.from_user.id}"
+            text=f"New Channel Sub: {info}",
         )
     except Exception as e:
         print(e)
 
     caption = formatting.as_list(
-        formatting.Bold(get_text(lang, "Congratulations on joining! 🌟")),
         formatting.as_line(
-            get_text(
-                lang,
-                "You now have a fantastic opportunity to be one of our lucky winners.",
-            ),
-            get_text(
-                lang,
-                "To increase your chances, invite your friends using your personal invitation link.",
-            ),
-            sep="\n",
-        ),
-        formatting.as_line(
-            get_text(lang, "Simply type"),
-            formatting.BotCommand("/invite"),
-            get_text(lang, "to get your referral link and invite your friends."),
+            formatting.Bold(get_text(lang, "Welcome aboard!")),
+            "🎆",
             sep=" ",
         ),
-        formatting.as_line(
-            get_text(lang, "Let's make our community bigger and better together! 🚀")
+        formatting.as_list(
+            formatting.as_line(
+                get_text(
+                    lang,
+                    "You are now one step closer to becoming one of the Lucky 7 winners!",
+                ),
+                "🏅",
+                sep=" ",
+            ),
+            formatting.as_line(
+                get_text(lang, "To increase your chances, get your own referral link from"),
+                formatting.BotCommand("/invite"),
+                get_text(lang, "and send it to as many friends you can!"),
+                "🔠",
+                sep=" ",
+            ),
+            sep="\n",
         ),
         sep="\n\n",
     )

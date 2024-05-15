@@ -47,3 +47,27 @@ class UserRepository:
             select(User).where(User.id == user_id),
         )
         return raw_user.scalars().first()
+
+
+    async def get_all_users(self):
+        """
+        Get all users.
+
+        :return: list of user instances.
+        """
+        raw_users = await self.session.execute(select(User))
+        return raw_users.scalars().all()
+    
+
+    async def get_user_rank(self, user_id: int):
+        """
+        Get user rank using func.rank
+
+        :param user_id: id of user.
+        :return: rank of user.
+        """
+
+        raw = await self.session.execute(
+            select(func.rank().over(order_by=User.invited_users)).where(User.id == user_id),
+        )
+        return raw.scalars().all()

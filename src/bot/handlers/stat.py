@@ -6,7 +6,7 @@ from aiogram.utils.markdown import hbold
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from src.bot import beans
 
-@HasPermissions(0)
+@HasPermissions(2)
 async def stat_handler(
     message: Message,
     session_factory: async_sessionmaker[AsyncSession],
