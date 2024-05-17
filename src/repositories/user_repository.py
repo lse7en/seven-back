@@ -58,6 +58,15 @@ class UserRepository:
         raw_users = await self.session.execute(select(User))
         return raw_users.scalars().all()
     
+    async def get_not_joined_users(self) -> list[User]:
+        """
+        Get all users who have not joined the community.
+
+        :return: list of user instances.
+        """
+        raw_users = await self.session.execute(select(User).where(User.joined == False))  # noqa: E712
+        return raw_users.scalars().all()
+    
 
     async def get_user_rank(self, user_id: int):
         """
