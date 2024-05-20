@@ -62,7 +62,7 @@ async def start_handler(
     if not user:
         try:
 
-            text = f"New Bot join: {new_user.info} \n Referrer: {referrer.info if referrer else 'None'}"
+            text = f"New Bot join: {new_user.info}"
 
             await stat_bot.send_message(
                 chat_id=STAT_CHAT_ID,

@@ -70,14 +70,14 @@ async def joined_handler(
                 **joined_message.as_kwargs(),
             )
 
-        try:
-            await stat_bot.send_message(
-                chat_id=STAT_CHAT_ID,
-                message_thread_id=JOIN_THREAD_ID,
-                text=f"New Channel Sub: {info}",
-            )
-        except Exception as e:
-            print(e)
+            try:
+                await stat_bot.send_message(
+                    chat_id=STAT_CHAT_ID,
+                    message_thread_id=JOIN_THREAD_ID,
+                    text=f"New Channel Sub: {info} \n Referrer: {referrer.info if referrer else 'None'}",
+                )
+            except Exception as e:
+                print(e)
 
     caption = formatting.as_list(
         formatting.as_line(
