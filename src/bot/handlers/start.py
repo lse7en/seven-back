@@ -40,24 +40,19 @@ async def start_handler(
 
     async with session.begin():
         user = await user_repository.get_user_or_none_by_id(message.from_user.id)
-        referrer = (
-            await user_repository.get_user_or_none_by_id(int(ref)) if ref else None
-        )
+
 
     if not user:
         async with session.begin():
             new_user = User(
                     id=message.from_user.id,
-                    invited_by_id=referrer.id if referrer else None,
+                    invited_by_id=ref if ref else None,
                     first_name=message.from_user.first_name,
                     last_name=message.from_user.last_name,
                     username=message.from_user.username,
                     joined=False
                 )
             await user_repository.add_user(new_user)
-            if referrer:
-                referrer.invited_users += 1
-                await user_repository.add_user(referrer)
 
     await message.answer(
         reply_markup=kb,
@@ -78,31 +73,6 @@ async def start_handler(
             print(e)
 
 
-    if referrer and not user:
-        lang = referrer.language
-        joined_message = formatting.as_list(
-            formatting.as_line(formatting.Bold(get_text(lang, "Keep going!")), "💪", sep=" "),
-            formatting.as_line(
-                get_text(lang, "Your friend"),
-                formatting.Bold(message.from_user.first_name),
-                get_text(lang, "joined the Bot!"),
-                sep=" ",
-            ),
-            formatting.as_list(
-                get_text(lang, "You have invited {} friends.").format(referrer.invited_users),
-                formatting.as_line(
-                    get_text(lang, "And you have gathered"),
-                    formatting.Italic(f"{referrer.points:.2f}"),
-                    get_text(lang, "points so far!"),
-                    sep=" ",
-                ),
-            ),
-            sep="\n\n",
-        )
 
-        await message.bot.send_message(
-            chat_id=referrer.id,
-            **joined_message.as_kwargs(),
-        )
 
 

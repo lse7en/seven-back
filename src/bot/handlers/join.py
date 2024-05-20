@@ -35,6 +35,42 @@ async def joined_handler(
             show_alert=True,
         )
         return
+    send_referral = not user.joined and (user.invited_by_id is not None)
+    async with session.begin():
+        if not user.joined:
+            user.joined = True
+            if user.invited_by_id:
+                referrer = await user_repository.get_user_or_none_by_id(user.invited_by_id)
+                referrer.invited_users += 1
+                await user_repository.add_user(referrer)
+            await user_repository.add_user(user)
+    
+    if send_referral:
+        lang = referrer.language
+        joined_message = formatting.as_list(
+            formatting.as_line(formatting.Bold(get_text(lang, "Keep going!")), "💪", sep=" "),
+            formatting.as_line(
+                get_text(lang, "Your friend"),
+                formatting.Bold(user.full_name),
+                get_text(lang, "joined the Bot!"),
+                sep=" ",
+            ),
+            formatting.as_list(
+                get_text(lang, "You have invited {} friends.").format(referrer.invited_users),
+                formatting.as_line(
+                    get_text(lang, "And you have gathered"),
+                    formatting.Italic(f"{referrer.points:.2f}"),
+                    get_text(lang, "points so far!"),
+                    sep=" ",
+                ),
+            ),
+            sep="\n\n",
+        )
+
+        await callback.bot.send_message(
+            chat_id=referrer.id,
+            **joined_message.as_kwargs(),
+        )
 
     try:
         await stat_bot.send_message(
