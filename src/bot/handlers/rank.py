@@ -53,5 +53,8 @@ async def rank_handler(
             formatting.as_line(get_text(lang, "Get started!"), formatting.BotCommand("/invite"), sep=" "),
             sep="\n\n",
         )
-    await message.answer(caption.as_html()) 
-    await stat_bot.send_message(chat_id=STAT_CHAT_ID, message_thread_id=USER_LOG_THREAD_ID, text=f"command: /rank\nuser: {user.info}")
+    await message.answer(caption.as_html())
+    try:
+        await stat_bot.send_message(chat_id=STAT_CHAT_ID, message_thread_id=USER_LOG_THREAD_ID, text=f"command: /rank\nuser: {user.info}")
+    except Exception as e:
+        print(e)
