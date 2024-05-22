@@ -58,7 +58,7 @@ async def send_text_to_not_joined(
         await asyncio.sleep(3)
 
 
-async def populate_data(
+async def print_users(
     bot: Bot, session_factory: async_sessionmaker[AsyncSession]
 ) -> None:
     session = session_factory()
@@ -67,14 +67,8 @@ async def populate_data(
     async with session.begin():
         all_users = await user_repository.get_all_users()
 
+        all_users = sorted(all_users, key=lambda x: x.points, reverse=True)
         for user in all_users:
-            # user_chat = await bot.get_chat(chat_id=user.id)
-            # user.username = user_chat.username
-            # user.first_name = user_chat.first_name
-            # user.last_name = user_chat.last_name
-            # user.joined = await is_member_of(bot, COMMUNITY_TID, user.id)
-            # await user_repository.add_user(user)
-
             print(user.info)
 
 
@@ -86,8 +80,10 @@ async def get_rank_test(
     session = session_factory()
     user_repository = UserRepository(session)
     async with session.begin():
-        rank = await user_repository.get_user_rank(user_id)
-        print(rank)
+        all_u = await user_repository.get_all_users_with_ranking()
+        min_invitation_for_top_4 = await user_repository.get_min_invitation_count_for_rank(9)
+        print(all_u)
+        print(min_invitation_for_top_4)
 
 
 async def main():
@@ -105,6 +101,8 @@ async def main():
     engine, session_factory = setup_db()
 
     # await send_text_to_not_joined(bot, session_factory)
+    await print_users(bot, session_factory)
+    await get_rank_test(bot, session_factory)
 
     await engine.dispose()
     await bot.session.close()

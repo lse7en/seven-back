@@ -1,14 +1,16 @@
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
-
+import asyncio
 from src.api.routes import router
 from fastapi import FastAPI
 from fastapi_pagination import add_pagination
 from fastapi_pagination.utils import disable_installed_extensions_check
-
+from src.tasks import stat_task
 from src.core.database import setup_db
 from src.bot.bot_app import start_application, end_application
 from src.bot.stat_app import start_application as start_stat_application, end_application as end_stat_application
+
+
 
 
 @asynccontextmanager
@@ -26,6 +28,7 @@ async def lifespan(_application: FastAPI) -> AsyncGenerator:
     _application.state.stat_dp = stat_dp
     _application.state.stat_bot = stat_bot
 
+    # asyncio.create_task(stat_task(stat_bot, session_factory))
     yield
     
 

@@ -71,8 +71,3 @@ async def start_handler(
             )
         except Exception as e:
             print(e)
-
-
-
-
-

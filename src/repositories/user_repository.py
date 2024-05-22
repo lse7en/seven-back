@@ -68,15 +68,47 @@ class UserRepository:
         return raw_users.scalars().all()
     
 
-    async def get_user_rank(self, user_id: int):
+    async def get_user_rank(self, user_id: int) -> int:
         """
         Get user rank using func.rank
 
         :param user_id: id of user.
         :return: rank of user.
         """
+        subq = select(User.id, func.rank().over(order_by=User.invited_users.desc()).label('rank')).subquery()
 
         raw = await self.session.execute(
-            select(func.rank().over(order_by=User.invited_users)).where(User.id == user_id),
+            select(subq.c.rank).where(subq.c.id == user_id)
+        )
+        return raw.scalar_one()
+    
+
+    async def get_min_invitation_count_for_rank(self, max_rank: int) -> int:
+        """
+        Get minimum invitation count for a rank.
+        
+        :param max_rank: maximum rank.
+        :return: minimum invitation count.
+        """
+        subq = select(User.invited_users, func.rank().over(order_by=User.invited_users.desc()).label('rank')).subquery()
+
+        # select first row with rank less than or equal to max_rank
+        raw = await self.session.execute(
+            select(subq.c.invited_users).where(subq.c.rank <= max_rank).order_by(subq.c.rank.desc()).limit(1)
+        )
+        return raw.scalar_one()
+    
+
+
+    async def get_all_users_with_ranking(self):
+        """
+        Get all users.
+
+        :return: list of user instances.
+        """
+        subq = select(User, func.rank().over(order_by=User.invited_users.desc()).label('rank')).subquery()
+
+        raw = await self.session.execute(
+            select(subq.c.rank)
         )
         return raw.scalars().all()
