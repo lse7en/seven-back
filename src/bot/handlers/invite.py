@@ -25,6 +25,7 @@ async def invite_handler(message: Message, session_factory: async_sessionmaker[A
     caption = formatting.as_list(
     formatting.as_line(
         formatting.Spoiler(get_text(lang, "Telegram premium")),
+        formatting.Spoiler(get_text(lang, "$400 giveaway")),
         formatting.Spoiler(get_text(lang, "100% Share of ad revenue")),
         sep="\n",
     ),
