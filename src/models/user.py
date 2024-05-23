@@ -21,7 +21,7 @@ class User(Base):
     username: Mapped[str] = mapped_column(nullable=True)
     joined: Mapped[bool] = mapped_column(default=False, nullable=False)
     referrer_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
-    referrer = relationship("User", back_populates="invitees")
+    # referrer = relationship("User", back_populates="invitees")
 
 
 
