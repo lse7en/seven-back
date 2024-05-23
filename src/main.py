@@ -28,7 +28,7 @@ async def lifespan(_application: FastAPI) -> AsyncGenerator:
     _application.state.stat_dp = stat_dp
     _application.state.stat_bot = stat_bot
 
-    # asyncio.create_task(stat_task(stat_bot, session_factory))
+    asyncio.create_task(stat_task(stat_bot, session_factory))
     yield
     
 

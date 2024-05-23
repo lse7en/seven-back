@@ -3,8 +3,8 @@ from sqlalchemy import (
     Integer,
     DateTime
 )
-from sqlalchemy.orm import Mapped, mapped_column
-
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import ForeignKey
 from src.core.model import Base
 from datetime import datetime
 from math import log2
@@ -13,7 +13,6 @@ from math import log2
 class User(Base):
     __tablename__ = "users"
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
-    invited_by_id: Mapped[int] = mapped_column(BigInteger, nullable=True)
     invited_users: Mapped[int] = mapped_column(Integer, default=0)
     last_check_in: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     language: Mapped[str] = mapped_column(default="en")
@@ -21,6 +20,9 @@ class User(Base):
     last_name: Mapped[str] = mapped_column(nullable=True)
     username: Mapped[str] = mapped_column(nullable=True)
     joined: Mapped[bool] = mapped_column(default=False, nullable=False)
+    referrer_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
+    referrer = relationship("User", back_populates="invitees")
+
 
 
     @property
@@ -34,4 +36,4 @@ class User(Base):
 
     @property
     def info(self) -> str:
-        return f"id({self.id}): {self.full_name} @{self.username}; joined: {self.joined}; invited_users: {self.invited_users} language: {self.language}, referrer: {self.invited_by_id}"
+        return f"id({self.id}): {self.full_name} @{self.username}; joined: {self.joined}; invited_users: {self.invited_users} language: {self.language}, referrer: {self.referrer_id}"

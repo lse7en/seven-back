@@ -172,6 +172,14 @@ dictionary = {
         'fa': "شروع کنید!",
         'ru': "Начните!",
     },
+    "Just a reminder that you should also be a member of The Lucky 7 channel in order to participate in the giveaways and the $400 contest!": {
+        'fa': "یادآوری کوچک: برای شرکت در جوایز و مسابقه 400 دلاری، شما همچنین باید عضو کانال Lucky 7 باشید!",
+        'ru': "Просто напоминаем, что вы также должны быть участником канала Lucky 7, чтобы принять участие в розыгрышах и конкурсе на 400 долларов!",
+    },
+    "Check out our {} contest!": {
+        'fa': "مسابقه {} دلاری ما را ببیینید!",
+        'ru': "Проверьте наш {} конкурс!",
+    },
 }
 
 

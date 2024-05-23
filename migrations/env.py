@@ -23,6 +23,7 @@ if config.config_file_name is not None:
 from src.core.model import Base  # noqa: E402
 # itereate in src.models and import all models
 from src.models.user import User  # noqa: E402
+from src.models.system import System  # noqa: E402
 target_metadata = Base.metadata
 from loguru import logger
 # target_metadata = User.metadata

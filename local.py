@@ -15,7 +15,7 @@ from src.bot.text import get_text
 from src.models.user import User
 
 
-data_fake = [User(id=70056025, language='fa')]
+data_fake = [User(id=70056025, language='fa' )]
 
 
 async def send_text_to_not_joined(
@@ -24,7 +24,7 @@ async def send_text_to_not_joined(
     session = session_factory()
     user_repository = UserRepository(session)
     async with session.begin():
-        all_users = await user_repository.get_not_joined_users()
+        all_users = data_fake #await user_repository.get_not_joined_users()
 
     for user in all_users:
         lang = user.language
@@ -37,13 +37,16 @@ async def send_text_to_not_joined(
 
         kb = InlineKeyboardMarkup(inline_keyboard=[[channel], [joined]])
 
-        caption = formatting.as_line(
+        caption = formatting.as_list(formatting.as_line(
             get_text(
                 lang,
-                "Just a reminder that you should also be a member of The Lucky 7 channel in order to participate in the giveaways!",
+                "Just a reminder that you should also be a member of The Lucky 7 channel in order to participate in the giveaways and the $400 contest!",
             ),
             "🎁",
             sep=" ",
+        ),
+        formatting.Url("https://t.me/the_lucky_7/32"),
+        sep="\n\n",
         )
         print(user.info)
         try:
@@ -57,6 +60,41 @@ async def send_text_to_not_joined(
         # wait 3 seconds to avoid spamming
         await asyncio.sleep(3)
 
+
+async def send_contest_to_join(
+    bot: Bot, session_factory: async_sessionmaker[AsyncSession]
+) -> None:
+    session = session_factory()
+    user_repository = UserRepository(session)
+    async with session.begin():
+        all_users = data_fake #await user_repository.get_joined_users()
+
+
+    for user in all_users:
+        lang = user.language
+
+
+        caption = formatting.as_list(formatting.as_line(
+            get_text(
+                lang,
+                "Check out our {} contest!",
+            ).format("$400"),
+            "💰",
+            sep=" ",
+        ),
+        formatting.Url("https://t.me/the_lucky_7/32"),
+        sep="\n\n",
+        )
+        print(user.info)
+        try:
+            await bot.send_message(
+                chat_id=user.id,
+                text=caption.as_html(),
+            )
+        except Exception as e:
+            print(e)
+        # wait 3 seconds to avoid spamming
+        await asyncio.sleep(3)
 
 async def print_users(
     bot: Bot, session_factory: async_sessionmaker[AsyncSession]
@@ -100,9 +138,8 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    # await send_text_to_not_joined(bot, session_factory)
-    await print_users(bot, session_factory)
-    await get_rank_test(bot, session_factory)
+    await send_contest_to_join(bot, session_factory)
+
 
     await engine.dispose()
     await bot.session.close()

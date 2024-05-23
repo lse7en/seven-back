@@ -38,13 +38,13 @@ async def joined_handler(
     if not user.joined:
         async with session.begin():
             user.joined = True
-            if user.invited_by_id:
-                referrer = await user_repository.get_user_or_none_by_id(user.invited_by_id)
+            if user.referrer_id:
+                referrer = await user_repository.get_user_or_none_by_id(user.referrer_id)
                 referrer.invited_users += 1
                 await user_repository.add_user(referrer)
             await user_repository.add_user(user)
         
-        if user.invited_by_id:
+        if user.referrer_id:
             joined_message = formatting.as_list(
                 formatting.as_line(formatting.Bold(get_text(referrer.language, "Keep going!")), "💪", sep=" "),
                 formatting.as_line(
