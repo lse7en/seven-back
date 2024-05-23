@@ -24,7 +24,7 @@ async def send_text_to_not_joined(
     session = session_factory()
     user_repository = UserRepository(session)
     async with session.begin():
-        all_users = data_fake #await user_repository.get_not_joined_users()
+        all_users = await user_repository.get_not_joined_users()
 
     for user in all_users:
         lang = user.language
@@ -45,7 +45,7 @@ async def send_text_to_not_joined(
             "🎁",
             sep=" ",
         ),
-        formatting.Url("https://t.me/the_lucky_7/32"),
+        formatting.Url("https://t.me/the_lucky_7/33"),
         sep="\n\n",
         )
         print(user.info)
@@ -67,7 +67,7 @@ async def send_contest_to_join(
     session = session_factory()
     user_repository = UserRepository(session)
     async with session.begin():
-        all_users = data_fake #await user_repository.get_joined_users()
+        all_users = await user_repository.get_joined_users()
 
 
     for user in all_users:
@@ -82,7 +82,7 @@ async def send_contest_to_join(
             "💰",
             sep=" ",
         ),
-        formatting.Url("https://t.me/the_lucky_7/32"),
+        formatting.Url("https://t.me/the_lucky_7/33"),
         sep="\n\n",
         )
         print(user.info)
@@ -138,7 +138,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await send_contest_to_join(bot, session_factory)
+    await send_text_to_not_joined(bot, session_factory)
 
 
     await engine.dispose()
