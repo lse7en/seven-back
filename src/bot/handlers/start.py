@@ -36,7 +36,13 @@ async def start_handler(
     session = session_factory()
     user_repository = await beans.get_user_repository(session)
 
-    ref = int(decode_payload(command.args)) if command.args else None
+    ref = decode_payload(command.args) if command.args else None
+
+    if ref is not None:
+        try:
+            ref = int(ref)
+        except Exception:
+            ref = None
 
     async with session.begin():
         user = await user_repository.get_user_or_none_by_id(message.from_user.id)
