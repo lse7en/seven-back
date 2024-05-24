@@ -20,7 +20,7 @@ async def stat_task(stat_bot: Bot, session_factory: async_sessionmaker[AsyncSess
                 await system_repository.update(system)
             
         if all_u:
-            text = "\n".join([f"{i+1}. {user.full_info}" for i, user in enumerate(all_u)])
+            text = "\n\n".join([f"{i+1}. {user.full_info}" for i, user in enumerate(all_u)])
             try:
                 await stat_bot.send_message(chat_id=STAT_CHAT_ID, message_thread_id=JOIN_THREAD_ID, text=text)
             except Exception as e:
