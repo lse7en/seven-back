@@ -49,7 +49,7 @@ async def start_handler(
         async with session.begin():
             new_user = User(
                     id=message.from_user.id,
-                    referrer_id=ref if ref else None,
+                    referrer_id=ref,
                     first_name=message.from_user.first_name,
                     last_name=message.from_user.last_name,
                     username=message.from_user.username,

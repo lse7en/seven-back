@@ -21,11 +21,11 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from src.core.model import Base  # noqa: E402
-# itereate in src.models and import all models
-from src.models.user import User  # noqa: E402
-from src.models.system import System  # noqa: E402
+# iterate in src.models and import all models
+from src.models.user import User  # noqa: E402, F401
+from src.models.system import System  # noqa: E402, F401
+from src.models.system_log import SystemLog  # noqa: E402, F401
 target_metadata = Base.metadata
-from loguru import logger
 # target_metadata = User.metadata
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -78,7 +78,6 @@ async def run_async_migrations() -> None:
 
     print(settings.db_url)
     print(settings.db_connections_args)
-    print("ehsan")
     connectable = create_async_engine(settings.db_url, echo=settings.postgres_echo, connect_args=settings.db_connections_args)
 
     async with connectable.connect() as connection:

@@ -1,6 +1,8 @@
 from typing import Optional
 
+from datetime import datetime
 from sqlalchemy import func, select
+from sqlalchemy.orm import joinedload
 
 from src.core.database import DBSession
 from src.models.user import User
@@ -122,3 +124,18 @@ class UserRepository:
             select(subq.c.rank)
         )
         return raw.scalars().all()
+    
+
+    async def get_users_order_by_join_and_limit(self, last_date: datetime, limit: int) -> list[User]:
+        """
+        Get all users who joined after last_date.
+
+        :param last_date: last date.
+        :param limit: limit of users.
+        :return: list of user instances.
+        """
+        raw_users = await self.session.execute(
+            select(User).options(joinedload(User.referrer))
+            .where(User.created_at > last_date).order_by(User.created_at).limit(limit)
+        )
+        return raw_users.scalars().all()

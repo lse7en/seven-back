@@ -4,6 +4,7 @@ from aiogram.enums import ParseMode
 from src.core.database import setup_db
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from src.repositories.user_repository import UserRepository
+from src.repositories.system_repository import SystemRepository
 from src.bot.validators import is_member_of
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from src.bot.callbacks import community_callback
@@ -124,6 +125,25 @@ async def get_rank_test(
         print(min_invitation_for_top_4)
 
 
+async def get_join_test(
+    bot: Bot, session_factory: async_sessionmaker[AsyncSession]
+) -> None:
+    user_id = 307046083
+
+    session = session_factory()
+    user_repository = UserRepository(session)
+    system_repository = SystemRepository(session)
+    async with session.begin():
+        system = await system_repository.get()
+        all_u = await user_repository.get_users_order_by_join_and_limit(system.last_user_log, system.max_user_cumulative)
+        if all_u:
+            system.last_user_log = all_u[-1].created_at
+            await system_repository.update(system)
+        
+    
+    for i, user in enumerate(all_u):
+        print(i, user.full_info, user.created_at)
+
 async def main():
     print("This is a local script")
     print("It is not meant to be imported")
@@ -138,7 +158,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await send_text_to_not_joined(bot, session_factory)
+    await get_join_test(bot, session_factory)
 
 
     await engine.dispose()

@@ -20,8 +20,10 @@ class User(Base):
     last_name: Mapped[str] = mapped_column(nullable=True)
     username: Mapped[str] = mapped_column(nullable=True)
     joined: Mapped[bool] = mapped_column(default=False, nullable=False)
+
     referrer_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
-    # referrer = relationship("User", back_populates="invitees")
+    referrer = relationship("User", back_populates="invitees", remote_side=id)
+    invitees = relationship("User", back_populates="referrer", remote_side=referrer_id)
 
 
 
@@ -36,4 +38,9 @@ class User(Base):
 
     @property
     def info(self) -> str:
-        return f"id({self.id}): {self.full_name} @{self.username}; joined: {self.joined}; invited_users: {self.invited_users} language: {self.language}, referrer: {self.referrer_id}"
+        return f"id({self.id}): {self.full_name} @{self.username}; joined: {self.joined}; invited_users: {self.invited_users} language: {self.language} referrer: {self.referrer_id}"
+    
+
+    @property
+    def full_info(self) -> str:
+        return f"{self.info}" + (f"\nreferrer: \n{self.referrer.info}" if self.referrer else "")
