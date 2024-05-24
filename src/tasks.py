@@ -25,5 +25,4 @@ async def stat_task(stat_bot: Bot, session_factory: async_sessionmaker[AsyncSess
                 await stat_bot.send_message(chat_id=STAT_CHAT_ID, message_thread_id=JOIN_THREAD_ID, text=text)
             except Exception as e:
                 print(e)
-        await session.expire_all()
         await asyncio.sleep(60)

@@ -1,19 +1,16 @@
 from aiogram.types import CallbackQuery
 from aiogram.utils import formatting
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
-from aiogram import Bot
 from src.bot import beans
 from src.bot.callbacks import JoinedCallback
 from src.bot.constants import JOIN_PHOTO_FILE_ID
 from src.bot.text import get_text
 from src.bot.validators import is_member_of
-from src.bot.constants import STAT_CHAT_ID, JOIN_THREAD_ID, ADMIN_CHAT_ID
 
 
 async def joined_handler(
     callback: CallbackQuery,
     callback_data: JoinedCallback,
-    stat_bot: Bot,
     session_factory: async_sessionmaker[AsyncSession],
 ) -> None:
     """
@@ -70,14 +67,6 @@ async def joined_handler(
                 **joined_message.as_kwargs(),
             )
 
-            try:
-                await stat_bot.send_message(
-                    chat_id=STAT_CHAT_ID,
-                    message_thread_id=JOIN_THREAD_ID,
-                    text=f"New Channel Sub: {info} \n Referrer: {referrer.info if referrer else 'None'}",
-                )
-            except Exception as e:
-                print(e)
 
     caption = formatting.as_list(
         formatting.as_line(

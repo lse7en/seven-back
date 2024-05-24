@@ -3,12 +3,10 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from aiogram.utils.deep_linking import decode_payload
 from aiogram.utils import formatting
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
-from aiogram import Bot
 from src.models.user import User
 from src.bot import beans
 from src.bot.callbacks import LanguageCallback
-from src.bot.constants import ADMIN_CHAT_ID, STAT_CHAT_ID, JOIN_THREAD_ID
-from src.bot.text import get_text
+
 
 fa_lang = InlineKeyboardButton(text="فارسی 🇮🇷", callback_data=LanguageCallback(lang='fa', next=True).pack())
 en_lang = InlineKeyboardButton(text="English 🇺🇸", callback_data=LanguageCallback(lang='en', next=True).pack())
@@ -26,7 +24,6 @@ caption = formatting.as_list(
 async def start_handler(
     message: Message,
     command: CommandObject,
-    stat_bot: Bot,
     session_factory: async_sessionmaker[AsyncSession],
 ) -> None:
     """
@@ -61,16 +58,3 @@ async def start_handler(
         reply_markup=kb,
         text=caption.as_html(),
     )
-
-    if not user:
-        try:
-
-            text = f"New Bot join: {new_user.info}"
-
-            await stat_bot.send_message(
-                chat_id=STAT_CHAT_ID,
-                message_thread_id=JOIN_THREAD_ID,
-                text=text
-            )
-        except Exception as e:
-            print(e)
