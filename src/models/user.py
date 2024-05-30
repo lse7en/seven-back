@@ -8,8 +8,8 @@ from sqlalchemy import ForeignKey
 from src.core.model import Base
 from datetime import datetime
 from math import log2
-
-
+from aiogram.utils.deep_linking import create_deep_link
+from src.bot.constants import COMMUNITY_TID
 class User(Base):
     __tablename__ = "users"
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
@@ -48,6 +48,14 @@ class User(Base):
     def full_info(self) -> str:
         return f"{self.info}" + (f"\nreferrer: \n{self.referrer.info}" if self.referrer else "")
     
+    @property
+    def ref_link(self) -> str:
+        return create_deep_link(
+        username="the_lucky_7_bot",
+        link_type="start",
+        payload=str(self),
+        encode=True,
+    )
 
     @property
     def rank(self) -> int:

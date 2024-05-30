@@ -27,5 +27,5 @@ class User(UserBase):
 
     invited_users: int
     points: float
-
+    ref_link: str
 

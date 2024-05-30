@@ -39,7 +39,7 @@ async def get_current_user(
 
     data_json = json.loads(user_data)
     async with session.begin():
-        return await user_repository.get_user_or_none_by_id(session, data_json["id"])
+        return await user_repository.get_user_or_none_by_id(data_json["id"])
 
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
