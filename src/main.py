@@ -9,6 +9,7 @@ from src.tasks import stat_task
 from src.core.database import setup_db
 from src.bot.bot_app import start_application, end_application
 from src.bot.stat_app import start_application as start_stat_application, end_application as end_stat_application
+from fastapi.middleware.cors import CORSMiddleware
 
 
 
@@ -49,5 +50,11 @@ def create_application() -> FastAPI:
     app.include_router(router, prefix="/api")
     add_pagination(app)
     disable_installed_extensions_check()
-
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
     return app
