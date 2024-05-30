@@ -18,6 +18,7 @@ class UserBase(BaseModel):
     photo_url: Optional[str] = None
     joined: bool
     created_at: datetime
+    username: Optional[str] = None
 
 
 
@@ -30,3 +31,9 @@ class User(UserBase):
     points: float
     ref_link: str
     friends: list[UserBase] = []
+
+
+class Rank(BaseModel):
+    """DTO for User rank."""
+
+    rank: int
