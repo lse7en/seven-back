@@ -31,6 +31,7 @@ class User(UserBase):
     points: float
     ref_link: str
     friends: list[UserBase] = []
+    last_lucky_push: datetime
 
 
 class Rank(BaseModel):
