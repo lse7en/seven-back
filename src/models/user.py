@@ -36,7 +36,7 @@ class User(Base):
     
     @property
     def full_name(self) -> str:
-        return f"{self.first_name} {self.last_name}"
+        return f"{self.first_name} {self.last_name}" if self.last_name else self.first_name
 
 
     @property
