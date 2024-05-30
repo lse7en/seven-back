@@ -38,6 +38,7 @@ async def get_current_user(
         raise InvalidToken()
 
     data_json = json.loads(user_data)
+
     async with session.begin():
         return await user_repository.get_user_or_none_by_id(data_json["id"])
 
