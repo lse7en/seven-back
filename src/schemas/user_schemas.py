@@ -17,6 +17,7 @@ class UserBase(BaseModel):
     full_name: str
     photo_url: Optional[str] = None
     joined: bool
+    created_at: str
 
 
 
@@ -28,4 +29,4 @@ class User(UserBase):
     invited_users: int
     points: float
     ref_link: str
-
+    friends: list[UserBase] = []

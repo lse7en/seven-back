@@ -136,6 +136,17 @@ class UserRepository:
         )
         return raw_users.scalars().all()
     
+    async def get_friends(self, user_id) -> list[User]:
+        """
+        Get all friends of user.
+
+        :param user: user instance.
+        :return: list of user instances.
+        """
+        raw_friends = await self.session.execute(
+            select(User).where(User.referrer_id == user_id).order_by(User.created_at.desc())
+        )
+        return raw_friends.scalars().all()
 """
 SELECT anon_1.id, anon_1.invited_users, anon_1.last_check_in, anon_1.language, anon_1.first_name, anon_1.last_name, anon_1.username, anon_1.joined, anon_1.referrer_id, anon_1.created_at, anon_1.updated_at, anon_1.rank 
 FROM (SELECT users.id AS id, users.invited_users AS invited_users, users.last_check_in AS last_check_in, users.language AS language, users.first_name AS first_name, users.last_name AS last_name, users.username AS username, users.joined AS joined, users.referrer_id AS referrer_id, users.created_at AS created_at, users.updated_at AS updated_at, rank() OVER (ORDER BY users.invited_users DESC) AS rank 

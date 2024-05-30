@@ -178,6 +178,16 @@ async def get_user_photo_test(
         # with open("photo.jpg", "wb") as f:
         #     await 
 
+async def test_get_friends(
+        bot: Bot, session_factory: async_sessionmaker[AsyncSession]
+) -> None:
+    user_id = 70056025
+    session = session_factory()
+    user_repository = UserRepository(session)
+    async with session.begin():
+        all_users = await user_repository.get_friends(user_id)
+        for user in all_users:
+            print(user.info)
 
 
 async def main():
@@ -194,7 +204,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await get_user_photo_test(bot, session_factory)
+    await test_get_friends(bot, session_factory)
 
 
     await engine.dispose()
