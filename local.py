@@ -144,6 +144,42 @@ async def get_join_test(
     for i, user in enumerate(all_u):
         print(i, user.full_info, user.created_at)
 
+async def get_leaderboard_test(
+    bot: Bot, session_factory: async_sessionmaker[AsyncSession]
+) -> None:
+    limit = 20
+    session = session_factory()
+    user_repository = UserRepository(session)
+    async with session.begin():
+        all_u = await user_repository.get_users_with_ranking(limit)
+    for u in all_u:
+        print(u)
+        if getattr(u, 'info', None) is None:
+            print("no info")
+        else:
+            print(u.info)
+
+async def get_user_photo_test(
+    bot: Bot, session_factory: async_sessionmaker[AsyncSession]
+) -> None:
+    user_id = 70056025
+
+
+    p = await bot.get_user_profile_photos(user_id, limit=1)
+
+    if p.total_count > 0:
+        candid = min(p.photos[0], key=lambda x: x.width)
+        file_id = candid.file_id
+
+        photo = await bot.get_file(file_id)
+        await bot.download_file(photo.file_path, "photo.jpg")
+        print(photo.file_path)
+        print("kir")
+        # with open("photo.jpg", "wb") as f:
+        #     await 
+
+
+
 async def main():
     print("This is a local script")
     print("It is not meant to be imported")
@@ -158,7 +194,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await get_join_test(bot, session_factory)
+    await get_user_photo_test(bot, session_factory)
 
 
     await engine.dispose()

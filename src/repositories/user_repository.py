@@ -112,19 +112,15 @@ class UserRepository:
     
 
 
-    async def get_all_users_with_ranking(self):
-        """
-        Get all users.
+    async def get_users_with_ranking(self, limit: int):
 
-        :return: list of user instances.
-        """
         subq = select(User, func.rank().over(order_by=User.invited_users.desc()).label('rank')).subquery()
 
-        raw = await self.session.execute(
-            select(subq.c.rank)
+        raw_users = await self.session.execute(
+            select(subq).select_from(subq).order_by(subq.c.rank).limit(limit)
         )
-        return raw.scalars().all()
-    
+        return raw_users.all()
+
 
     async def get_users_order_by_join_and_limit(self, last_date: datetime, limit: int) -> list[User]:
         """
@@ -139,3 +135,9 @@ class UserRepository:
             .where(User.created_at > last_date).order_by(User.created_at).limit(limit)
         )
         return raw_users.scalars().all()
+    
+"""
+SELECT anon_1.id, anon_1.invited_users, anon_1.last_check_in, anon_1.language, anon_1.first_name, anon_1.last_name, anon_1.username, anon_1.joined, anon_1.referrer_id, anon_1.created_at, anon_1.updated_at, anon_1.rank 
+FROM (SELECT users.id AS id, users.invited_users AS invited_users, users.last_check_in AS last_check_in, users.language AS language, users.first_name AS first_name, users.last_name AS last_name, users.username AS username, users.joined AS joined, users.referrer_id AS referrer_id, users.created_at AS created_at, users.updated_at AS updated_at, rank() OVER (ORDER BY users.invited_users DESC) AS rank 
+FROM users) AS anon_1 ORDER BY anon_1.rank 
+"""

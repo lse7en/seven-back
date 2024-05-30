@@ -14,19 +14,18 @@ class UserBase(BaseModel):
     """
 
     id: int
-    first_name: str
-    telegram_id: int
-    photo_url: Optional[str]
+    full_name: str
+    photo_url: Optional[str] = None
+    joined: bool
 
-class User(BaseModel):
+
+
+
+
+class User(UserBase):
     """DTO for User model."""
 
-    telegram_id: int
-    last_name: str
-    is_bot: bool
-    username: Optional[str]
-    language_code: str
-    added_to_attachment_menu: bool
-    allows_write_to_pm: bool
-    is_premium: bool
-    auth_date: int
+    invited_users: int
+    points: float
+
+
