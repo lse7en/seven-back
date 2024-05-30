@@ -2,7 +2,7 @@
 
 from typing import Optional
 from src.core.schema import BaseModel
-
+from datetime import datetime
 
 
 
@@ -17,7 +17,7 @@ class UserBase(BaseModel):
     full_name: str
     photo_url: Optional[str] = None
     joined: bool
-    created_at: str
+    created_at: datetime
 
 
 
