@@ -14,6 +14,6 @@ async def profile(
     user_repository: Annotated[UserRepository, Depends()]
 
 ):
-    friends = await UserRepository.get_friends(current_user.id)
+    friends = await user_repository.get_friends(current_user.id)
     current_user.friends = friends
     return current_user
