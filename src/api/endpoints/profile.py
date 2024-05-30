@@ -10,9 +10,7 @@ router = APIRouter(prefix="/profile", tags=["profile"])
 
 @router.get("", response_model=User)
 async def profile(
-    current_user: CurrentUser,
-    user_repository: Annotated[UserRepository, Depends()]
-
+    current_user: CurrentUser
 ):
     return current_user
 

@@ -53,7 +53,7 @@ class User(Base):
         return create_deep_link(
         username="the_lucky_7_bot",
         link_type="start",
-        payload=str(self),
+        payload=str(self.id),
         encode=True,
     )
 
