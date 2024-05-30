@@ -17,7 +17,7 @@ async def profile(
     return current_user
 
 
-@router.get("/friends", response_model=[UserBase])
+@router.get("/friends", response_model=list[UserBase])
 async def friends(
     current_user: CurrentUser,
     user_repository: Annotated[UserRepository, Depends()]
