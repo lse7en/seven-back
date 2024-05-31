@@ -27,7 +27,7 @@ async def friends(
     return friends
 
 
-@router.f ("/joined", response_model=User)
+@router.post("/joined", response_model=User)
 async def joined(
     request: Request,
     current_user: CurrentUser,
