@@ -6,6 +6,7 @@ from src.deps import  CurrentUser
 from src.core.database import DBSession
 from src.schemas.user_schemas import User
 import random
+from datetime import datetime
 from src.repositories.user_repository import UserRepository
 router = APIRouter(prefix="/lpush", tags=["lpush"])
 
@@ -21,6 +22,7 @@ async def lpush(
 
     async with session.begin():
         current_user.lucky_points += r/100
+        current_user.last_lucky_push = datetime.utcnow()
         await user_repository.add_user(current_user)
 
     return current_user
