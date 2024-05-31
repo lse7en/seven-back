@@ -16,6 +16,12 @@ async def rank(
     user_repository: Annotated[UserRepository, Depends()]
 ):
     rank = await user_repository.get_user_rank(current_user.id)
+
     current_user.rank = rank
+
+    if rank > 20:
+        min_invitations = await user_repository.get_min_invitation_count_for_rank(20)
+
+        current_user.min_invitations = min_invitations
 
     return current_user

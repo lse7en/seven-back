@@ -32,6 +32,8 @@ class User(UserBase):
     ref_link: str
     friends: list[UserBase] = []
     last_lucky_push: datetime
+    rank: Optional[int] = None
+    min_invitations: Optional[int] = None
 
 
 class Rank(BaseModel):
