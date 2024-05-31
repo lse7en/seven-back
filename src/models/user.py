@@ -56,7 +56,3 @@ class User(Base):
         payload=str(self.id),
         encode=True,
     )
-
-    @property
-    def rank(self) -> int:
-        return self._rank
