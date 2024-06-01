@@ -14,3 +14,7 @@ class System(Base):
         DateTime(timezone=True), default=datetime.min,
     )
     max_user_cumulative = mapped_column(Integer, default=0)
+
+    last_action_log: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=datetime.min,
+    )

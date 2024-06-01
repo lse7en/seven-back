@@ -9,7 +9,7 @@ from src.core.model import Base
 from datetime import datetime
 from math import log2
 from aiogram.utils.deep_linking import create_deep_link
-from src.bot.constants import COMMUNITY_TID
+
 class User(Base):
     __tablename__ = "users"
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
