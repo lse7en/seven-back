@@ -18,7 +18,7 @@ async def rank(
     user_repository: Annotated[UserRepository, Depends()],
     system_log_repository: Annotated[SystemLogRepository, Depends()]
 ):
-    await system_log_repository.add_log(SystemLog(user=current_user, command="get:profile"))
+    await system_log_repository.add_log(SystemLog(user=current_user, command="get:rank"))
     rank = await user_repository.get_user_rank(current_user.id)
     current_user.rank = rank
 

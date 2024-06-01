@@ -24,7 +24,7 @@ async def lpush(
     r = random.randint(1, 20)
 
     async with session.begin():
-        await system_log_repository.add_log(SystemLog(user=current_user, command="get:profile"))
+        await system_log_repository.add_log(SystemLog(user=current_user, command="get:push"))
         current_user.lucky_points += r/100
         current_user.last_lucky_push = datetime.utcnow()
         await user_repository.add_user(current_user)
