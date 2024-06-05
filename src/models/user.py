@@ -31,7 +31,7 @@ class User(Base):
 
     @property
     def points(self) -> float:
-        return self.lucky_points + 1 + log2(1 + self.invited_users)
+        return self.lucky_points + 1 + self.invited_users
     
     
     @property
