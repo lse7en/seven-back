@@ -18,7 +18,7 @@ async def stat_task(stat_bot: Bot, session_factory: async_sessionmaker[AsyncSess
             async with session.begin():
                 system = await system_repository.get()
                 all_u = await user_repository.get_users_order_by_join_and_limit(system.last_user_log, system.max_user_cumulative)
-                all_logs = await system_log_repository.get_logs_order_by_time_and_limit(system.last_action_log, system.max_user_cumulative * 3)
+                all_logs = await system_log_repository.get_logs_order_by_time_and_limit(system.last_action_log, system.max_user_cumulative * 2)
 
                 if all_u:
                     system.last_user_log = all_u[-1].created_at
