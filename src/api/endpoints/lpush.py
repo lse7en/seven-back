@@ -10,7 +10,7 @@ from datetime import datetime, UTC, timedelta
 from src.repositories.user_repository import UserRepository
 from src.repositories.system_log_repository import SystemLogRepository
 from src.models.system_log import SystemLog
-from
+
 router = APIRouter(prefix="/lpush", tags=["lpush"])
 
 
