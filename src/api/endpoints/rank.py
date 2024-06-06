@@ -24,7 +24,9 @@ async def rank(
 
     if rank > 20:
         min_invitations = await user_repository.get_min_invitation_count_for_rank(20)
+        min_points = await user_repository.get_min_points_for_rank(20)
 
         current_user.min_invitations = min_invitations
+        current_user.min_points = min_points
 
     return current_user

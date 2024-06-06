@@ -34,6 +34,7 @@ class User(UserBase):
     last_lucky_push: datetime
     rank: Optional[int] = None
     min_invitations: Optional[int] = None
+    min_points: Optional[float] = None
 
 
 class Rank(BaseModel):
