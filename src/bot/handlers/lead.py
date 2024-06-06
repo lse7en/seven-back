@@ -25,7 +25,7 @@ async def lead_handler(
             get_text(lang, "You have invited {} friends.").format(user.invited_users),
             formatting.as_line(
                 get_text(lang, "And now you have gathered"),
-                formatting.Italic(f"{user.points:.2f}"),
+                formatting.Italic(f"{user.points}"),
                 get_text(lang, "points so far!"),
                 sep=" ",
             ),

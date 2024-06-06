@@ -16,7 +16,9 @@ class User(Base):
     invited_users: Mapped[int] = mapped_column(Integer, default=0)
     last_check_in: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
     last_lucky_push: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
-    lucky_points: Mapped[float] = mapped_column(default=0.0)
+    push_points: Mapped[int] = mapped_column(default=0)
+    points: Mapped[int] = mapped_column(default=0, index=True)
+
     language: Mapped[str] = mapped_column(default="en")
     first_name: Mapped[str] = mapped_column(nullable=False)
     last_name: Mapped[str] = mapped_column(nullable=True)
@@ -28,10 +30,6 @@ class User(Base):
     invitees = relationship("User", back_populates="referrer", remote_side=referrer_id)
 
 
-
-    @property
-    def points(self) -> float:
-        return self.lucky_points + 1 + self.invited_users
     
     
     @property

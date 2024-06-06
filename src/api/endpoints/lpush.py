@@ -21,11 +21,12 @@ async def lpush(
     system_log_repository: Annotated[SystemLogRepository, Depends()]
 ):
     # generate random  between 1 and 20
-    r = random.randint(1, 20)
+    r = random.randint(1, 200)
 
     async with session.begin():
         await system_log_repository.add_log(SystemLog(user=current_user, command="get:push"))
-        current_user.lucky_points += r/100
+        current_user.push_points += r
+        current_user.points += r
         current_user.last_lucky_push = datetime.now(UTC)
         await user_repository.add_user(current_user)
 

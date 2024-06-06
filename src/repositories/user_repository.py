@@ -87,7 +87,7 @@ class UserRepository:
         :param user_id: id of user.
         :return: rank of user.
         """
-        subq = select(User.id, func.rank().over(order_by=User.invited_users.desc()).label('rank')).subquery()
+        subq = select(User.id, func.rank().over(order_by=User.points.desc()).label('rank')).subquery()
 
         raw = await self.session.execute(
             select(subq.c.rank).where(subq.c.id == user_id)
@@ -102,7 +102,7 @@ class UserRepository:
         :param max_rank: maximum rank.
         :return: minimum invitation count.
         """
-        subq = select(User.invited_users, func.rank().over(order_by=User.invited_users.desc()).label('rank')).subquery()
+        subq = select(User.invited_users, func.rank().over(order_by=User.points.desc()).label('rank')).subquery()
 
         # select first row with rank less than or equal to max_rank
         raw = await self.session.execute(
@@ -114,7 +114,7 @@ class UserRepository:
 
     async def get_users_with_ranking(self, limit: int):
 
-        subq = select(User, func.rank().over(order_by=User.invited_users.desc()).label('rank')).subquery()
+        subq = select(User, func.rank().over(order_by=User.points.desc()).label('rank')).subquery()
 
         raw_users = await self.session.execute(
             select(subq).select_from(subq).order_by(subq.c.rank).limit(limit)

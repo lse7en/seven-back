@@ -38,6 +38,7 @@ async def joined_handler(
             if user.referrer_id:
                 referrer = await user_repository.get_user_or_none_by_id(user.referrer_id)
                 referrer.invited_users += 1
+                referrer.points += 1000
                 await user_repository.add_user(referrer)
             await user_repository.add_user(user)
         
