@@ -3,8 +3,10 @@ from aiogram import Bot
 from aiogram.enums import ParseMode
 from src.core.database import setup_db
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
+from sqlalchemy import delete
 from src.repositories.user_repository import UserRepository
 from src.repositories.system_repository import SystemRepository
+from src.models.system_log import SystemLog
 from src.bot.validators import is_member_of
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from src.bot.callbacks import community_callback
@@ -181,13 +183,13 @@ async def get_user_photo_test(
 async def test_get_friends(
         bot: Bot, session_factory: async_sessionmaker[AsyncSession]
 ) -> None:
-    user_id = 70056025
+    user_id = 5824417928
     session = session_factory()
     user_repository = UserRepository(session)
     async with session.begin():
-        all_users = await user_repository.get_friends(user_id)
-        for user in all_users:
-            print(user.info)
+        user = await user_repository.get_user_or_none_by_id(user_id)
+        await user_repository.session.execute(delete(SystemLog).where(SystemLog.user_id == user_id))
+        await user_repository.session.delete(user)
 
 
 async def main():

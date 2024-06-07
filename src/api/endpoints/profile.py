@@ -40,9 +40,9 @@ async def joined(
     user_repository: Annotated[UserRepository, Depends()]
 ):
     bot = request.app.state.stat_bot
-    current_user.joined = await is_member_of(bot, COMMUNITY_TID, current_user.id)
     async with user_repository.session.begin():
-        await user_repository.add_user(current_user)
+            current_user.joined = await is_member_of(bot, COMMUNITY_TID, current_user.id)
+            await user_repository.add_user(current_user)
 
 
     if current_user.joined and current_user.referrer_id and not current_user.referrer_score:

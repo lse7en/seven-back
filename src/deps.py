@@ -35,6 +35,8 @@ async def get_current_user(
 
     if tg_data is None:
         raise AuthRequired()
+    
+    print(tg_data)
   # application/x-www-form-urlencoded
     try:
         data = safe_parse_webapp_init_data(token=settings.tg_token, init_data=tg_data)
