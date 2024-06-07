@@ -11,7 +11,7 @@ from src.core.security import validate_tg_data
 from src.models.user import User
 from src.repositories.user_repository import UserRepository
 from src.settings import Settings, get_settings
-from datetime import datetime, UTC
+from datetime import datetime, UTC, timedelta
 from aiogram.utils.deep_linking import decode_payload
 
 SettingsDep = Annotated[Settings, Depends(get_settings)]
@@ -70,7 +70,8 @@ async def get_current_user(
                 first_name=data.user.first_name,
                 last_name=data.user.last_name,
                 username=data.user.username,
-                joined=False
+                joined=False,
+                last_lucky_push=datetime.now(UTC) - timedelta(days=1),
             )
         await user_repository.add_user(new_user)
 

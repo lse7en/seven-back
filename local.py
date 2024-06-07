@@ -189,8 +189,8 @@ async def test_get_friends(
     async with session.begin():
         user = await user_repository.get_user_or_none_by_id(user_id)
         print(user.info)
-        # await user_repository.session.execute(delete(SystemLog).where(SystemLog.user_id == user_id))
-        # await user_repository.session.delete(user)
+        await user_repository.session.execute(delete(SystemLog).where(SystemLog.user_id == user_id))
+        await user_repository.session.delete(user)
 
 
 async def main():

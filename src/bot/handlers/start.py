@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from src.models.user import User
 from src.bot import beans
 from src.bot.callbacks import LanguageCallback
-
+from datetime import datetime, UTC, timedelta
 
 fa_lang = InlineKeyboardButton(text="فارسی 🇮🇷", callback_data=LanguageCallback(lang='fa', next=True).pack())
 en_lang = InlineKeyboardButton(text="English 🇺🇸", callback_data=LanguageCallback(lang='en', next=True).pack())
@@ -50,7 +50,8 @@ async def start_handler(
                     first_name=message.from_user.first_name,
                     last_name=message.from_user.last_name,
                     username=message.from_user.username,
-                    joined=False
+                    joined=False,
+                    last_lucky_push=datetime.now(UTC) - timedelta(days=1),
                 )
             await user_repository.add_user(new_user)
 
