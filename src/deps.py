@@ -2,7 +2,7 @@ import json
 from typing import Annotated
 
 from fastapi import Depends, Header, Request
-
+from aiogram.utils.web_app import safe_parse_webapp_init_data
 from src.bot.constants import COMMUNITY_TID
 from src.bot.validators import is_member_of
 from src.core.database import DBSession
@@ -11,7 +11,9 @@ from src.core.security import validate_tg_data
 from src.models.user import User
 from src.repositories.user_repository import UserRepository
 from src.settings import Settings, get_settings
-from datetime import datetime
+from datetime import datetime, UTC
+from aiogram.utils.deep_linking import decode_payload
+
 SettingsDep = Annotated[Settings, Depends(get_settings)]
 
 
@@ -33,25 +35,47 @@ async def get_current_user(
 
     if tg_data is None:
         raise AuthRequired()
-
-    (is_valid, user_data, auth_date) = validate_tg_data(tg_data, settings.tg_secret_key_bytes)
-
-    if not is_valid:
+  # application/x-www-form-urlencoded
+    try:
+        data = safe_parse_webapp_init_data(token=settings.tg_token, init_data=tg_data)
+    except ValueError:
         raise InvalidToken()
 
-    data_json = json.loads(user_data)
+    
+    async with session.begin():
+        user = await user_repository.get_user_or_none_by_id(data.user.id)
+    
+    if user is not None:
+        # if user.last_check is older than 5 minutes, update the user data
+        if datetime.now(UTC).timestamp() - user.last_check_in.timestamp() > 300:
+            async with session.begin():
+                user.joined = await is_member_of(request.app.state.stat_bot, COMMUNITY_TID, user.id)
+                user.last_check_in = datetime.now(UTC)
+                await user_repository.add_user(user)
+        return user
+
+
+    try:
+        ref = int(decode_payload(data.start_param)) if data.start_param else None
+        async with session.begin():
+            referrer = await user_repository.get_user_or_none_by_id(ref)
+            if referrer is None:
+                ref = None
+    except Exception as e:
+        ref = None
+
 
     async with session.begin():
-        user = await user_repository.get_user_or_none_by_id(data_json["id"])
-    
+        new_user = User(
+                id=data.user.id,
+                referrer_id=ref,
+                first_name=data.user.first_name,
+                last_name=data.user.last_name,
+                username=data.user.username,
+                joined=False
+            )
+        await user_repository.add_user(new_user)
 
-    # if user.last_check is older than 5 minutes, update the user data
-    if datetime.utcnow().timestamp() - user.last_check_in.timestamp() > 300:
-        async with session.begin():
-            user.joined = await is_member_of(request.app.state.stat_bot, COMMUNITY_TID, user.id)
-            user.last_check_in = datetime.utcnow()
-            await user_repository.add_user(user)
-    return user
-
+    return new_user
 
 CurrentUser = Annotated[User, Depends(get_current_user)]

@@ -28,7 +28,8 @@ class User(Base):
     referrer_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
     referrer = relationship("User", back_populates="invitees", remote_side=id)
     invitees = relationship("User", back_populates="referrer", remote_side=referrer_id)
-
+    
+    referrer_score: Mapped[bool] = mapped_column(default=False, nullable=False)
 
     
     
