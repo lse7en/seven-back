@@ -7,8 +7,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey
 from src.core.model import Base
 from datetime import datetime
-from math import log2
-from aiogram.utils.deep_linking import create_deep_link
+from aiogram.utils.payload import  encode_payload
 
 class User(Base):
     __tablename__ = "users"
@@ -28,7 +27,7 @@ class User(Base):
     referrer_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
     referrer = relationship("User", back_populates="invitees", remote_side=id)
     invitees = relationship("User", back_populates="referrer", remote_side=referrer_id)
-    
+
     referrer_score: Mapped[bool] = mapped_column(default=False, nullable=False)
 
     
@@ -49,9 +48,4 @@ class User(Base):
     
     @property
     def ref_link(self) -> str:
-        return create_deep_link(
-        username="the_lucky_7_bot",
-        link_type="start",
-        payload=str(self.id),
-        encode=True,
-    )
+        return f"https://t.me/the_lucky_7_bot/main?startapp={encode_payload(str(self.id))}"

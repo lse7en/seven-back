@@ -3,7 +3,6 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from src.bot.permissions import IsChannelMember
 from src.bot.constants import COMMUNITY_TID
 from aiogram.utils import formatting
-from aiogram.utils.deep_linking import create_start_link
 from src.bot.text import get_text
 from src.bot import beans
 random_string = '1234567890abcdefghijklmnopqrstuvwxyz'
@@ -18,19 +17,18 @@ async def invite_handler(message: Message, session_factory: async_sessionmaker[A
 
 
     async with session.begin():
-        lang = (await user_repository.get_user_or_none_by_id(message.from_user.id)).language
+        user = await user_repository.get_user_or_none_by_id(message.from_user.id)
     
-    link = await create_start_link(message.bot, payload=str(message.from_user.id), encode=True)
 
     caption = formatting.as_list(
-        formatting.as_line(get_text(lang, "Here is your invite link:")),
+        formatting.as_line(get_text(user.language, "Here is your invite link:")),
         formatting.as_line(
-            formatting.Spoiler(get_text(lang, "Telegram premium")),
-            formatting.Spoiler(get_text(lang, "$400 giveaway")),
-            formatting.Spoiler(get_text(lang, "100% Share of ad revenue")),
+            formatting.Spoiler(get_text(user.language, "Telegram premium")),
+            formatting.Spoiler(get_text(user.language, "$400 giveaway")),
+            formatting.Spoiler(get_text(user.language, "100% Share of ad revenue")),
             sep="\n",
         ),
-        formatting.Url(link),
+        formatting.Url(user.ref_link),
         formatting.HashTag("WeGiveBack"),
         sep="\n\n",
     )
