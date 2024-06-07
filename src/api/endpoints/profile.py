@@ -41,14 +41,14 @@ async def joined(
 ):
     bot = request.app.state.stat_bot
     async with user_repository.session.begin():
-            current_user.joined = await is_member_of(bot, COMMUNITY_TID, current_user.id)
-            await user_repository.add_user(current_user)
+        current_user.joined = await is_member_of(bot, COMMUNITY_TID, current_user.id)
+        await user_repository.add_user(current_user)
 
 
     if current_user.joined and current_user.referrer_id and not current_user.referrer_score:
-        referrer = await user_repository.get_user_or_none_by_id(current_user.referrer_id)
 
         async with user_repository.session.begin():
+            referrer = await user_repository.get_user_or_none_by_id(current_user.referrer_id)
             referrer.invited_users += 1
             referrer.points += 1000
             await user_repository.add_user(referrer)
