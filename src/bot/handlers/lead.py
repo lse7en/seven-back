@@ -33,7 +33,7 @@ async def lead_handler(
         text = "\n\n".join(
             [
                 f"{i+1}. {user.info}"
-                for i, user in enumerate(users)
+                for i, user in enumerate(sorted_users)
             ]
         )
 
