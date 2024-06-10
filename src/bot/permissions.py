@@ -56,7 +56,7 @@ class IsChannelMember:
             message = args[0]
             bot: Bot = message.bot
 
-            if not await is_member_of(bot, self.tid, message.chat.id):
+            if not await is_member_of(bot, self.tid, message.from_user.id):
                 await message.answer("You must be a member of the channel to use this command: @the_lucky_7")
                 return
 
