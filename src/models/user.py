@@ -39,7 +39,7 @@ class User(Base):
 
     @property
     def info(self) -> str:
-        return f"id({self.id}): {self.full_name} @{self.username}; joined: {self.joined}; invited_users: {self.invited_users} language: {self.language} referrer: {self.referrer_id}"
+        return f"id({self.id}): {self.full_name} @{self.username}; jnd: {self.joined}; inv: {self.invited_users} pnts: {self.points} ref: {self.referrer_id}"
     
 
     @property
