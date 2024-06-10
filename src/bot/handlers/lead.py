@@ -8,8 +8,9 @@ from aiogram.utils import formatting
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from src.bot import beans
 from src.bot.text import get_text
+from src.bot.permissions import HasPermissions
 
-@IsChannelMember(COMMUNITY_TID)
+@HasPermissions(2)
 async def lead_handler(
     message: Message,
     command: CommandObject,
@@ -18,22 +19,21 @@ async def lead_handler(
     session = session_factory()
     user_repository = await beans.get_user_repository(session)
 
+    try:
+        lead = int(command.args) if command.args else 10
+    except Exception as e:
+        lead = 10
+
+
     async with session.begin():
-        user = await user_repository.get_user_or_none_by_id(message.from_user.id)
-        lang = user.language
+        all_u = await user_repository.get_users_with_ranking(lead)
+        users = await user_repository.get_users_with_ids_in(all_u)
 
-    caption = formatting.as_list(
-        formatting.as_line(formatting.Bold(get_text(lang, "Keep going!")), "💪", sep=" "),
-        formatting.as_list(
-            get_text(lang, "You have invited {} friends.").format(user.invited_users),
-            formatting.as_line(
-                get_text(lang, "And now you have gathered"),
-                formatting.Italic(f"{user.points}"),
-                get_text(lang, "points so far!"),
-                sep=" ",
-            ),
-        ),
-        sep="\n\n",
-    )
+        text = "\n\n".join(
+            [
+                f"{i+1}. {user.info}"
+                for i, user in enumerate(users)
+            ]
+        )
 
-    await message.answer(caption.as_html())
+    await message.answer(text)

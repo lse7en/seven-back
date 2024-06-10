@@ -133,9 +133,22 @@ class UserRepository:
         subq = select(User, func.rank().over(order_by=User.points.desc()).label('rank')).subquery()
 
         raw_users = await self.session.execute(
-            select(subq).select_from(subq).order_by(subq.c.rank).limit(limit)
+            select(subq.c.id).select_from(subq).order_by(subq.c.rank).limit(limit)
         )
-        return raw_users.all()
+        return raw_users.scalars().all()
+    
+
+    async def get_users_with_ids_in(self, ids: list[int]) -> list[User]:
+        """
+        Get users with ids in list.
+
+        :param ids: list of user ids.
+        :return: list of user instances.
+        """
+        raw_users = await self.session.execute(
+            select(User).where(User.id.in_(ids))
+        )
+        return raw_users.scalars().all()
 
 
     async def get_users_order_by_join_and_limit(self, last_date: datetime, limit: int) -> list[User]:

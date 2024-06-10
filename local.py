@@ -154,8 +154,10 @@ async def get_leaderboard_test(
     user_repository = UserRepository(session)
     async with session.begin():
         all_u = await user_repository.get_users_with_ranking(limit)
-    for u in all_u:
+        users = await user_repository.get_users_with_ids_in(all_u)
+    for u in users:
         print(u)
+        print(type(u))
         if getattr(u, 'info', None) is None:
             print("no info")
         else:
@@ -216,7 +218,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await reset_last_lucky_push(bot, session_factory)
+    await get_leaderboard_test(bot, session_factory)
 
 
     await engine.dispose()
