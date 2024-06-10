@@ -13,7 +13,6 @@ from src.bot.text import get_text
 from aiogram.utils import formatting
 router = APIRouter(prefix="/profile", tags=["profile"])
 
-
 @router.get("", response_model=User)
 async def profile(
     current_user: CurrentUser,
@@ -78,16 +77,14 @@ async def joined(
             sep="\n\n",
         )
 
-        await request.app.state.bot.send_message(
-            chat_id=referrer.id,
-
-            **joined_message.as_kwargs(),
-        )
-
-        await request.app.state.bot.send_photo(
-            chat_id=referrer.id,
-            photo=FRIEND_INVITE_FILE_ID,
-            caption=joined_message.as_html(),
-        )
+        try:
+            await request.app.state.bot.send_photo(
+                chat_id=referrer.id,
+                photo=FRIEND_INVITE_FILE_ID,
+                caption=joined_message.as_html(),
+            )
+        except Exception as e:
+            print("kire kharg")
+            print(e)
 
     return current_user
