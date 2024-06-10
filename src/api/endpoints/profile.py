@@ -8,7 +8,7 @@ from src.repositories.user_repository import UserRepository
 from src.repositories.system_log_repository import SystemLogRepository
 from src.models.system_log import SystemLog
 from src.bot.validators import is_member_of
-from src.bot.constants import COMMUNITY_TID
+from src.bot.constants import COMMUNITY_TID, FRIEND_INVITE_FILE_ID
 from src.bot.text import get_text
 from aiogram.utils import formatting
 router = APIRouter(prefix="/profile", tags=["profile"])
@@ -80,7 +80,14 @@ async def joined(
 
         await request.app.state.bot.send_message(
             chat_id=referrer.id,
+
             **joined_message.as_kwargs(),
+        )
+
+        await request.app.state.bot.send_photo(
+            chat_id=referrer.id,
+            photo=FRIEND_INVITE_FILE_ID,
+            caption=joined_message.as_html(),
         )
 
     return current_user

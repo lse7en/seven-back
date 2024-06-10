@@ -10,6 +10,7 @@ from src.bot.text import get_text
 @IsChannelMember(COMMUNITY_TID)
 async def lead_handler(
     message: Message,
+    command: CommandObject,
     session_factory: async_sessionmaker[AsyncSession],
 ) -> None:
     session = session_factory()

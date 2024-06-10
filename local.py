@@ -3,7 +3,7 @@ from aiogram import Bot
 from aiogram.enums import ParseMode
 from src.core.database import setup_db
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
-from sqlalchemy import delete
+from sqlalchemy import delete, update
 from src.repositories.user_repository import UserRepository
 from src.repositories.system_repository import SystemRepository
 from src.models.system_log import SystemLog
@@ -192,6 +192,15 @@ async def test_get_friends(
         await user_repository.session.execute(delete(SystemLog).where(SystemLog.user_id == user_id))
         await user_repository.session.delete(user)
 
+async def reset_last_lucky_push(
+        bot: Bot, session_factory: async_sessionmaker[AsyncSession]
+) -> None:
+    user_id = 5824417928
+    from datetime import datetime, timedelta, UTC
+    session = session_factory()
+    async with session.begin():
+        await session.execute(update(User).values(last_lucky_push=datetime.now(UTC) - timedelta(days=1)))
+
 
 async def main():
     print("This is a local script")
@@ -207,7 +216,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await test_get_friends(bot, session_factory)
+    await reset_last_lucky_push(bot, session_factory)
 
 
     await engine.dispose()
