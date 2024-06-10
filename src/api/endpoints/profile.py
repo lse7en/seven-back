@@ -38,12 +38,14 @@ async def joined(
     current_user: CurrentUser,
     user_repository: Annotated[UserRepository, Depends()]
 ):
-    bot = request.app.state.stat_bot
+    bot = request.app.state.bot
     try:
         joined = await is_member_of(bot, COMMUNITY_TID, current_user.id)
     except Exception as e:
         print(e)
+        print(current_user.id)
         joined = False
+
     async with user_repository.session.begin():
         current_user.joined = joined
         await user_repository.add_user(current_user)
