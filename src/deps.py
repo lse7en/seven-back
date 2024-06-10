@@ -36,7 +36,6 @@ async def get_current_user(
     if tg_data is None:
         raise AuthRequired()
     
-    print(tg_data)
   # application/x-www-form-urlencoded
     try:
         data = safe_parse_webapp_init_data(token=settings.tg_token, init_data=tg_data)
@@ -45,7 +44,7 @@ async def get_current_user(
 
     async with session.begin():
         user = await user_repository.get_user_or_none_by_id(data.user.id)
-    
+        print(user.info)
         if user is not None:
             # if user.last_check is older than 5 minutes, update the user data
             # if datetime.now(UTC).timestamp() - user.last_check_in.timestamp() > 300:
