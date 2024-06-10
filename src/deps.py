@@ -44,7 +44,9 @@ async def get_current_user(
 
     async with session.begin():
         user = await user_repository.get_user_or_none_by_id(data.user.id)
-        print(user.info)
+        print(user.info, 'user info')
+        print(user.id, 'user id')
+        print(COMMUNITY_TID, 'community tid')
         if user is not None:
             # if user.last_check is older than 5 minutes, update the user data
             # if datetime.now(UTC).timestamp() - user.last_check_in.timestamp() > 300:
