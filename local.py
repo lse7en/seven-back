@@ -203,6 +203,18 @@ async def reset_last_lucky_push(
     async with session.begin():
         await session.execute(update(User).values(last_lucky_push=datetime.now(UTC) - timedelta(days=1)))
 
+async def test_edit_me(
+        bot: Bot, session_factory: async_sessionmaker[AsyncSession]
+) -> None:
+    user_id = 70056025
+    from datetime import datetime, timedelta, UTC
+    session = session_factory()
+    user_repository = UserRepository(session)
+    async with session.begin():
+        user = await user_repository.get_user_or_none_by_id(user_id)
+        user.joined = False
+        user.last_lucky_push = datetime.now(UTC) - timedelta(days=1)
+        await user_repository.add_user(user)
 
 async def main():
     print("This is a local script")
@@ -218,7 +230,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await get_leaderboard_test(bot, session_factory)
+    await test_edit_me(bot, session_factory)
 
 
     await engine.dispose()
