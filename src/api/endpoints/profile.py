@@ -53,7 +53,9 @@ async def joined(
             referrer = await user_repository.get_user_or_none_by_id(current_user.referrer_id)
             referrer.invited_users += 1
             referrer.points += 1000
+            current_user.referrer_score = True
             await user_repository.add_user(referrer)
+            await user_repository.add_user(current_user)
 
 
         joined_message = formatting.as_list(

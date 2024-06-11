@@ -12,13 +12,35 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from src.bot.callbacks import community_callback
 from aiogram.utils import formatting
 
-
+from src.bot.validators import is_member_of
 from src.bot.constants import COMMUNITY_TID
 from src.bot.text import get_text
 from src.models.user import User
-
+from aiogram.types import BufferedInputFile
 
 data_fake = [User(id=70056025, language='fa' )]
+
+
+async def send_text_to_channel(
+    bot: Bot, session_factory: async_sessionmaker[AsyncSession]
+) -> None:
+
+    photo_file = BufferedInputFile.from_file("/Users/xhsvn/Downloads/start_photo.jpg")
+
+    botkb = InlineKeyboardButton(
+        text="play", url="http://t.me/the_lucky_7_bot/main"
+    )
+    kb = InlineKeyboardMarkup(inline_keyboard=[[botkb]])
+
+    await bot.send_photo(
+        photo=photo_file,
+        chat_id=70056025,
+        reply_markup=kb,
+        caption="caption",
+    )
+    # wait 3 seconds to avoid spamming
+    await asyncio.sleep(3)
+
 
 
 async def send_text_to_not_joined(
@@ -216,6 +238,17 @@ async def test_edit_me(
         user.last_lucky_push = datetime.now(UTC) - timedelta(days=1)
         await user_repository.add_user(user)
 
+async def check_is_member(
+        bot: Bot, session_factory: async_sessionmaker[AsyncSession]
+) -> None:
+    user_id = 138599579
+    session = session_factory()
+    user_repository = UserRepository(session)
+    
+    j = await bot.get_chat_member(COMMUNITY_TID, user_id)
+    print(j)
+
+
 async def main():
     print("This is a local script")
     print("It is not meant to be imported")
@@ -230,7 +263,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await test_edit_me(bot, session_factory)
+    await send_text_to_channel(bot, session_factory)
 
 
     await engine.dispose()
