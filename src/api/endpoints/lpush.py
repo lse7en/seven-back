@@ -22,7 +22,7 @@ async def lpush(
     system_log_repository: Annotated[SystemLogRepository, Depends()]
 ):
     # generate random  between 1 and 20
-    r = random.randint(1, 200)
+    r = random.randint(1, 300)
 
 
     minutes = (2 ** (3 - current_user.invited_users)) * 60

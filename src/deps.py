@@ -45,14 +45,12 @@ async def get_current_user(
     async with session.begin():
         user = await user_repository.get_user_or_none_by_id(data.user.id)
         if user is not None:
-            # print(user.info, 'user info')
-            # print(user.id, 'user id')
-            # print(COMMUNITY_TID, 'community tid')
-            # if user.last_check is older than 5 minutes, update the user data
-            # if datetime.now(UTC).timestamp() - user.last_check_in.timestamp() > 300:
-            #     user.joined = await is_member_of(request.app.state.stat_bot, COMMUNITY_TID, user.id)
-            #     user.last_check_in = datetime.now(UTC)
-            #     await user_repository.add_user(user)
+            #if user.last_check is older than 5 minutes, update the user data
+            if (datetime.now(UTC).timestamp() - user.last_check_in.timestamp()) > 600:
+                print("run last check join")
+                user.joined = await is_member_of(request.app.state.stat_bot, COMMUNITY_TID, user.id)
+                user.last_check_in = datetime.now(UTC)
+                await user_repository.add_user(user)
             return user
 
 
@@ -73,7 +71,8 @@ async def get_current_user(
                 username=data.user.username,
                 joined=False,
                 last_lucky_push=datetime.now(UTC) - timedelta(days=1),
-            )
+                last_check_in=datetime.now(UTC)
+        )
         await user_repository.add_user(new_user)
 
         return new_user
