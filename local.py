@@ -25,18 +25,29 @@ async def send_text_to_channel(
     bot: Bot, session_factory: async_sessionmaker[AsyncSession]
 ) -> None:
 
-    photo_file = BufferedInputFile.from_file("/Users/xhsvn/Downloads/start_photo.jpg")
+    photo_file = BufferedInputFile.from_file("/Users/xhsvn/Downloads/3 (1).jpg")
 
     botkb = InlineKeyboardButton(
         text="play", url="http://t.me/the_lucky_7_bot/main"
     )
     kb = InlineKeyboardMarkup(inline_keyboard=[[botkb]])
 
+    caption = """
+Oh look! 👀 There's a new mini-app! 😱
+
+🥳 In order to make things easier and more appealing, we have now launched an exciting brand new mini-app! 🖥
+
+💬 Get updated about ongoing contests, check your rank, invite and remind your friends to join, AND receive up to 300 extra points by clicking on the gift box! 🎁
+
+⌛ The gift box takes a while to reload but by inviting each friend, you can cut the waiting time in half until you reach only 30 minutes! ✂️⏱
+"""
+
+
     await bot.send_photo(
         photo=photo_file,
-        chat_id=70056025,
+        chat_id='@the_lucky_7',
         reply_markup=kb,
-        caption="caption",
+        caption=caption,
     )
     # wait 3 seconds to avoid spamming
     await asyncio.sleep(3)

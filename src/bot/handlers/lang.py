@@ -45,7 +45,7 @@ async def lang_handler(
             text="The lucky 7 Community", url="https://t.me/the_lucky_7"
         )
         joined = InlineKeyboardButton(
-            text=get_text(lang, "Joined ✅"), callback_data=community_callback.pack()
+            text=get_text(lang, "Play"), url="https://t.me/the_lucky_7_bot/main"
         )
 
         kb = InlineKeyboardMarkup(inline_keyboard=[[channel], [joined]])
