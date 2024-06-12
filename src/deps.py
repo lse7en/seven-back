@@ -46,7 +46,7 @@ async def get_current_user(
         user = await user_repository.get_user_or_none_by_id(data.user.id)
         if user is not None:
             #if user.last_check is older than 5 minutes, update the user data
-            if (datetime.now(UTC).timestamp() - user.last_check_in.timestamp()) > 600:
+            if (datetime.now(UTC).timestamp() - user.last_check_in.timestamp()) > 6000:
                 print("run last check join")
                 user.joined = await is_member_of(request.app.state.stat_bot, COMMUNITY_TID, user.id)
                 user.last_check_in = datetime.now(UTC)
