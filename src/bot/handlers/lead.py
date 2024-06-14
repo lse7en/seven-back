@@ -24,6 +24,8 @@ async def lead_handler(
     except Exception as e:
         lead = 10
 
+    if lead > 40:
+        lead = 40
 
     async with session.begin():
         all_u = await user_repository.get_users_with_ranking(lead)
