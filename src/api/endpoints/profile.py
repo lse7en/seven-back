@@ -18,7 +18,7 @@ async def profile(
     current_user: CurrentUser,
     system_log_repository: Annotated[SystemLogRepository, Depends()]
 ):
-    await system_log_repository.add_log(SystemLog(user=current_user, command="get:profile"))
+    # await system_log_repository.add_log(SystemLog(user=current_user, command="get:profile"))
     return current_user
 
 
