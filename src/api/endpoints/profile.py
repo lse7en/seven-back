@@ -5,8 +5,6 @@ from fastapi import APIRouter, Depends, Request
 from src.deps import  CurrentUser
 from src.schemas.user_schemas import User, UserBase
 from src.repositories.user_repository import UserRepository
-from src.repositories.system_log_repository import SystemLogRepository
-from src.models.system_log import SystemLog
 from src.bot.validators import is_member_of
 from src.bot.constants import COMMUNITY_TID, FRIEND_INVITE_FILE_ID
 from src.bot.text import get_text
@@ -16,9 +14,7 @@ router = APIRouter(prefix="/profile", tags=["profile"])
 @router.get("", response_model=User)
 async def profile(
     current_user: CurrentUser,
-    system_log_repository: Annotated[SystemLogRepository, Depends()]
 ):
-    # await system_log_repository.add_log(SystemLog(user=current_user, command="get:profile"))
     return current_user
 
 
@@ -26,10 +22,8 @@ async def profile(
 async def friends(
     current_user: CurrentUser,
     user_repository: Annotated[UserRepository, Depends()],
-    # system_log_repository: Annotated[SystemLogRepository, Depends()]
 
 ):
-    # await system_log_repository.add_log(SystemLog(user=current_user, command="get:friends"))
     friends = await user_repository.get_friends(current_user.id)
     return friends
 
