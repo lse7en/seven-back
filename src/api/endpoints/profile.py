@@ -26,10 +26,10 @@ async def profile(
 async def friends(
     current_user: CurrentUser,
     user_repository: Annotated[UserRepository, Depends()],
-    system_log_repository: Annotated[SystemLogRepository, Depends()]
+    # system_log_repository: Annotated[SystemLogRepository, Depends()]
 
 ):
-    await system_log_repository.add_log(SystemLog(user=current_user, command="get:friends"))
+    # await system_log_repository.add_log(SystemLog(user=current_user, command="get:friends"))
     friends = await user_repository.get_friends(current_user.id)
     return friends
 
