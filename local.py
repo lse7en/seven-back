@@ -260,6 +260,16 @@ async def check_is_member(
     print(j)
 
 
+async def test_get_user(
+        bot: Bot, session_factory: async_sessionmaker[AsyncSession]
+) -> None:
+    user_id = 98897584
+    session = session_factory()
+    user_repo = UserRepository(session)
+    async with session.begin():
+        user = await user_repo.get_user_or_none_by_id(user_id)
+        print(user.full_info)
+
 async def main():
     print("This is a local script")
     print("It is not meant to be imported")
@@ -274,7 +284,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await send_text_to_channel(bot, session_factory)
+    await test_get_user(bot, session_factory)
 
 
     await engine.dispose()
