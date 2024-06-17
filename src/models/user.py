@@ -30,7 +30,7 @@ class User(Base):
 
     referrer_score: Mapped[bool] = mapped_column(default=False, nullable=False)
 
-    static_rank: Mapped[int] = mapped_column(default=0, nullable=False, index=True)
+    static_rank: Mapped[int] = mapped_column(default=1000, nullable=False, index=True)
     
     @property
     def full_name(self) -> str:

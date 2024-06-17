@@ -28,14 +28,12 @@ async def lead_handler(
         lead = 40
 
     async with session.begin():
-        all_u = await user_repository.get_users_with_ranking(lead)
-        users = await user_repository.get_users_with_ids_in(all_u)
-        sorted_users = sorted(users, key=lambda x: x.points, reverse=True)
+        users = await user_repository.get_top_users(lead)
 
         text = "\n\n".join(
             [
                 f"{i+1}. {user.info}"
-                for i, user in enumerate(sorted_users)
+                for i, user in enumerate(users)
             ]
         )
 

@@ -182,19 +182,13 @@ async def get_join_test(
 async def get_leaderboard_test(
     bot: Bot, session_factory: async_sessionmaker[AsyncSession]
 ) -> None:
-    limit = 20
+    limit = 50
     session = session_factory()
     user_repository = UserRepository(session)
     async with session.begin():
-        all_u = await user_repository.get_users_with_ranking(limit)
-        users = await user_repository.get_users_with_ids_in(all_u)
+        users = await user_repository.get_top_users(limit)
     for u in users:
-        print(u)
-        print(type(u))
-        if getattr(u, 'info', None) is None:
-            print("no info")
-        else:
-            print(u.info)
+        print(u.info)
 
 async def get_user_photo_test(
     bot: Bot, session_factory: async_sessionmaker[AsyncSession]
@@ -212,6 +206,7 @@ async def get_user_photo_test(
         await bot.download_file(photo.file_path, "photo.jpg")
         print(photo.file_path)
         print("kir")
+        print(u.info)
         # with open("photo.jpg", "wb") as f:
         #     await 
 
@@ -306,7 +301,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await cheat_points(bot, session_factory)
+    await get_leaderboard_test(bot, session_factory)
 
 
     await engine.dispose()

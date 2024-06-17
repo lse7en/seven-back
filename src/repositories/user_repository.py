@@ -138,6 +138,19 @@ class UserRepository:
         return raw_users.scalars().all()
     
 
+    async def get_top_users(self, limit: int) -> list[User]:
+        """
+        Get top users.
+
+        :param limit: limit of users.
+        :return: list of user instances.
+        """
+        raw_users = await self.session.execute(
+            select(User).order_by(User.static_rank.asc()).limit(limit)
+        )
+        return raw_users.scalars().all()
+    
+
     async def get_users_with_ids_in(self, ids: list[int]) -> list[User]:
         """
         Get users with ids in list.
