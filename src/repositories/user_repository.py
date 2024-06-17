@@ -1,7 +1,7 @@
 from typing import Optional
 
 from datetime import datetime
-from sqlalchemy import func, select
+from sqlalchemy import func, select, update
 from sqlalchemy.orm import joinedload
 
 from src.core.database import DBSession
@@ -176,3 +176,13 @@ class UserRepository:
             select(User).where(User.referrer_id == user_id).order_by(User.created_at.desc())
         )
         return raw_friends.scalars().all()
+
+
+    async def set_static_rank_for_all(self):
+
+        subq = select(User.id, func.rank().over(order_by=User.points.desc()).label('rank'))
+
+
+        update_stmt = update(User).values(static_rank=subq.c.rank).where(User.id == subq.c.id)
+
+        await self.session.execute(update_stmt)

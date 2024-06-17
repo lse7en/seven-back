@@ -19,7 +19,8 @@ async def rank(
     system_log_repository: Annotated[SystemLogRepository, Depends()]
 ):
     await system_log_repository.add_log(SystemLog(user=current_user, command="get:rank"))
-    rank = await user_repository.get_user_rank(current_user.id)
+    # rank = await user_repository.get_user_rank(current_user.id)
+    rank = current_user.static_rank
     current_user.rank = rank
 
     if rank > 20:

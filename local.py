@@ -270,6 +270,28 @@ async def test_get_user(
         user = await user_repo.get_user_or_none_by_id(user_id)
         print(user.full_info)
 
+async def set_static_rank(
+        bot: Bot, session_factory: async_sessionmaker[AsyncSession]
+) -> None:
+    session = session_factory()
+    user_repo = UserRepository(session)
+    async with session.begin():
+        await user_repo.set_static_rank_for_all()
+
+
+async def cheat_points(
+        bot: Bot, session_factory: async_sessionmaker[AsyncSession]
+) -> None:
+    user_id = 70056025
+    session = session_factory()
+    user_repo = UserRepository(session)
+    async with session.begin():
+        user = await user_repo.get_user_or_none_by_id(user_id)
+        user.push_points -= 6000
+        user.points -= 6000
+        await user_repo.add_user(user)
+
+
 async def main():
     print("This is a local script")
     print("It is not meant to be imported")
@@ -284,7 +306,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await test_get_user(bot, session_factory)
+    await cheat_points(bot, session_factory)
 
 
     await engine.dispose()
