@@ -188,7 +188,7 @@ async def get_leaderboard_test(
     async with session.begin():
         users = await user_repository.get_top_users(limit)
     for u in users:
-        print(u.info)
+        print(u.info, u.static_rank)
 
 async def get_user_photo_test(
     bot: Bot, session_factory: async_sessionmaker[AsyncSession]
@@ -206,7 +206,6 @@ async def get_user_photo_test(
         await bot.download_file(photo.file_path, "photo.jpg")
         print(photo.file_path)
         print("kir")
-        print(u.info)
         # with open("photo.jpg", "wb") as f:
         #     await 
 
