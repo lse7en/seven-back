@@ -28,7 +28,9 @@ async def lead_handler(
         lead = 40
 
     async with session.begin():
-        users = await user_repository.get_users_with_ranking(lead)
+        ids = await user_repository.get_users_with_ranking(lead)
+        users = await user_repository.get_users_with_ids_in(ids)
+        users = sorted(users, key=lambda x: ids.index(x.id))
 
         text = "\n\n".join(
             [
