@@ -24,8 +24,8 @@ async def rank_handler(
 
 
     if user.invited_users >= 7:
-        # rank = await user_repository.get_user_rank(user.id)
-        rank = user.static_rank
+        rank = await user_repository.get_user_rank(user.id)
+        # rank = user.static_rank
 
         if rank < 20:
             caption = formatting.as_list(
