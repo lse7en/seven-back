@@ -33,11 +33,13 @@ async def lpush(
 
         next_push = user.last_lucky_push + timedelta(minutes=minutes)
 
-        if datetime.now(UTC) < next_push:
+        nn = datetime.now(UTC)
+
+        if nn < next_push:
             return user
     
     
-        await system_log_repository.add_log(SystemLog(user=user, command=f"push:{r}: {user.points} -> {user.points + r}"))
+        await system_log_repository.add_log(SystemLog(user=user, command=f"push:{r}: {user.points} -> {user.points + r} now: {nn} next: {next_push}"))
         user.push_points += r
         user.points += r
         user.last_lucky_push = datetime.now(UTC)
