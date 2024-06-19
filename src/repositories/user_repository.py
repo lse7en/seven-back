@@ -34,8 +34,31 @@ class UserRepository:
         :param user: user instance.
         :return: user instance.
         """
-        self.session.add(user)
+        self.session.add(user).
         await self.session.flush()
+
+
+    async def upsert_user(self, user: User) -> None:
+        """
+        Add or update user to session.
+
+        :param user: user instance.
+        :return: None.
+        """
+        await self.session.merge(user)
+        await self.session.flush()
+
+    async def get_user_for_update(self, user_id: int) -> User:
+        """
+        Get user for update.
+
+        :param user_id: id of user.
+        :return: user instance.
+        """
+        raw_user = await self.session.execute(
+            select(User).where(User.id == user_id).with_for_update()
+        )
+        return raw_user.scalar_one_or_none()
 
 
     async def get_user_or_none_by_id(self, user_id: int) -> Optional[User]:

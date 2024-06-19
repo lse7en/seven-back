@@ -10,7 +10,7 @@ from datetime import datetime, UTC, timedelta
 from src.repositories.user_repository import UserRepository
 from src.repositories.system_log_repository import SystemLogRepository
 from src.models.system_log import SystemLog
-
+from sqlalchemy import update
 router = APIRouter(prefix="/lpush", tags=["lpush"])
 
 
@@ -22,21 +22,27 @@ async def lpush(
     system_log_repository: Annotated[SystemLogRepository, Depends()]
 ):
     # generate random  between 1 and 20
+    u_id = current_user.id
     r = random.randint(1, 300)
 
-
-    minutes = (2 ** (3 - current_user.invited_users)) * 60
-
-    next_push = current_user.last_lucky_push + timedelta(minutes=minutes)
-
-    if datetime.now(UTC) < next_push:
-        return current_user
-
     async with session.begin():
-        await system_log_repository.add_log(SystemLog(user=current_user, command="get:push"))
-        current_user.push_points += r
-        current_user.points += r
-        current_user.last_lucky_push = datetime.now(UTC)
-        await user_repository.add_user(current_user)
+        user = await user_repository.get_user_for_update(u_id)
 
-    return current_user
+
+        minutes = (2 ** (3 - user.invited_users)) * 60
+
+        next_push = user.last_lucky_push + timedelta(minutes=minutes)
+
+        if datetime.now(UTC) < next_push:
+            return user
+    
+    
+        await system_log_repository.add_log(SystemLog(user=user, command="get:push"))
+        user.push_points += r
+        user.points += r
+        user.last_lucky_push = datetime.now(UTC)
+        await user_repository.add_user(user)
+
+        return user
+    
+    
