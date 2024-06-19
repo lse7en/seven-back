@@ -13,7 +13,7 @@ from src.bot.permissions import HasPermissions
 
 # get daily active users
 @HasPermissions(2)
-async def dau(
+async def dau_handler(
     message: Message,
     command: CommandObject,
     session_factory: async_sessionmaker[AsyncSession],
