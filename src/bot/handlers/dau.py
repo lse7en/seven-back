@@ -31,4 +31,4 @@ async def dau_handler(
     async with session.begin():
         count = await user_repository.count_active_users_since_last_hour(hours)
 
-    await message.answer(count)
+    await message.answer(f"Active users in the last {hours} hours: {count}")
