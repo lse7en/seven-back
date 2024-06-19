@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import (
 
 from src.bot.handlers.stat import stat_handler
 from src.bot.handlers.lead import lead_handler
+from src.bot.handlers.dau import dau_handler
 from src.settings import get_settings
 
 settings = get_settings()
@@ -17,6 +18,7 @@ def register_handlers(router: Router) -> None:
 
     router.message.register(stat_handler, Command("stat"))
     router.message.register(lead_handler, Command("lead"))
+    router.message.register(dau_handler, Command("dau"))
 
 
 

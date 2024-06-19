@@ -1,12 +1,11 @@
 from typing import Optional
 
-from datetime import datetime
+from datetime import datetime, timedelta, UTC
 from sqlalchemy import func, select, update
 from sqlalchemy.orm import joinedload
 
 from src.core.database import DBSession
 from src.models.user import User
-
 
 class UserRepository:
     """
@@ -185,6 +184,19 @@ class UserRepository:
             select(User).where(User.id.in_(ids))
         )
         return raw_users.scalars().all()
+    
+
+    async def count_active_users_since_last_hour(self, hour: int) -> int:
+        """
+        Count active users since last hour.
+
+        :param hour: hour.
+        :return: count of active users.
+        """
+        raw = await self.session.execute(
+            select(func.count(User.id)).where(User.last_check_in > datetime.now(UTC) - timedelta(hours=hour))
+        )
+        return raw.scalar()
 
 
     async def get_users_order_by_join_and_limit(self, last_date: datetime, limit: int) -> list[User]:
