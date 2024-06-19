@@ -34,7 +34,7 @@ class UserRepository:
         :param user: user instance.
         :return: user instance.
         """
-        self.session.add(user).
+        self.session.add(user)
         await self.session.flush()
 
 
