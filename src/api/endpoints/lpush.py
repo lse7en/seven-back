@@ -29,7 +29,7 @@ async def lpush(
         user = await user_repository.get_user_for_update(u_id)
 
 
-        minutes = (2 ** (3 - max(4, user.invited_users))) * 60
+        minutes = (2 ** (3 - min(4, user.invited_users))) * 60
 
         next_push = user.last_lucky_push + timedelta(minutes=minutes)
 
