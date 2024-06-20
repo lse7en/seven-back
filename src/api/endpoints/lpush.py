@@ -29,7 +29,7 @@ async def lpush(
         user = await user_repository.get_user_for_update(u_id)
 
 
-        minutes = (2 ** (3 - user.invited_users)) * 60
+        minutes = (2 ** (3 - max(4, user.invited_users))) * 60
 
         next_push = user.last_lucky_push + timedelta(minutes=minutes)
 
@@ -39,7 +39,7 @@ async def lpush(
             return user
     
     
-        await system_log_repository.add_log(SystemLog(user=user, command=f"push:{r}: {user.points} -> {user.points + r} now: {nn} next: {next_push}"))
+        await system_log_repository.add_log(SystemLog(user=user, command=f"push:{r}: {user.points} -> {user.points + r}"))
         user.push_points += r
         user.points += r
         user.last_lucky_push = datetime.now(UTC)
