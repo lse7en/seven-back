@@ -1,12 +1,13 @@
 from sqlalchemy import (
     BigInteger,
     Integer,
-    DateTime
+    DateTime,
+    DATE
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey
 from src.core.model import Base
-from datetime import datetime
+from datetime import datetime, date
 from aiogram.utils.payload import  encode_payload
 
 class User(Base):
@@ -31,7 +32,10 @@ class User(Base):
     referrer_score: Mapped[bool] = mapped_column(default=False, nullable=False)
 
     static_rank: Mapped[int] = mapped_column(default=1000, nullable=False, index=True)
-    
+
+    last_secret_code_date: Mapped[date] = mapped_column(DATE, nullable=False, default=date(2021, 1, 1))
+
+
     @property
     def full_name(self) -> str:
         return f"{self.first_name} {self.last_name}" if self.last_name else self.first_name
