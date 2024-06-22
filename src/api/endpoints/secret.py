@@ -60,10 +60,10 @@ async def secret(
             return user
         
         if secret.lower() == SECRETS.get(str(current_date), ""):
+            await system_log_repository.add_log(SystemLog(user=user, command=f"secret:{secret} {user.points} -> {user.points + 500}"))
             user.points += 500
             user.last_secret_code_date = current_date
             await user_repository.add_user(user)
-            await system_log_repository.add_log(SystemLog(user=user, command=f"secret:{secret}"))
             return user
         else:
             raise HTTPException(status_code=400, detail="invalid_secret_code")

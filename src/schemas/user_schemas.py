@@ -2,7 +2,7 @@
 
 from typing import Optional
 from src.core.schema import BaseModel
-from datetime import datetime
+from datetime import datetime, date
 
 
 
@@ -35,6 +35,7 @@ class User(UserBase):
     rank: Optional[int] = None
     min_invitations: Optional[int] = None
     min_points: Optional[float] = None
+    last_secret_code_date: date
 
 
 class Rank(BaseModel):
