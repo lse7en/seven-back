@@ -10,7 +10,6 @@ from datetime import datetime, UTC, timedelta
 from src.repositories.user_repository import UserRepository
 from src.repositories.system_log_repository import SystemLogRepository
 from src.models.system_log import SystemLog
-from sqlalchemy import update
 router = APIRouter(prefix="/lpush", tags=["lpush"])
 
 
@@ -24,8 +23,9 @@ async def lpush(
     # generate random  between 1 and 20
     u_id = current_user.id
     r = random.randint(1, 300)
+    session.expire_all()
 
-    async with session.begin():
+    async with session.begin():   
         user = await user_repository.get_user_for_update(u_id)
 
 

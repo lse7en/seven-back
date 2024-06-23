@@ -1,13 +1,12 @@
-import json
+
 from typing import Annotated
 
 from fastapi import Depends, Header, Request
-from aiogram.utils.web_app import safe_parse_webapp_init_data
+from aiogram.utils.web_app import safe_parse_webapp_init_data, parse_webapp_init_data
 from src.bot.constants import COMMUNITY_TID
 from src.bot.validators import is_member_of
 from src.core.database import DBSession
 from src.core.exceptions import AuthRequired, InvalidToken
-from src.core.security import validate_tg_data
 from src.models.user import User
 from src.repositories.user_repository import UserRepository
 from src.settings import Settings, get_settings
@@ -39,6 +38,7 @@ async def get_current_user(
   # application/x-www-form-urlencoded
     try:
         data = safe_parse_webapp_init_data(token=settings.tg_token, init_data=tg_data)
+        # data = parse_webapp_init_data(tg_data)
     except ValueError:
         raise InvalidToken()
 

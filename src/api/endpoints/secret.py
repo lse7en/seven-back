@@ -51,6 +51,7 @@ async def secret(
 
     # generate random  between 1 and 20
     u_id = current_user.id
+    session.expire_all()
 
     async with session.begin():
         user = await user_repository.get_user_for_update(u_id)

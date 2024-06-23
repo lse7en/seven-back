@@ -224,11 +224,11 @@ async def test_get_friends(
 async def reset_last_lucky_push(
         bot: Bot, session_factory: async_sessionmaker[AsyncSession]
 ) -> None:
-    user_id = 5824417928
+    user_id = 70056025
     from datetime import datetime, timedelta, UTC
     session = session_factory()
     async with session.begin():
-        await session.execute(update(User).values(last_lucky_push=datetime.now(UTC) - timedelta(days=1)))
+        await session.execute(update(User).values(last_lucky_push=datetime.now(UTC) - timedelta(days=1)).where(User.id == user_id))
 
 async def test_edit_me(
         bot: Bot, session_factory: async_sessionmaker[AsyncSession]
@@ -302,7 +302,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await cheat(bot, session_factory)
+    await reset_last_lucky_push(bot, session_factory)
 
 
     await engine.dispose()
