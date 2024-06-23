@@ -273,17 +273,19 @@ async def set_static_rank(
         await user_repo.set_static_rank_for_all()
 
 
-async def cheat_points(
+async def cheat(
         bot: Bot, session_factory: async_sessionmaker[AsyncSession]
 ) -> None:
     user_id = 70056025
     session = session_factory()
     user_repo = UserRepository(session)
+    from datetime import date
+    old_date = date(2021, 1, 1)
     async with session.begin():
         user = await user_repo.get_user_or_none_by_id(user_id)
-        user.push_points -= 6000
-        user.points -= 6000
-        await user_repo.add_user(user)
+        print(user.last_secret_code_date)
+        # user.last_secret_code_date = old_date
+        # await user_repo.add_user(user)
 
 
 async def main():
@@ -300,7 +302,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await get_leaderboard_test(bot, session_factory)
+    await cheat(bot, session_factory)
 
 
     await engine.dispose()
