@@ -62,19 +62,22 @@ async def get_current_user(
         except Exception as e:
             ref = None
 
+        try:
+            new_user = User(
+                    id=data.user.id,
+                    referrer_id=ref,
+                    first_name=data.user.first_name,
+                    last_name=data.user.last_name,
+                    username=data.user.username,
+                    joined=False,
+                    last_lucky_push=datetime.now(UTC) - timedelta(days=1),
+                    last_check_in=datetime.now(UTC)
+            )
+            await user_repository.add_user(new_user)
 
-        new_user = User(
-                id=data.user.id,
-                referrer_id=ref,
-                first_name=data.user.first_name,
-                last_name=data.user.last_name,
-                username=data.user.username,
-                joined=False,
-                last_lucky_push=datetime.now(UTC) - timedelta(days=1),
-                last_check_in=datetime.now(UTC)
-        )
-        await user_repository.add_user(new_user)
-
-        return new_user
+            return new_user
+        except Exception as e:
+            print(e)
+            return await user_repository.get_user_or_none_by_id(data.user.id)
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
