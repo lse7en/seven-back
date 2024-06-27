@@ -35,12 +35,11 @@ async def get_participant(
             return participant
         
         try:
-            participant = Participant(user_id=u_id, lottery_id=lottery_id)
-            await participant_repository.add_participant(participant)
-            return participant
+            await participant_repository.add_participant(Participant(user_id=u_id, lottery_id=lottery_id))
         except Exception as e:
             print("should_not_happen", e)
-            return await participant_repository.get_participant(u_id, lottery_id)
+        
+        return await participant_repository.get_participant(u_id, lottery_id)
         
 
 
