@@ -3,15 +3,16 @@ from aiogram import Bot
 from aiogram.enums import ParseMode
 from src.core.database import setup_db
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
-from sqlalchemy import delete, update
+from sqlalchemy import delete, update, select, func
 from src.repositories.user_repository import UserRepository
+from src.repositories.lottery_repository import LotteryRepository
 from src.repositories.system_repository import SystemRepository
 from src.models.system_log import SystemLog
 from src.bot.validators import is_member_of
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from src.bot.callbacks import community_callback
 from aiogram.utils import formatting
-
+from src.models.lottery import Lottery
 from src.bot.validators import is_member_of
 from src.bot.constants import COMMUNITY_TID
 from src.bot.text import get_text
@@ -284,8 +285,24 @@ async def cheat(
     async with session.begin():
         user = await user_repo.get_user_or_none_by_id(user_id)
         print(user.last_secret_code_date)
+        user.invited_users += 5
+        user.points += 10000
+        await user_repo.add_user(user)
         # user.last_secret_code_date = old_date
         # await user_repo.add_user(user)
+
+
+async def add_lottery(
+        bot: Bot, session_factory: async_sessionmaker[AsyncSession]
+) -> None:
+    session = session_factory()
+    lottery_repo = LotteryRepository(session)
+
+    async with session.begin():
+        ticket_number = await lottery_repo.get_lottery_ticket_for_index(1, 7)
+        print(ticket_number)
+        
+
 
 
 async def main():
@@ -302,7 +319,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await reset_last_lucky_push(bot, session_factory)
+    await cheat(bot, session_factory)
 
 
     await engine.dispose()

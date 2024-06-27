@@ -7,7 +7,6 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     AsyncSession,
 )
-from sqlalchemy import log as sqlalchemy_log
 
 # Disable default logging
 # sqlalchemy_log._add_default_handler = lambda x: None

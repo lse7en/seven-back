@@ -25,6 +25,7 @@ from src.core.model import Base  # noqa: E402
 from src.models.user import User  # noqa: E402, F401
 from src.models.system import System  # noqa: E402, F401
 from src.models.system_log import SystemLog  # noqa: E402, F401
+from src.models.lottery import Lottery, Participant, Ticket  # noqa: E402, F401
 target_metadata = Base.metadata
 # target_metadata = User.metadata
 # other values from the config, defined by the needs of env.py,
