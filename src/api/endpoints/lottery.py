@@ -52,10 +52,10 @@ async def activate(
         participant = await participant_repository.get_participant_for_update(user_id, lottery_id)
 
         if participant.activate_tickets_count >= participant.user.invited_users + 1:
-            raise await participant_repository.get_participant(user_id, lottery_id)
+            return await participant_repository.get_participant(user_id, lottery_id)
         
         if participant.user.points < 2000:
-            raise await participant_repository.get_participant(user_id, lottery_id)
+            return await participant_repository.get_participant(user_id, lottery_id)
         
 
         participant.activate_tickets_count += 1

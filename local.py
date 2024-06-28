@@ -26,7 +26,7 @@ async def send_text_to_channel(
     bot: Bot, session_factory: async_sessionmaker[AsyncSession]
 ) -> None:
 
-    photo_file = BufferedInputFile.from_file("/Users/xhsvn/Downloads/3 (1).jpg")
+    photo_file = BufferedInputFile.from_file("/Users/xhsvn/Downloads/lotterytut.mp4")
 
     botkb = InlineKeyboardButton(
         text="play", url="http://t.me/the_lucky_7_bot/main"
@@ -34,18 +34,12 @@ async def send_text_to_channel(
     kb = InlineKeyboardMarkup(inline_keyboard=[[botkb]])
 
     caption = """
-Oh look! 👀 There's a new mini-app! 😱
-
-🥳 In order to make things easier and more appealing, we have now launched an exciting brand new mini-app! 🖥
-
-💬 Get updated about ongoing contests, check your rank, invite and remind your friends to join, AND receive up to 300 extra points by clicking on the gift box! 🎁
-
-⌛ The gift box takes a while to reload but by inviting each friend, you can cut the waiting time in half until you reach only 30 minutes! ✂️⏱
+caption
 """
 
 
-    await bot.send_photo(
-        photo=photo_file,
+    await bot.send_video(
+        video=photo_file,
         chat_id='@the_lucky_7',
         reply_markup=kb,
         caption=caption,
@@ -103,35 +97,37 @@ async def send_contest_to_join(
 ) -> None:
     session = session_factory()
     user_repository = UserRepository(session)
-    async with session.begin():
-        all_users = await user_repository.get_joined_users()
 
+    total = 7300
+    step = 15
+    invalid_uids = {93890907, 25621237}
 
-    for user in all_users:
-        lang = user.language
+    for i in range(0, total, step):
+        async with session.begin():
+            all_users = await user_repository.get_all_users_order_by_id_with_limit_offset(step, i)
+        print(i , "to", i + step)
+        for user in all_users:
+            if user.id in invalid_uids:
+                continue
 
-
-        caption = formatting.as_list(formatting.as_line(
-            get_text(
-                lang,
-                "Check out our {} contest!",
-            ).format("$400"),
-            "💰",
-            sep=" ",
-        ),
-        formatting.Url("https://t.me/the_lucky_7/33"),
-        sep="\n\n",
-        )
-        print(user.info)
-        try:
-            await bot.send_message(
-                chat_id=user.id,
-                text=caption.as_html(),
+            caption = formatting.as_list(formatting.as_line(
+                "Introducing our next Contest: Lottery!💰 🎲",
+                sep=" ",
+            ),
+            formatting.Url("https://t.me/the_lucky_7/54"),
+            sep="\n\n",
             )
-        except Exception as e:
-            print(e)
-        # wait 3 seconds to avoid spamming
-        await asyncio.sleep(3)
+            try:
+                await bot.send_message(
+                    chat_id=user.id,
+                    text=caption.as_html(),
+                )
+            except Exception as e:
+                print(e)
+                print(user.info)
+            # wait 3 seconds to avoid spamming
+        
+        await asyncio.sleep(1)
 
 async def print_users(
     bot: Bot, session_factory: async_sessionmaker[AsyncSession]
@@ -319,7 +315,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await cheat(bot, session_factory)
+    await send_contest_to_join(bot, session_factory)
 
 
     await engine.dispose()
