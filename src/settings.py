@@ -54,6 +54,10 @@ class Settings(BaseSettings):
 
     stat_tg_token: str
 
+    jwt_secret: str
+    jwt_algorithm: str = "HS256"
+    jwt_expiration: int = 120
+
 
 
     @property

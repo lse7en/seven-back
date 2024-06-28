@@ -2,7 +2,7 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends
 
-from src.deps import  CurrentUser
+from src.deps import  CurrentUserId
 from src.core.database import DBSession
 from src.schemas.user_schemas import User
 import random
@@ -15,18 +15,16 @@ router = APIRouter(prefix="/lpush", tags=["lpush"])
 
 @router.post("", response_model=User)
 async def lpush(
-    current_user: CurrentUser,
+    user_id: CurrentUserId,
     session: DBSession,
     user_repository: Annotated[UserRepository, Depends()],
     system_log_repository: Annotated[SystemLogRepository, Depends()]
 ):
     # generate random  between 1 and 20
-    u_id = current_user.id
-    r = random.randint(1, 300)
-    session.expire_all()
+    r = int(random.uniform(1.0, 300.0))
 
     async with session.begin():   
-        user = await user_repository.get_user_for_update(u_id)
+        user = await user_repository.get_user_for_update(user_id)
 
 
         minutes = (2 ** (3 - min(4, user.invited_users))) * 60

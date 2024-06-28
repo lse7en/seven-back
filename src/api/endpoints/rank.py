@@ -2,7 +2,7 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends
 
-from src.deps import  CurrentUser
+from src.deps import  CurrentUserId
 from src.core.database import DBSession
 from src.schemas.user_schemas import User
 import random
@@ -14,10 +14,12 @@ router = APIRouter(prefix="/rank", tags=["rank"])
 
 @router.get("", response_model=User)
 async def rank(
-    current_user: CurrentUser,
+    user_id: CurrentUserId,
     user_repository: Annotated[UserRepository, Depends()],
     system_log_repository: Annotated[SystemLogRepository, Depends()]
 ):
+    
+    current_user = await user_repository.get_user_or_none_by_id(user_id)
     rank = await user_repository.get_user_rank(current_user.id)
     # rank = current_user.static_rank
     current_user.rank = rank

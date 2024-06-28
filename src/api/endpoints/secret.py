@@ -2,7 +2,7 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 
-from src.deps import  CurrentUser
+from src.deps import  CurrentUserId
 from src.core.database import DBSession
 from src.schemas.user_schemas import User
 import random
@@ -23,7 +23,7 @@ SECRETS = {
     "2024-06-25": "lucky",
     "2024-06-26": "ton",
     "2024-06-27": "telegram",
-    "2024-06-28": "dao",
+    "2024-06-28": "lottery",
     "2024-06-29": "crypto",
     "2024-06-30": "l7",
 
@@ -37,7 +37,7 @@ class SecretRequest(BaseModel):
 
 @router.post("", response_model=User)
 async def secret(
-    current_user: CurrentUser,
+    user_id: CurrentUserId,
     secret_request: SecretRequest,
     session: DBSession,
     user_repository: Annotated[UserRepository, Depends()],
@@ -49,12 +49,8 @@ async def secret(
     current_date = datetime.now(UTC).date()
 
 
-    # generate random  between 1 and 20
-    u_id = current_user.id
-    session.expire_all()
-
     async with session.begin():
-        user = await user_repository.get_user_for_update(u_id)
+        user = await user_repository.get_user_for_update(user_id)
 
 
         if user.last_secret_code_date == current_date:
