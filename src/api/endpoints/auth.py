@@ -6,7 +6,7 @@ from src.deps import SettingsDep
 from src.models.user import User
 from src.repositories.user_repository import UserRepository
 from src.bot.validators import is_member_of
-
+from sqlalchemy import update
 from aiogram.utils.deep_linking import decode_payload
 from src.bot.constants import COMMUNITY_TID
 from aiogram.utils.web_app import safe_parse_webapp_init_data, WebAppInitData, parse_webapp_init_data
@@ -54,14 +54,17 @@ async def upsert_user(
 ) -> User:
 
     async with session.begin():
-        user = await user_repository.get_user_for_update(data.user.id)
+        user = await user_repository.get_user_or_none_by_id(data.user.id)
         if user is not None:
             #if user.last_check is older than 5 minutes, update the user data
             if (datetime.now(UTC).timestamp() - user.last_check_in.timestamp()) > 6000:
                 print("run last check join")
-                user.joined = await is_member_of(request.app.state.stat_bot, COMMUNITY_TID, user.id)
-                user.last_check_in = datetime.now(UTC)
-                await user_repository.add_user(user)
+                joined = await is_member_of(request.app.state.stat_bot, COMMUNITY_TID, user.id)
+                last_check_in = datetime.now(UTC)
+
+                query = update(User).where(User.id == user.id).values(joined=joined, last_check_in=last_check_in).returning(User)
+                res = await session.execute(query)
+                return res.scalar_one()
             return user
 
 
@@ -88,7 +91,7 @@ async def upsert_user(
         except Exception as e:
             print("should_not_happen", e)
 
-        return await user_repository.get_user_for_update(data.user.id)
+        return await user_repository.get_user_or_none_by_id(data.user.id)
 
 
 @router.post("")
