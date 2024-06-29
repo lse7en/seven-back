@@ -49,7 +49,7 @@ async def joined(
             referrer.points += 1000
             await user_repository.add_user(referrer)
         
-        current_user.referrer_score = True
+            current_user.referrer_score = True
         await user_repository.add_user(current_user)
 
     return current_user
