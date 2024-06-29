@@ -41,6 +41,7 @@ async def joined(
     if not joined:
         return await user_repository.get_user_or_none_by_id(user_id)
 
+    send_text_to_referrer = False
 
     async with user_repository.session.begin():
         current_user = await user_repository.get_user_for_update(user_id)
@@ -53,11 +54,35 @@ async def joined(
             await user_repository.add_user(referrer)
 
             current_user.referrer_score = True
+            send_text_to_referrer = True
 
 
         await user_repository.add_user(current_user)
 
     
+    if send_text_to_referrer:
+        joined_message = formatting.as_list(
+            formatting.as_line(formatting.Bold(get_text(referrer.language, "Keep going!")), "💪", sep=" "),
+            formatting.as_line(
+                get_text(referrer.language, "Your friend"),
+                formatting.Bold(current_user.full_name),
+                get_text(referrer.language, "joined the Bot!"),
+                sep=" ",
+            ),
+            formatting.as_list(
+                get_text(referrer.language, "And You get 1000 points and 1 extra ticket for that!"),
+            ),
+            sep="\n\n",
+        )
+        try:
+            await request.app.state.bot.send_photo(
+                chat_id=referrer.id,
+                photo=FRIEND_INVITE_FILE_ID,
+                caption=joined_message.as_html(),
+            )
+        except Exception as e:
+            print("kire kharg")
+            print(e)
 
 
     return current_user
