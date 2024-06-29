@@ -51,6 +51,9 @@ async def activate(
     async with session.begin():
         participant = await participant_repository.get_participant_for_update(user_id, lottery_id)
 
+        if not participant:
+            raise HTTPException(status_code=404, detail="Participant not found")
+
         if participant.activate_tickets_count >= participant.user.invited_users + 1:
             return await participant_repository.get_participant(user_id, lottery_id)
         
