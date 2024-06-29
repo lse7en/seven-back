@@ -14,6 +14,11 @@ class User(Base):
     __tablename__ = "users"
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     invited_users: Mapped[int] = mapped_column(Integer, default=0)
+    joined: Mapped[bool] = mapped_column(default=False, nullable=False)
+    referrer_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
+    referrer = relationship("User", back_populates="invitees", remote_side=id)
+
+
     last_check_in: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
     last_lucky_push: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
     push_points: Mapped[int] = mapped_column(default=0)
@@ -23,10 +28,8 @@ class User(Base):
     first_name: Mapped[str] = mapped_column(nullable=False)
     last_name: Mapped[str] = mapped_column(nullable=True)
     username: Mapped[str] = mapped_column(nullable=True)
-    joined: Mapped[bool] = mapped_column(default=False, nullable=False)
 
-    referrer_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
-    referrer = relationship("User", back_populates="invitees", remote_side=id)
+
     invitees = relationship("User", back_populates="referrer", remote_side=referrer_id)
 
     referrer_score: Mapped[bool] = mapped_column(default=False, nullable=False)

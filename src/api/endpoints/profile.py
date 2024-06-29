@@ -38,8 +38,8 @@ async def joined(
     bot = request.app.state.bot
     joined = await is_member_of(bot, COMMUNITY_TID, user_id)
 
-    if not joined:
-        return await user_repository.get_user_or_none_by_id(user_id)
+    # if not joined:
+    #     return await user_repository.get_user_or_none_by_id(user_id)
 
     send_text_to_referrer = False
 
