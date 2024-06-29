@@ -70,9 +70,9 @@ async def upsert_user(
 
         try:
             ref = int(decode_payload(data.start_param)) if data.start_param else None
-            referrer = await user_repository.get_user_or_none_by_id(ref)
-            if referrer is None:
-                ref = None
+            # referrer = await user_repository.get_user_or_none_by_id(ref)
+            # if referrer is None:
+            #     ref = None
         except Exception as e:
             ref = None
 
