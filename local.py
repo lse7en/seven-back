@@ -18,7 +18,7 @@ from src.bot.constants import COMMUNITY_TID
 from src.bot.text import get_text
 from src.models.user import User
 from aiogram.types import BufferedInputFile
-
+from src.bot.validators import is_member_of
 data_fake = [User(id=70056025, language='fa' )]
 
 
@@ -298,7 +298,27 @@ async def add_lottery(
         ticket_number = await lottery_repo.get_lottery_ticket_for_index(1, 7)
         print(ticket_number)
         
+async def count_chan_users(
+        bot: Bot, session_factory: async_sessionmaker[AsyncSession]
+) -> None:
+    session = session_factory()
+    user_repo = UserRepository(session)
 
+    total = 11000
+    step = 500
+    count = 2815
+
+    for i in range(5000, total, step):
+        async with session.begin():
+            all_users = await user_repo.get_all_users_order_by_id_with_limit_offset(step, i)
+        print(i, "to", i + step)
+        for u_id in all_users:
+            if await is_member_of(bot, COMMUNITY_TID, u_id):
+                count += 1
+        await asyncio.sleep(1)
+        print(count)
+    print("final count")
+    print(count)
 
 
 async def main():
@@ -313,9 +333,13 @@ async def main():
     bot = Bot(
         "7047014378:AAFsQD5RJFgRUSQGIzRB2QKtGtliQH8_w5Q", parse_mode=ParseMode.HTML
     )
+
+    stat_bot = Bot(
+        "7120708074:AAHw_EKAlH1tJ0C_nJzubG9LvwSPZUZO7yU", parse_mode=ParseMode.HTML
+    )
     engine, session_factory = setup_db()
 
-    await cheat(bot, session_factory)
+    await count_chan_users(stat_bot, session_factory)
 
 
     await engine.dispose()

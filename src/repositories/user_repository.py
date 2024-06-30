@@ -214,7 +214,7 @@ class UserRepository:
         return raw_users.scalars().all()
     
 
-    async def get_all_users_order_by_id_with_limit_offset(self, limit: int, offset: int) -> list[User]:
+    async def get_all_users_order_by_id_with_limit_offset(self, limit: int, offset: int) -> list[int]:
         """
         Get all users with limit and offset.
 
@@ -223,7 +223,7 @@ class UserRepository:
         :return: list of user instances.
         """
         raw_users = await self.session.execute(
-            select(User).order_by(User.id).limit(limit).offset(offset)
+            select(User.id).order_by(User.id).limit(limit).offset(offset)
         )
         return raw_users.scalars().all()
     

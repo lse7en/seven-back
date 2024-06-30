@@ -13,8 +13,8 @@ async def is_member_of(bot: Bot, tid: int, chat_id: int) -> bool:
 
         return chat.status in VALID_STATUSES
     except Exception as e:
-        print("kirekhar")
-        print(chat_id)
-        print(tid)
-        print(e)
+        # print("kirekhar")
+        # print(chat_id)
+        # print(tid)
+        # print(e)
         return False
