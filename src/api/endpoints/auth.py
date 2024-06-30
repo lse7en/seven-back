@@ -68,14 +68,15 @@ async def upsert_user(
             return user
 
 
-        try:
-            ref = int(decode_payload(data.start_param)) if data.start_param else None
-            # referrer = await user_repository.get_user_or_none_by_id(ref)
-            # if referrer is None:
-            #     ref = None
-        except Exception as e:
-            ref = None
+    try:
+        ref = int(decode_payload(data.start_param)) if data.start_param else None
+        # referrer = await user_repository.get_user_or_none_by_id(ref)
+        # if referrer is None:
+        #     ref = None
+    except Exception as e:
+        ref = None
 
+    async with session.begin():
         try:
             new_user = User(
                     id=data.user.id,
@@ -89,8 +90,9 @@ async def upsert_user(
             )
             await user_repository.add_user(new_user)
         except Exception as e:
-            print("should_not_happen", e)
+            pass
 
+    async with session.begin():
         return await user_repository.get_user_or_none_by_id(data.user.id)
 
 

@@ -21,7 +21,7 @@ async def lpush(
     system_log_repository: Annotated[SystemLogRepository, Depends()]
 ):
     # generate random  between 1 and 20
-    r = int(random.uniform(150.0, 300.0))
+    r = 25 #int(random.uniform(150.0, 300.0))
 
     async with session.begin():   
         user = await user_repository.get_user_for_update(user_id)
