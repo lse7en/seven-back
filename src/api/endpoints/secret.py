@@ -6,7 +6,7 @@ from src.deps import  CurrentUserId
 from src.core.database import DBSession
 from src.schemas.user_schemas import User
 import random
-from datetime import datetime, UTC, timedelta
+from datetime import datetime, UTC, timedelta, date, time
 from src.repositories.user_repository import UserRepository
 from src.repositories.system_log_repository import SystemLogRepository
 from src.models.system_log import SystemLog
@@ -28,6 +28,21 @@ class SecretRequest(BaseModel):
     secret: str
 
 
+
+def get_secret_reset_datetime(date: date):
+    # create a date time in utc timezone with the given date and time 16:00:00
+    return datetime.combine(date, time(16, 0, 0), tzinfo=UTC)
+
+def get_now_key():
+    now = datetime.now(UTC)
+
+    if now.hour < 16:
+        return now.date()
+    else:
+        return (now + timedelta(days=1)).date()
+
+
+
 @router.post("", response_model=User)
 async def secret(
     user_id: CurrentUserId,
@@ -39,20 +54,21 @@ async def secret(
     
     secret = secret_request.secret
 
-    current_date = datetime.now(UTC).date()
 
 
     async with session.begin():
         user = await user_repository.get_user_for_update(user_id)
 
 
-        if user.last_secret_code_date == current_date:
+        if datetime.now(UTC) < get_secret_reset_datetime(user.last_secret_code_date):
             return user
         
-        if secret.lower() == SECRETS.get(str(current_date), ""):
+        key = get_now_key()
+        
+        if secret.lower() == SECRETS.get(str(key), ""):
             await system_log_repository.add_log(SystemLog(user=user, command=f"secret:{secret} {user.points} -> {user.points + 500}"))
             user.points += 500
-            user.last_secret_code_date = current_date
+            user.last_secret_code_date = key
             await user_repository.add_user(user)
             return user
         else:
