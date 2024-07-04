@@ -273,16 +273,15 @@ async def set_static_rank(
 async def cheat(
         bot: Bot, session_factory: async_sessionmaker[AsyncSession]
 ) -> None:
-    user_id = 5824417928
+    user_id = 70056025
     session = session_factory()
     user_repo = UserRepository(session)
-    from datetime import date
-    old_date = date(2021, 1, 1)
+    from datetime import date, timedelta, datetime
+    old_date = datetime.utcnow() - timedelta(days=1)
     async with session.begin():
         user = await user_repo.get_user_or_none_by_id(user_id)
 
-        user.referrer_score = False
-        user.joined = False
+        user.last_secret_code_date = old_date.date()
         await user_repo.add_user(user)
         # user.last_secret_code_date = old_date
         # await user_repo.add_user(user)
@@ -339,7 +338,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await count_chan_users(stat_bot, session_factory)
+    await cheat(stat_bot, session_factory)
 
 
     await engine.dispose()

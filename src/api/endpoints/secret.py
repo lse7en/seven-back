@@ -31,7 +31,7 @@ class SecretRequest(BaseModel):
 
 def get_secret_reset_datetime(date: date):
     # create a date time in utc timezone with the given date and time 16:00:00
-    return datetime.combine(date, time(16, 0, 0), tzinfo=UTC)
+    return datetime.combine(date, time(16, 0, 0), tzinfo=UTC) + timedelta(days=1)
 
 def get_now_key():
     now = datetime.now(UTC)
