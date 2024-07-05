@@ -20,7 +20,7 @@ SECRETS = {
     "2024-07-03": "invite",
     "2024-07-04": "jackpot",
     "2024-07-05": "airdrop",
-    "2024-07-06": "airdrop",
+    "2024-07-06": "1day",
 }
 
 #body
@@ -64,9 +64,7 @@ async def secret(
             return user
         
         key = get_now_key()
-        print(key)
-        print(SECRETS.get(str(key), ""))
-        
+
         if secret.lower() == SECRETS.get(str(key), ""):
             await system_log_repository.add_log(SystemLog(user=user, command=f"secret:{secret} {user.points} -> {user.points + 500}"))
             user.points += 500
@@ -74,4 +72,4 @@ async def secret(
             await user_repository.add_user(user)
             return user
         else:
-            raise HTTPException(status_code=400, detail="invalid_secret_code" + str(key) + " " + secret + " " + SECRETS.get(str(key), ""))
+            raise HTTPException(status_code=400, detail="invalid_secret_code")
