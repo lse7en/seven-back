@@ -20,7 +20,7 @@ SECRETS = {
     "2024-07-03": "invite",
     "2024-07-04": "jackpot",
     "2024-07-05": "listing",
-    "2024-07-06": "ticket",
+    "2024-07-06": "airdrop",
 }
 
 #body
