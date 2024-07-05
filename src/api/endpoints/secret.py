@@ -37,9 +37,9 @@ def get_now_key():
     now = datetime.now(UTC)
 
     if now.hour < 16:
-        return now.date()
+        return (now - timedelta(days=1)).date()
     else:
-        return (now + timedelta(days=1)).date()
+        return now.date()
 
 
 
