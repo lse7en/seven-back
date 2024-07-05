@@ -275,16 +275,12 @@ async def cheat(
 ) -> None:
     user_id = 70056025
     session = session_factory()
-    user_repo = UserRepository(session)
-    from datetime import date, timedelta, datetime
-    old_date = datetime.utcnow() - timedelta(days=1)
-    async with session.begin():
-        user = await user_repo.get_user_or_none_by_id(user_id)
 
-        user.last_secret_code_date = old_date.date()
-        await user_repo.add_user(user)
-        # user.last_secret_code_date = old_date
-        # await user_repo.add_user(user)
+    # set last secret code date to 1 day before current value of last secret code date
+    async with session.begin():
+        await session.execute(update(User).values(last_secret_code_date=func.date(User.last_secret_code_date) - 1).where(User.id == user_id))
+
+
 
 
 async def add_lottery(
