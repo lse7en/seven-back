@@ -64,6 +64,8 @@ async def secret(
             return user
         
         key = get_now_key()
+        print(key)
+        print(SECRETS.get(str(key), ""))
         
         if secret.lower() == SECRETS.get(str(key), ""):
             await system_log_repository.add_log(SystemLog(user=user, command=f"secret:{secret} {user.points} -> {user.points + 500}"))
