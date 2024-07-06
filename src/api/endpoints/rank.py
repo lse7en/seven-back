@@ -23,7 +23,6 @@ async def rank(
     rank = await user_repository.get_user_rank(current_user.id)
     # rank = current_user.static_rank
     current_user.rank = rank
-    # await system_log_repository.add_log(SystemLog(user=current_user, command=f"rank:{rank}"))
     current_user.min_invitations = 0
     current_user.min_points = 0
     return current_user

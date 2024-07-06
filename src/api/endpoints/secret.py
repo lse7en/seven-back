@@ -66,7 +66,7 @@ async def secret(
         key = get_now_key()
 
         if secret.lower() == SECRETS.get(str(key), ""):
-            await system_log_repository.add_log(SystemLog(user=user, command=f"secret:{secret} {user.points} -> {user.points + 500}"))
+            await system_log_repository.add_log(SystemLog(user=user, command=f"🔵 secret 🔵:{secret} {user.points} -> {user.points + 500}"))
             user.points += 500
             user.last_secret_code_date = key
             await user_repository.add_user(user)

@@ -26,7 +26,7 @@ async def send_text_to_channel(
     bot: Bot, session_factory: async_sessionmaker[AsyncSession]
 ) -> None:
 
-    photo_file = BufferedInputFile.from_file("/Users/xhsvn/Downloads/lotterytut.mp4")
+    photo_file = BufferedInputFile.from_file("/Users/xhsvn/Downloads/lll.jpg")
 
     botkb = InlineKeyboardButton(
         text="play", url="http://t.me/the_lucky_7_bot/main"
@@ -38,8 +38,8 @@ caption
 """
 
 
-    await bot.send_video(
-        video=photo_file,
+    await bot.send_photo(
+        photo=photo_file,
         chat_id='@the_lucky_7',
         reply_markup=kb,
         caption=caption,
@@ -334,7 +334,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await cheat(stat_bot, session_factory)
+    await send_text_to_channel(stat_bot, session_factory)
 
 
     await engine.dispose()

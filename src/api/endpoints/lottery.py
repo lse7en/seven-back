@@ -72,7 +72,7 @@ async def activate(
 
         session.add(ticket)
         await session.flush()
-        await system_log_repository.add_log(SystemLog(user=participant.user, command=f"c:ticket: {ticket_index}"))
+        await system_log_repository.add_log(SystemLog(user=participant.user, command=f"🟢 ticket 🟢: {ticket_index}"))
         await participant_repository.add_participant(participant)
 
 
