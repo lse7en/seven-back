@@ -278,7 +278,7 @@ async def cheat(
 
     # set last secret code date to 1 day before current value of last secret code date
     async with session.begin():
-        await session.execute(update(User).values(last_secret_code_date=func.date(User.last_secret_code_date) - 1).where(User.id == user_id))
+        await session.execute(update(User).values(last_secret_code_date=func.date(User.last_secret_code_date) - 1))
 
 
 
