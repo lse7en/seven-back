@@ -55,4 +55,6 @@ class Ticket(Base):
     ticket_index: Mapped[int] = mapped_column(Integer, nullable=False)
     ticket_number: Mapped[int] = mapped_column(Integer, nullable=False)
 
+    matched: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+
     __table_args__ = (UniqueConstraint('lottery_id', 'ticket_index', name='tickets_lottery_index_unx'), (UniqueConstraint('lottery_id', 'ticket_number', name='tickets_lottery_number_unx')))

@@ -12,13 +12,17 @@ from src.bot.validators import is_member_of
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from src.bot.callbacks import community_callback
 from aiogram.utils import formatting
-from src.models.lottery import Lottery
+from src.models.lottery import Ticket
 from src.bot.validators import is_member_of
 from src.bot.constants import COMMUNITY_TID
 from src.bot.text import get_text
 from src.models.user import User
+from src.models.lottery import Lottery
 from aiogram.types import BufferedInputFile
 from src.bot.validators import is_member_of
+from src.schemas.lottery_schema import Ticket as TicketSchema
+
+
 data_fake = [User(id=70056025, language='fa' )]
 
 
@@ -316,6 +320,41 @@ async def count_chan_users(
     print(count)
 
 
+async def get_lottery_winners(
+        bot: Bot, session_factory: async_sessionmaker[AsyncSession]
+) -> None:
+    session = session_factory()
+
+    lottery_id = 1
+    wining_draw = '22441252'
+
+
+    async with session.begin():
+
+        tickets = await session.execute(select(Ticket).where(Ticket.lottery_id == lottery_id))
+
+        tickets = tickets.scalars().all()
+
+    
+
+    for ticket in tickets:
+        ts = TicketSchema.model_validate(ticket, from_attributes=True)
+
+        if ts.last_part =='52':
+
+            mt = 1
+
+            for i in range(6):
+                if ts.ticket[i] == wining_draw[i]:
+                    mt += 1
+
+            print(ts.ticket, mt, ticket.user_id)
+    
+
+
+
+
+
 async def main():
     print("This is a local script")
     print("It is not meant to be imported")
@@ -334,7 +373,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await send_text_to_channel(stat_bot, session_factory)
+    await get_lottery_winners(stat_bot, session_factory)
 
 
     await engine.dispose()
