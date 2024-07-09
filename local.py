@@ -279,10 +279,13 @@ async def cheat(
 ) -> None:
     user_id = 70056025
     session = session_factory()
+    user_repo = UserRepository(session)
 
     # set last secret code date to 1 day before current value of last secret code date
     async with session.begin():
-        await session.execute(update(User).values(last_secret_code_date=func.date(User.last_secret_code_date) - 1))
+        user =  await user_repo.get_user_or_none_by_id(user_id)
+        user.invited_users = user.invited_users + 4
+        await user_repo.add_user(user)
 
 
 
@@ -373,7 +376,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await get_lottery_winners(stat_bot, session_factory)
+    await cheat(stat_bot, session_factory)
 
 
     await engine.dispose()

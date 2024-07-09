@@ -77,8 +77,7 @@ async def run_async_migrations() -> None:
 
     settings = get_settings()
 
-    print(settings.db_url)
-    print(settings.db_connections_args)
+
     connectable = create_async_engine(settings.db_url, echo=settings.postgres_echo, connect_args=settings.db_connections_args)
 
     async with connectable.connect() as connection:
