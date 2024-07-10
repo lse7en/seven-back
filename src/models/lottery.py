@@ -16,7 +16,7 @@ from datetime import datetime
 class Lottery(Base):
     __tablename__ = "lotteries"
     pot: Mapped[int] = mapped_column(Integer, default=0)
-    tickets: Mapped[list[int]] = mapped_column(ARRAY(Integer), default=[])
+    tickets: Mapped[list[int]] = mapped_column(ARRAY(Integer), default=[], deferred=True, deferred_raiseload=True)
     last_ticket_index: Mapped[int] = mapped_column(Integer, default=0)
 
     jackpot: Mapped[int] = mapped_column(Integer, nullable=True, default=None)
@@ -31,6 +31,7 @@ class Participant(Base):
     user: Mapped[User] = relationship(User)
 
     lottery_id: Mapped[int] = mapped_column(ForeignKey("lotteries.id"), nullable=False)
+    lottery: Mapped[Lottery] = relationship(Lottery)
 
     activate_tickets_count: Mapped[int] = mapped_column(Integer, default=0)
 

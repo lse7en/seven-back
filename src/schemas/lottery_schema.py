@@ -42,7 +42,11 @@ class Ticket(BaseModel):
     def last_part(self) -> str:
         return self.ticket[6:]
 
-
+class Lottery(BaseModel):
+    id: int
+    # name: str
+    pot: int
+    finish_date: Optional[datetime]
 
 class Participant(BaseModel):
     """
@@ -52,8 +56,16 @@ class Participant(BaseModel):
     """
 
     user: User
+    lottery: Lottery
     activate_tickets_count: int
     tickets: list[Ticket] = []
 
 
 
+class LotteryList(BaseModel):
+    """
+    DTO for list of Lottery model.
+
+    It returned when accessing list of Lottery models from the API.
+    """
+    items: list[Lottery]

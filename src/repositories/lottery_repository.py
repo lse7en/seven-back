@@ -8,65 +8,61 @@ from src.models import lottery
 
 
 class LotteryRepository:
-    
-        def __init__(self, session: DBSession):
-            self.session = session
-    
-    
-        async def update_and_get_index(self, lottery_id: int) -> int:
-            """
-            Update last_ticket_index and return it.
-
-            :param lottery_id: id of lottery.
-            :return: last_ticket_index.
-            """
-            query = update(lottery.Lottery).where(lottery.Lottery.id == lottery_id).values(
-                last_ticket_index=lottery.Lottery.last_ticket_index + 1
-            ).returning(lottery.Lottery.last_ticket_index)
-
-            raw_index = await self.session.execute(query)
-            return raw_index.scalar_one()
-        
-        async def get_lottery_ticket_for_index(self, lottery_id: int, ticket_index: int) -> int:
-            """
-            Get ticket in with ticket_index in lottery.tickets array.
-
-            :param lottery_id: id of lottery.
-            :param ticket_index: index of ticket.
-            :return: ticket number.
-            """
-            query = select(lottery.Lottery.tickets[ticket_index]).where(lottery.Lottery.id == lottery_id)
-
-            raw_ticket = await self.session.execute(query)
-            return raw_ticket.scalar_one()
-        
-
-        async def add_lottery(self, lottery: lottery.Lottery):
-            
-            self.session.add(lottery)
-            await self.session.flush()
-
-
-        async def get_lottery_for_update(self, lottery_id: int) -> lottery.Lottery | None:
-
-            query = select(lottery.Lottery).where(lottery.Lottery.id == lottery_id)\
-            .options(load_only(lottery.Lottery.id, lottery.Lottery.pot, lottery.Lottery.last_ticket_index))
-
-            raw_lottery = await self.session.execute(query.with_for_update())
-            return raw_lottery.scalar_one_or_none()
-
-
-
-class ParticipantRepository:
-
     def __init__(self, session: DBSession):
         self.session = session
 
 
-    
+    async def get_lottery_ticket_for_index(
+        self, lottery_id: int, ticket_index: int
+    ) -> int:
+        """
+        Get ticket in with ticket_index in lottery.tickets array.
+
+        :param lottery_id: id of lottery.
+        :param ticket_index: index of ticket.
+        :return: ticket number.
+        """
+        query = select(lottery.Lottery.tickets[ticket_index]).where(
+            lottery.Lottery.id == lottery_id
+        )
+
+        raw_ticket = await self.session.execute(query)
+        return raw_ticket.scalar_one()
+
+    async def add_lottery(self, lottery: lottery.Lottery):
+        self.session.add(lottery)
+        await self.session.flush()
 
 
-    async def get_participant(self, user_id: int, lottery_id: int) -> lottery.Participant | None:
+
+    async def get_lotteries_with_id_less_than(
+        self, lottery_id: int
+    ) -> list[lottery.Lottery]:
+        """
+        Get all lotteries with id less than given id.
+
+        :param lottery_id: id of lottery.
+        :return: list of lottery instances.
+        """
+
+        query = (
+            select(lottery.Lottery)
+            .where(lottery.Lottery.id < lottery_id)
+            .order_by(lottery.Lottery.id.desc())
+        )
+
+        raw_lotteries = await self.session.execute(query)
+        return raw_lotteries.scalars().all()
+
+
+class ParticipantRepository:
+    def __init__(self, session: DBSession):
+        self.session = session
+
+
+    async def get_participant(
+        self, user_id: int, lottery_id: int
+    ) -> lottery.Participant | None:
         """
         Get participant by user_id and lottery_id.
 
@@ -74,17 +70,23 @@ class ParticipantRepository:
         :param lottery_id: id of lottery.
         :return: participant instance.
         """
-        query = select(lottery.Participant).where(
-            lottery.Participant.user_id == user_id,
-            lottery.Participant.lottery_id == lottery_id
-        ).options(joinedload(lottery.Participant.user, innerjoin=True)).options(joinedload(lottery.Participant.tickets))
-
+        query = (
+            select(lottery.Participant)
+            .where(
+                lottery.Participant.user_id == user_id,
+                lottery.Participant.lottery_id == lottery_id,
+            )
+            .options(joinedload(lottery.Participant.user, innerjoin=True))
+            .options(joinedload(lottery.Participant.tickets))
+            .options(joinedload(lottery.Participant.lottery, innerjoin=True))
+        )
 
         raw_participant = await self.session.execute(query)
         return raw_participant.unique().scalar_one_or_none()
 
-
-    async def get_participant_for_update(self, user_id: int, lottery_id: int) -> lottery.Participant | None:
+    async def get_participant_for_update(
+        self, user_id: int, lottery_id: int
+    ) -> lottery.Participant | None:
         """
         Get participant by user_id and lottery_id for update.
 
@@ -92,15 +94,18 @@ class ParticipantRepository:
         :param lottery_id: id of lottery.
         :return: participant instance.
         """
-        query = select(lottery.Participant).where(
-            lottery.Participant.user_id == user_id,
-            lottery.Participant.lottery_id == lottery_id
-        ).options(joinedload(lottery.Participant.user, innerjoin=True))
+        query = (
+            select(lottery.Participant)
+            .where(
+                lottery.Participant.user_id == user_id,
+                lottery.Participant.lottery_id == lottery_id,
+            )
+            .options(joinedload(lottery.Participant.user, innerjoin=True))
+            .options(joinedload(lottery.Participant.lottery, innerjoin=True))
+        )
 
         raw_participant = await self.session.execute(query.with_for_update())
         return raw_participant.scalar_one_or_none()
-
-
 
     async def add_participant(self, participant: lottery.Participant) -> None:
         """
@@ -111,5 +116,3 @@ class ParticipantRepository:
         """
         self.session.add(participant)
         await self.session.flush()
-
-
