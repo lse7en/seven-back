@@ -14,7 +14,7 @@ from src.models.system_log import SystemLog
 
 router = APIRouter(prefix="/lotteries", tags=["lottery"])
 
-ACTIVE_LOTTERY_ID = 1
+ACTIVE_LOTTERY_ID = 2
 
 
 
@@ -27,11 +27,11 @@ async def get_lotteries(
     lottery_repository: Annotated[LotteryRepository, Depends()],
 ):
     async with session.begin():
-        lotteries = await lottery_repository.get_lotteries_with_id_less_than(ACTIVE_LOTTERY_ID + 1)
+        lotteries = await lottery_repository.get_lotteries_with_id_less_than(ACTIVE_LOTTERY_ID)
         
 
     return LotteryList(
-        items=[LotterySchema.model_validate(l, from_attributes=True) for l in lotteries]
+        items=[LotterySchema.model_validate(lot, from_attributes=True) for lot in lotteries]
     )
 
 @router.get("/active/participant", response_model=ParticipantSchema)
