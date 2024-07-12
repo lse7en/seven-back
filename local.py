@@ -297,10 +297,32 @@ async def add_lottery(
 ) -> None:
     session = session_factory()
     lottery_repo = LotteryRepository(session)
+    # import random
+    # tickets = random.sample(range(6**8), 6**8)
+
+    # print(len(tickets))
+    # print(6**8)
+    # print(tickets[:10])
+
+    # from datetime import datetime, UTC
+
+    # #set date as 27 july 2024 16:00:00 utc
+    # dt = datetime(2024, 7, 27, 16, 0, 0, 0, UTC)
+    
+    # print(dt)
 
     async with session.begin():
-        ticket_number = await lottery_repo.get_lottery_ticket_for_index(1, 7)
-        print(ticket_number)
+        # lottery = Lottery(name="Not like us", pot=600, draw_date=dt, tickets=tickets, jackpot=None)
+        # await lottery_repo.add_lottery(lottery)
+
+        random_ticket = await lottery_repo.get_lottery_ticket_for_index(2, 1)
+        print(random_ticket)
+
+
+        random_ticket = await lottery_repo.get_lottery_ticket_for_index(2, 2)
+        print(random_ticket)
+        random_ticket = await lottery_repo.get_lottery_ticket_for_index(2, 4)
+        print(random_ticket)
         
 async def count_chan_users(
         bot: Bot, session_factory: async_sessionmaker[AsyncSession]
@@ -378,7 +400,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await cheat(stat_bot, session_factory)
+    await add_lottery(stat_bot, session_factory)
 
 
     await engine.dispose()
