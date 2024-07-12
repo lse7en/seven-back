@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from src.deps import  CurrentUserId
 from src.core.database import DBSession
-from src.schemas.lottery_schema import Participant as ParticipantSchema
+from src.schemas.lottery_schema import Participant as ParticipantSchema, LotteryList, Lottery as LotterySchema
 
 from src.models.lottery import Participant, Ticket
 from src.repositories.user_repository import UserRepository
@@ -12,14 +12,40 @@ from src.repositories.lottery_repository import ParticipantRepository, LotteryRe
 from src.repositories.system_log_repository import SystemLogRepository
 from src.models.system_log import SystemLog
 
-router = APIRouter(prefix="/lottery", tags=["lottery"])
+router = APIRouter(prefix="/lotteries", tags=["lottery"])
+
+ACTIVE_LOTTERY_ID = 1
 
 
-lottery_id = 1
 
 
-@router.get("/participant", response_model=ParticipantSchema)
+
+
+@router.get("", response_model=LotteryList)
+async def get_lotteries(
+    session: DBSession,
+    lottery_repository: Annotated[LotteryRepository, Depends()],
+):
+    async with session.begin():
+        lotteries = await lottery_repository.get_lotteries_with_id_less_than(ACTIVE_LOTTERY_ID + 1)
+        
+
+    return LotteryList(
+        items=[LotterySchema.model_validate(l, from_attributes=True) for l in lotteries]
+    )
+
+@router.get("/active/participant", response_model=ParticipantSchema)
+async def get_active_participant(
+    user_id: CurrentUserId,
+    session: DBSession,
+    participant_repository: Annotated[ParticipantRepository, Depends()]
+):
+
+    return await get_participant(ACTIVE_LOTTERY_ID, user_id, session, participant_repository)
+
+@router.get("/{lottery_id}/participant", response_model=ParticipantSchema)
 async def get_participant(
+    lottery_id: int,
     user_id: CurrentUserId,
     session: DBSession,
     participant_repository: Annotated[ParticipantRepository, Depends()],
@@ -39,6 +65,10 @@ async def get_participant(
         
 
 
+
+
+
+
 @router.post("/activate", response_model=ParticipantSchema)
 async def activate(
     user_id: CurrentUserId,
@@ -47,6 +77,8 @@ async def activate(
     participant_repository: Annotated[ParticipantRepository, Depends()],
     system_log_repository: Annotated[SystemLogRepository, Depends()]
 ):
+    
+    lottery_id = ACTIVE_LOTTERY_ID
 
     async with session.begin():
         participant = await participant_repository.get_participant_for_update(user_id, lottery_id)
@@ -63,9 +95,8 @@ async def activate(
 
         participant.activate_tickets_count += 1
         participant.user.points -= 2000
-        lottery = await lottery_repository.get_lottery_for_update(lottery_id)
-        lottery.last_ticket_index += 1
-        ticket_index = lottery.last_ticket_index
+        participant.lottery.last_ticket_index += 1
+        ticket_index = participant.lottery.last_ticket_index
         ticket_number = await lottery_repository.get_lottery_ticket_for_index(lottery_id, ticket_index)
 
         ticket = Ticket(lottery_id=lottery_id, user=participant.user, participant_id=participant.id, ticket_index=ticket_index, ticket_number=ticket_number)

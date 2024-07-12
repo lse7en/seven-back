@@ -42,7 +42,36 @@ class Ticket(BaseModel):
     def last_part(self) -> str:
         return self.ticket[6:]
 
+class Lottery(BaseModel):
+    id: int
+    name: str
+    pot: int
+    draw_date: Optional[datetime]
+    jackpot: int | None
 
+
+    @property
+    def ticket(self) -> str | None:
+        if self.jackpot:
+            return decimal_to_base6(self.jackpot)
+
+    @computed_field
+    @property
+    def first_part(self) -> str:
+
+        if not self.jackpot:
+            return None
+
+        string = self.ticket[:6]
+        return ' '.join(list(string))
+    
+
+    @computed_field
+    @property
+    def last_part(self) -> str:
+        if not self.jackpot:
+            return None
+        return self.ticket[6:]
 
 class Participant(BaseModel):
     """
@@ -52,8 +81,16 @@ class Participant(BaseModel):
     """
 
     user: User
+    lottery: Lottery
     activate_tickets_count: int
     tickets: list[Ticket] = []
 
 
 
+class LotteryList(BaseModel):
+    """
+    DTO for list of Lottery model.
+
+    It returned when accessing list of Lottery models from the API.
+    """
+    items: list[Lottery]
