@@ -281,10 +281,12 @@ async def cheat(
     session = session_factory()
     user_repo = UserRepository(session)
 
+    from datetime import datetime, timedelta, UTC
     # set last secret code date to 1 day before current value of last secret code date
     async with session.begin():
         user =  await user_repo.get_user_or_none_by_id(user_id)
         user.invited_users = user.invited_users + 4
+        user.last_lucky_push = datetime.now(UTC) - timedelta(days=1)
         await user_repo.add_user(user)
 
 

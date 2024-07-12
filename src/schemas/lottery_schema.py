@@ -44,9 +44,34 @@ class Ticket(BaseModel):
 
 class Lottery(BaseModel):
     id: int
-    # name: str
+    name: str
     pot: int
-    finish_date: Optional[datetime]
+    draw_date: Optional[datetime]
+    jackpot: int | None
+
+
+    @property
+    def ticket(self) -> str | None:
+        if self.jackpot:
+            return decimal_to_base6(self.jackpot)
+
+    @computed_field
+    @property
+    def first_part(self) -> str:
+
+        if not self.jackpot:
+            return None
+
+        string = self.ticket[:6]
+        return ' '.join(list(string))
+    
+
+    @computed_field
+    @property
+    def last_part(self) -> str:
+        if not self.jackpot:
+            return None
+        return self.ticket[6:]
 
 class Participant(BaseModel):
     """

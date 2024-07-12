@@ -31,10 +31,17 @@ async def get_lotteries(
         
 
     return LotteryList(
-        items=[LotterySchema.model_validate(lottery) for lottery in lotteries]
+        items=[LotterySchema.model_validate(l, from_attributes=True) for l in lotteries]
     )
 
+@router.get("/active/participant", response_model=ParticipantSchema)
+async def get_active_participant(
+    user_id: CurrentUserId,
+    session: DBSession,
+    participant_repository: Annotated[ParticipantRepository, Depends()]
+):
 
+    return await get_participant(ACTIVE_LOTTERY_ID, user_id, session, participant_repository)
 
 @router.get("/{lottery_id}/participant", response_model=ParticipantSchema)
 async def get_participant(
@@ -58,14 +65,7 @@ async def get_participant(
         
 
 
-@router.get("/active/participant", response_model=ParticipantSchema)
-async def get_active_participant(
-    user_id: CurrentUserId,
-    session: DBSession,
-    participant_repository: Annotated[ParticipantRepository, Depends()]
-):
 
-    return get_participant(ACTIVE_LOTTERY_ID, user_id, session, participant_repository)
 
 
 

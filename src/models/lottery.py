@@ -20,8 +20,8 @@ class Lottery(Base):
     last_ticket_index: Mapped[int] = mapped_column(Integer, default=0)
 
     jackpot: Mapped[int] = mapped_column(Integer, nullable=True, default=None)
-    draw_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True, default=None)
-    finish_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True, default=None)
+    draw_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    name: Mapped[str] = mapped_column(nullable=False)
 
 
 class Participant(Base):
@@ -36,6 +36,8 @@ class Participant(Base):
     activate_tickets_count: Mapped[int] = mapped_column(Integer, default=0)
 
     tickets: Mapped[list["Ticket"]] = relationship(back_populates="participant")
+
+    wins: Mapped[int] = mapped_column(Integer, default=0)
 
     __table_args__ = (UniqueConstraint('lottery_id', 'user_id', name='participants_lottery_user_unx'),)
 
@@ -57,5 +59,6 @@ class Ticket(Base):
     ticket_number: Mapped[int] = mapped_column(Integer, nullable=False)
 
     matched: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    win: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
     __table_args__ = (UniqueConstraint('lottery_id', 'ticket_index', name='tickets_lottery_index_unx'), (UniqueConstraint('lottery_id', 'ticket_number', name='tickets_lottery_number_unx')))
