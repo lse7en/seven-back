@@ -28,6 +28,7 @@ SECRETS = {
     "2024-07-11": "tomorrow",
     "2024-07-12": "not like us",
     "2024-07-13": "not like us",
+    "2024-07-14": "not like us",
 }
 
 #body
