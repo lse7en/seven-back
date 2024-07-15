@@ -61,6 +61,8 @@ async def get_participant(
         except Exception as e:
             print("should_not_happen", e)
         
+    
+    async with session.begin():
         return await participant_repository.get_participant(user_id, lottery_id)
         
 
