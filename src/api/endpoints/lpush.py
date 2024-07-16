@@ -5,7 +5,6 @@ from fastapi import APIRouter, Depends
 from src.deps import  CurrentUserId
 from src.core.database import DBSession
 from src.schemas.user_schemas import User
-import random
 from datetime import datetime, UTC, timedelta
 from src.repositories.user_repository import UserRepository
 from src.repositories.system_log_repository import SystemLogRepository
@@ -21,7 +20,7 @@ async def lpush(
     system_log_repository: Annotated[SystemLogRepository, Depends()]
 ):
     # generate random  between 1 and 20
-    r = 250 #int(random.uniform(150.0, 300.0))
+    r = 500 #int(random.uniform(150.0, 300.0))
 
     async with session.begin():   
         user = await user_repository.get_user_for_update(user_id)
