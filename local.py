@@ -285,8 +285,8 @@ async def cheat(
     # set last secret code date to 1 day before current value of last secret code date
     async with session.begin():
         user =  await user_repo.get_user_or_none_by_id(user_id)
-        user.invited_users = user.invited_users + 4
-        user.last_lucky_push = datetime.now(UTC) - timedelta(days=1)
+        # user.invited_users = user.invited_users + 4
+        user.last_lucky_push = datetime.now(UTC) - timedelta(minutes=29)
         await user_repo.add_user(user)
 
 
@@ -400,7 +400,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await send_text_to_channel(stat_bot, session_factory)
+    await cheat(stat_bot, session_factory)
 
 
     await engine.dispose()
