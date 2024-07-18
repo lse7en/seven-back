@@ -32,6 +32,7 @@ SECRETS = {
     "2024-07-15": "not like us",
     "2024-07-16": "double",
     "2024-07-17": "double",
+    "2024-07-18": "interface",
     
 }
 
