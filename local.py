@@ -286,7 +286,8 @@ async def cheat(
     async with session.begin():
         user =  await user_repo.get_user_or_none_by_id(user_id)
         # user.invited_users = user.invited_users + 4
-        user.last_lucky_push = datetime.now(UTC) - timedelta(minutes=29)
+        user.last_secret_code_date = datetime.now(UTC) - timedelta(days=2)
+        user.last_lucky_push = datetime.now(UTC) - timedelta(minutes=32)
         await user_repo.add_user(user)
 
 
