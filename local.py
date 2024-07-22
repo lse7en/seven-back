@@ -277,18 +277,21 @@ async def set_static_rank(
 async def cheat(
         bot: Bot, session_factory: async_sessionmaker[AsyncSession]
 ) -> None:
-    user_id = 70056025
+    uids = [100084659, 70056025]
+
     session = session_factory()
     user_repo = UserRepository(session)
 
     from datetime import datetime, timedelta, UTC
     # set last secret code date to 1 day before current value of last secret code date
-    async with session.begin():
-        user =  await user_repo.get_user_or_none_by_id(user_id)
-        # user.invited_users = user.invited_users + 4
-        user.last_secret_code_date = datetime.now(UTC) - timedelta(days=2)
-        user.last_lucky_push = datetime.now(UTC) - timedelta(minutes=32)
-        await user_repo.add_user(user)
+
+    for user_id in uids:
+        async with session.begin():
+            user =  await user_repo.get_user_or_none_by_id(user_id)
+            # user.invited_users = user.invited_users + 4
+            user.last_secret_code_date = datetime.now(UTC) - timedelta(days=2)
+            user.last_lucky_push = datetime.now(UTC) - timedelta(minutes=32)
+            await user_repo.add_user(user)
 
 
 
