@@ -37,6 +37,7 @@ SECRETS = {
     "2024-07-20": "27th",
     "2024-07-21": "partnership",
     "2024-07-22": "partnership",
+    "2024-07-23": "reduce",
     
 }
 
