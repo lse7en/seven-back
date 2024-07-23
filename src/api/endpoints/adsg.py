@@ -9,37 +9,34 @@ from datetime import datetime, UTC, timedelta
 from src.repositories.user_repository import UserRepository
 from src.repositories.system_log_repository import SystemLogRepository
 from src.models.system_log import SystemLog
-router = APIRouter(prefix="/lpush", tags=["lpush"])
+router = APIRouter(prefix="/adsg", tags=["adsg"])
 
 
 @router.post("", response_model=User)
-async def lpush(
+async def reduce_time(
     user_id: CurrentUserId,
     session: DBSession,
     user_repository: Annotated[UserRepository, Depends()],
     system_log_repository: Annotated[SystemLogRepository, Depends()]
 ):
-    # generate random  between 1 and 20
-    r = 500 #int(random.uniform(150.0, 300.0))
+
 
     async with session.begin():   
         user = await user_repository.get_user_for_update(user_id)
 
 
-        next_push = user.last_lucky_push + timedelta(minutes=user.push_waiting_time)
-
-        nn = datetime.now(UTC)
-
-        if nn < next_push:
+        
+        if user.ads_reduce_time == 0:
             return user
-    
-    
-        await system_log_repository.add_log(SystemLog(user=user, command=f"🔴 push 🔴: {user.points} + {r} -> {user.points + r}"))
-        user.push_points += r
-        user.points += r
-        user.push_count += 1
-        user.last_lucky_push = datetime.now(UTC)
-        user.total_ads_watched_this_push = 0
+        
+        rt = user.ads_reduce_time
+        user.last_lucky_push = user.last_lucky_push - timedelta(minutes=rt)
+
+        user.total_ads_watched_this_push += 1
+        user.total_ads_watched += 1
+
+        await system_log_repository.add_log(SystemLog(user=user, command=f"🟡 ads 🟡: {user.total_ads_watched_this_push}, {rt}"))
+
         await user_repository.add_user(user)
 
         return user

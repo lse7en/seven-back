@@ -36,6 +36,8 @@ class User(UserBase):
     min_invitations: Optional[int] = None
     min_points: Optional[float] = None
     last_secret_code_date: date
+    ads_reduce_time: int
+    push_waiting_time: int
 
 
 class Rank(BaseModel):

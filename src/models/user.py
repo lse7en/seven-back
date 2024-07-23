@@ -40,6 +40,10 @@ class User(Base):
     last_secret_code_date: Mapped[date] = mapped_column(DATE, nullable=False, default=date(2021, 1, 1))
 
 
+    total_ads_watched: Mapped[int] = mapped_column(default=0)
+    total_ads_watched_this_push: Mapped[int] = mapped_column(default=0)
+
+
     @property
     def full_name(self) -> str:
         return f"{self.first_name} {self.last_name}" if self.last_name else self.first_name
@@ -57,3 +61,15 @@ class User(Base):
     @property
     def ref_link(self) -> str:
         return f"https://t.me/the_lucky_7_bot/main?startapp={encode_payload(str(self.id))}"
+
+    @property
+    def push_waiting_time(self) -> int:
+        return (2 ** (3 - min(4, self.invited_users))) * 60
+
+    @property
+    def ads_reduce_time(self) -> int:
+
+        if self.total_ads_watched_this_push > 5:
+            return 0
+
+        return self.push_waiting_time // (self.total_ads_watched_this_push * 2 + 10)
