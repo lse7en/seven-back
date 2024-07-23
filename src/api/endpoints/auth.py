@@ -54,18 +54,19 @@ async def upsert_user(
 ) -> User:
 
     async with session.begin():
-        user = await user_repository.get_user_or_none_by_id(data.user.id)
+        user = await user_repository.get_user_for_update(data.user.id)
         if user is not None:
             #if user.last_check is older than 5 minutes, update the user data
+            joined = user.joined 
             if (datetime.now(UTC).timestamp() - user.last_check_in.timestamp()) > 6000:
                 print("run last check join")
                 joined = await is_member_of(request.app.state.stat_bot, COMMUNITY_TID, user.id)
-                last_check_in = datetime.now(UTC)
 
-                query = update(User).where(User.id == user.id).values(joined=joined, last_check_in=last_check_in).returning(User)
-                res = await session.execute(query)
-                return res.scalar_one()
-            return user
+            last_check_in = data.auth_date.astimezone(UTC)
+
+            query = update(User).where(User.id == user.id).values(joined=joined, last_check_in=last_check_in).returning(User)
+            res = await session.execute(query)
+            return res.scalar_one()
 
 
     try:

@@ -39,6 +39,7 @@ async def lpush(
         await system_log_repository.add_log(SystemLog(user=user, command=f"🔴 push 🔴: {user.points} + {r} -> {user.points + r}"))
         user.push_points += r
         user.points += r
+        user.push_count += 1
         user.last_lucky_push = datetime.now(UTC)
         await user_repository.add_user(user)
 

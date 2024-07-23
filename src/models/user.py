@@ -23,6 +23,7 @@ class User(Base):
     last_lucky_push: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
     push_points: Mapped[int] = mapped_column(default=0)
     points: Mapped[int] = mapped_column(default=1000, index=True)
+    push_count: Mapped[int] = mapped_column(default=0)
 
     language: Mapped[str] = mapped_column(default="en")
     first_name: Mapped[str] = mapped_column(nullable=False)
