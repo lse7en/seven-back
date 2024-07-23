@@ -72,4 +72,4 @@ class User(Base):
         if self.total_ads_watched_this_push > 5:
             return 0
 
-        return self.push_waiting_time // (self.total_ads_watched_this_push * 2 + 10)
+        return int(self.push_waiting_time // (self.total_ads_watched_this_push * 2 + 10))
