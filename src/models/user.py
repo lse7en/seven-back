@@ -43,6 +43,9 @@ class User(Base):
     total_ads_watched: Mapped[int] = mapped_column(default=0)
     total_ads_watched_this_push: Mapped[int] = mapped_column(default=0)
 
+    last_ads_watch_for_points: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.min)
+    total_ads_watched_for_points: Mapped[int] = mapped_column(default=0)
+
 
     @property
     def full_name(self) -> str:

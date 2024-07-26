@@ -40,4 +40,34 @@ async def reduce_time(
         await user_repository.add_user(user)
 
         return user
-    
+
+
+@router.post("/point", response_model=User)
+async def ad_point(
+    user_id: CurrentUserId,
+    session: DBSession,
+    user_repository: Annotated[UserRepository, Depends()],
+    system_log_repository: Annotated[SystemLogRepository, Depends()]
+):
+
+
+    async with session.begin():   
+        user = await user_repository.get_user_for_update(user_id)
+
+
+        threshold = 4
+        th = user.last_ads_watch_for_points + timedelta(hours=threshold)
+        
+        if datetime.now(UTC) < th:
+            return user
+        
+
+        user.last_ads_watch_for_points = datetime.now(UTC)
+        user.points += 250
+        user.total_ads_watched_for_points += 1
+
+        await system_log_repository.add_log(SystemLog(user=user, command=f"⚫ ads ⚫: {user.total_ads_watched_for_points}"))
+
+        await user_repository.add_user(user)
+
+        return user
