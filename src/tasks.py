@@ -36,7 +36,7 @@ async def stat_task(stat_bot: Bot, session_factory: async_sessionmaker[AsyncSess
                     print(e)
 
             if all_logs:
-                text = "\n\n".join([f"{i+1}. {log.created_at.time()}\nc: {log.command}\n {log.user.info}" for i, log in enumerate(all_logs)])
+                text = "\n\n".join([f"{log.id}. {log.created_at.time()}\nc: {log.command}\n {log.user.info}" for i, log in enumerate(all_logs)])
                 try:
                     await stat_bot.send_message(chat_id=STAT_CHAT_ID, message_thread_id=USER_LOG_THREAD_ID, text=text)
                 except Exception as e:
