@@ -38,6 +38,7 @@ class User(UserBase):
     last_secret_code_date: date
     ads_reduce_time: int
     push_waiting_time: int
+    next_ad_for_points: datetime
 
 
 class Rank(BaseModel):

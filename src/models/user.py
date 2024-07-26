@@ -7,7 +7,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey
 from src.core.model import Base
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from aiogram.utils.payload import  encode_payload
 
 class User(Base):
@@ -76,3 +76,8 @@ class User(Base):
             return 0
 
         return int(self.push_waiting_time // (self.total_ads_watched_this_push * 2 + 10))
+    
+
+    @property
+    def next_ad_for_points(self) -> datetime:
+        return self.last_ads_watch_for_points + timedelta(hours=4)
