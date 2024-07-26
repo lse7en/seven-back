@@ -55,10 +55,8 @@ async def ad_point(
         user = await user_repository.get_user_for_update(user_id)
 
 
-        threshold = 4
-        th = user.last_ads_watch_for_points + timedelta(hours=threshold)
-        
-        if datetime.now(UTC) < th:
+
+        if datetime.now(UTC) < user.next_ad_for_points:
             return user
         
 
