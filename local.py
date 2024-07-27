@@ -12,7 +12,7 @@ from src.bot.validators import is_member_of
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from src.bot.callbacks import community_callback
 from aiogram.utils import formatting
-from src.models.lottery import Ticket
+from src.models.lottery import Ticket, Participant
 from src.bot.validators import is_member_of
 from src.bot.constants import COMMUNITY_TID
 from src.bot.text import get_text
@@ -416,6 +416,12 @@ async def make_myself_winner(
 
         for ticket in tickets:
             ticket.win = 300
+        
+        session.add_all(tickets)
+
+        p = (await session.execute(select(Participant).where(Participant.user_id == user_id, Participant.lottery_id  == lottery_id))).scalar_one()
+        p.wins = 120
+        session.add(p)
 
 
 async def main():
@@ -436,7 +442,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    # await make_myself_winner(stat_bot, session_factory)
+    await make_myself_winner(stat_bot, session_factory)
 
     await engine.dispose()
     await bot.session.close()
