@@ -61,7 +61,7 @@ async def ad_point(
         
 
         user.last_ads_watch_for_points = datetime.now(UTC)
-        user.points += 250
+        user.points += 100
         user.total_ads_watched_for_points += 1
 
         await system_log_repository.add_log(SystemLog(user=user, command=f"⚫ ads ⚫: {user.total_ads_watched_for_points}"))

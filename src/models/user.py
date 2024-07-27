@@ -80,4 +80,4 @@ class User(Base):
 
     @property
     def next_ad_for_points(self) -> datetime:
-        return self.last_ads_watch_for_points + timedelta(hours=2)
+        return self.last_ads_watch_for_points + timedelta(minutes=10)

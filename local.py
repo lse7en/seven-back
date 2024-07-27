@@ -373,8 +373,8 @@ async def get_lottery_winners(
 ) -> None:
     session = session_factory()
 
-    lottery_id = 1
-    wining_draw = "22441252"
+    lottery_id = 2
+    wining_draw = "11566362"
 
     async with session.begin():
         tickets = await session.execute(
@@ -383,17 +383,26 @@ async def get_lottery_winners(
 
         tickets = tickets.scalars().all()
 
-    for ticket in tickets:
-        ts = TicketSchema.model_validate(ticket, from_attributes=True)
+        for ticket in tickets:
+            ts = TicketSchema.model_validate(ticket, from_attributes=True)
 
-        if ts.last_part == "52":
-            mt = 1
+            if ts.last_part == "62":
+                mt = 1
 
-            for i in range(6):
-                if ts.ticket[i] == wining_draw[i]:
-                    mt += 1
+                for i in range(6):
+                    if ts.ticket[i] == wining_draw[i]:
+                        mt += 1
+                if mt > 3:
+                    print(ts.ticket, mt, ticket.user_id)
 
-            print(ts.ticket, mt, ticket.user_id)
+
+    # u_ids = [1923991700, 902027729, 5480630871, 423843084]
+    # async with session.begin():
+    #     ps = (await session.execute(select(Participant).where(Participant.lottery_id == 2, Participant.user_id.in_(u_ids)))).scalars().all()
+    #     for p in ps:
+    #         p.win = 2000
+    #         session.add(p)
+    #         print(p.user_id, p.win)
 
 
 async def make_myself_winner(
@@ -442,7 +451,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await make_myself_winner(stat_bot, session_factory)
+    await get_lottery_winners(stat_bot, session_factory)
 
     await engine.dispose()
     await bot.session.close()
