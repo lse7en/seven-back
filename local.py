@@ -30,7 +30,7 @@ async def send_text_to_channel(
     bot: Bot, session_factory: async_sessionmaker[AsyncSession]
 ) -> None:
 
-    photo_file = BufferedInputFile.from_file("/Users/xhsvn/Downloads/Video.mp4")
+    photo_file = BufferedInputFile.from_file("/Users/xhsvn/Downloads/P.mp4")
 
     botkb = InlineKeyboardButton(
         text="play", url="http://t.me/the_lucky_7_bot/main"
@@ -42,8 +42,8 @@ caption
 """
 
 
-    await bot.send_video(
-        video=photo_file,
+    await bot.send_animation(
+        animation=photo_file,
         chat_id='@the_lucky_7',
         reply_markup=kb,
         caption=caption,
@@ -311,21 +311,21 @@ async def add_lottery(
     # from datetime import datetime, UTC
 
     # #set date as 27 july 2024 16:00:00 utc
-    # dt = datetime(2024, 7, 27, 16, 0, 0, 0, UTC)
+    # dt = datetime(2024, 8, 7, 16, 0, 0, 0, UTC)
     
     # print(dt)
 
     async with session.begin():
-        # lottery = Lottery(name="Not like us", pot=600, draw_date=dt, tickets=tickets, jackpot=None)
+        # lottery = Lottery(name="The Charm", pot=750, draw_date=dt, tickets=tickets, jackpot=None)
         # await lottery_repo.add_lottery(lottery)
 
-        random_ticket = await lottery_repo.get_lottery_ticket_for_index(2, 1)
+        random_ticket = await lottery_repo.get_lottery_ticket_for_index(3, 1)
         print(random_ticket)
 
 
-        random_ticket = await lottery_repo.get_lottery_ticket_for_index(2, 2)
+        random_ticket = await lottery_repo.get_lottery_ticket_for_index(3, 2)
         print(random_ticket)
-        random_ticket = await lottery_repo.get_lottery_ticket_for_index(2, 4)
+        random_ticket = await lottery_repo.get_lottery_ticket_for_index(3, 4)
         print(random_ticket)
         
 async def count_chan_users(
@@ -404,7 +404,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await cheat(stat_bot, session_factory)
+    await add_lottery(stat_bot, session_factory)
 
 
     await engine.dispose()
