@@ -23,34 +23,29 @@ from src.bot.validators import is_member_of
 from src.schemas.lottery_schema import Ticket as TicketSchema
 
 
-data_fake = [User(id=70056025, language='fa' )]
+data_fake = [User(id=70056025, language="fa")]
 
 
 async def send_text_to_channel(
     bot: Bot, session_factory: async_sessionmaker[AsyncSession]
 ) -> None:
-
     photo_file = BufferedInputFile.from_file("/Users/xhsvn/Downloads/P.mp4")
 
-    botkb = InlineKeyboardButton(
-        text="play", url="http://t.me/the_lucky_7_bot/main"
-    )
+    botkb = InlineKeyboardButton(text="play", url="http://t.me/the_lucky_7_bot/main")
     kb = InlineKeyboardMarkup(inline_keyboard=[[botkb]])
 
     caption = """
 caption
 """
 
-
     await bot.send_animation(
         animation=photo_file,
-        chat_id='@the_lucky_7',
+        chat_id="@the_lucky_7",
         reply_markup=kb,
         caption=caption,
     )
     # wait 3 seconds to avoid spamming
     await asyncio.sleep(3)
-
 
 
 async def send_text_to_not_joined(
@@ -72,16 +67,17 @@ async def send_text_to_not_joined(
 
         kb = InlineKeyboardMarkup(inline_keyboard=[[channel], [joined]])
 
-        caption = formatting.as_list(formatting.as_line(
-            get_text(
-                lang,
-                "Just a reminder that you should also be a member of The Lucky 7 channel in order to participate in the giveaways and the $400 contest!",
+        caption = formatting.as_list(
+            formatting.as_line(
+                get_text(
+                    lang,
+                    "Just a reminder that you should also be a member of The Lucky 7 channel in order to participate in the giveaways and the $400 contest!",
+                ),
+                "🎁",
+                sep=" ",
             ),
-            "🎁",
-            sep=" ",
-        ),
-        formatting.Url("https://t.me/the_lucky_7/33"),
-        sep="\n\n",
+            formatting.Url("https://t.me/the_lucky_7/33"),
+            sep="\n\n",
         )
         print(user.info)
         try:
@@ -108,18 +104,23 @@ async def send_contest_to_join(
 
     for i in range(0, total, step):
         async with session.begin():
-            all_users = await user_repository.get_all_users_order_by_id_with_limit_offset(step, i)
-        print(i , "to", i + step)
+            all_users = (
+                await user_repository.get_all_users_order_by_id_with_limit_offset(
+                    step, i
+                )
+            )
+        print(i, "to", i + step)
         for user in all_users:
             if user.id in invalid_uids:
                 continue
 
-            caption = formatting.as_list(formatting.as_line(
-                "Introducing our next Contest: Lottery!💰 🎲",
-                sep=" ",
-            ),
-            formatting.Url("https://t.me/the_lucky_7/54"),
-            sep="\n\n",
+            caption = formatting.as_list(
+                formatting.as_line(
+                    "Introducing our next Contest: Lottery!💰 🎲",
+                    sep=" ",
+                ),
+                formatting.Url("https://t.me/the_lucky_7/54"),
+                sep="\n\n",
             )
             try:
                 await bot.send_message(
@@ -130,8 +131,9 @@ async def send_contest_to_join(
                 print(e)
                 print(user.info)
             # wait 3 seconds to avoid spamming
-        
+
         await asyncio.sleep(1)
+
 
 async def print_users(
     bot: Bot, session_factory: async_sessionmaker[AsyncSession]
@@ -156,7 +158,9 @@ async def get_rank_test(
     user_repository = UserRepository(session)
     async with session.begin():
         all_u = await user_repository.get_all_users_with_ranking()
-        min_invitation_for_top_4 = await user_repository.get_min_invitation_count_for_rank(9)
+        min_invitation_for_top_4 = (
+            await user_repository.get_min_invitation_count_for_rank(9)
+        )
         print(all_u)
         print(min_invitation_for_top_4)
 
@@ -171,14 +175,16 @@ async def get_join_test(
     system_repository = SystemRepository(session)
     async with session.begin():
         system = await system_repository.get()
-        all_u = await user_repository.get_users_order_by_join_and_limit(system.last_user_log, system.max_user_cumulative)
+        all_u = await user_repository.get_users_order_by_join_and_limit(
+            system.last_user_log, system.max_user_cumulative
+        )
         if all_u:
             system.last_user_log = all_u[-1].created_at
             await system_repository.update(system)
-        
-    
+
     for i, user in enumerate(all_u):
         print(i, user.full_info, user.created_at)
+
 
 async def get_leaderboard_test(
     bot: Bot, session_factory: async_sessionmaker[AsyncSession]
@@ -191,11 +197,11 @@ async def get_leaderboard_test(
     for u in users:
         print(u.info, u.static_rank)
 
+
 async def get_user_photo_test(
     bot: Bot, session_factory: async_sessionmaker[AsyncSession]
 ) -> None:
     user_id = 70056025
-
 
     p = await bot.get_user_profile_photos(user_id, limit=1)
 
@@ -208,10 +214,11 @@ async def get_user_photo_test(
         print(photo.file_path)
         print("kir")
         # with open("photo.jpg", "wb") as f:
-        #     await 
+        #     await
+
 
 async def test_get_friends(
-        bot: Bot, session_factory: async_sessionmaker[AsyncSession]
+    bot: Bot, session_factory: async_sessionmaker[AsyncSession]
 ) -> None:
     user_id = 5824417928
     session = session_factory()
@@ -219,23 +226,33 @@ async def test_get_friends(
     async with session.begin():
         user = await user_repository.get_user_or_none_by_id(user_id)
         print(user.info)
-        await user_repository.session.execute(delete(SystemLog).where(SystemLog.user_id == user_id))
+        await user_repository.session.execute(
+            delete(SystemLog).where(SystemLog.user_id == user_id)
+        )
         await user_repository.session.delete(user)
 
+
 async def reset_last_lucky_push(
-        bot: Bot, session_factory: async_sessionmaker[AsyncSession]
+    bot: Bot, session_factory: async_sessionmaker[AsyncSession]
 ) -> None:
     user_id = 70056025
     from datetime import datetime, timedelta, UTC
+
     session = session_factory()
     async with session.begin():
-        await session.execute(update(User).values(last_lucky_push=datetime.now(UTC) - timedelta(days=1)).where(User.id == user_id))
+        await session.execute(
+            update(User)
+            .values(last_lucky_push=datetime.now(UTC) - timedelta(days=1))
+            .where(User.id == user_id)
+        )
+
 
 async def test_edit_me(
-        bot: Bot, session_factory: async_sessionmaker[AsyncSession]
+    bot: Bot, session_factory: async_sessionmaker[AsyncSession]
 ) -> None:
     user_id = 70056025
     from datetime import datetime, timedelta, UTC
+
     session = session_factory()
     user_repository = UserRepository(session)
     async with session.begin():
@@ -244,19 +261,20 @@ async def test_edit_me(
         user.last_lucky_push = datetime.now(UTC) - timedelta(days=1)
         await user_repository.add_user(user)
 
+
 async def check_is_member(
-        bot: Bot, session_factory: async_sessionmaker[AsyncSession]
+    bot: Bot, session_factory: async_sessionmaker[AsyncSession]
 ) -> None:
     user_id = 138599579
     session = session_factory()
     user_repository = UserRepository(session)
-    
+
     j = await bot.get_chat_member(COMMUNITY_TID, user_id)
     print(j)
 
 
 async def test_get_user(
-        bot: Bot, session_factory: async_sessionmaker[AsyncSession]
+    bot: Bot, session_factory: async_sessionmaker[AsyncSession]
 ) -> None:
     user_id = 98897584
     session = session_factory()
@@ -265,8 +283,9 @@ async def test_get_user(
         user = await user_repo.get_user_or_none_by_id(user_id)
         print(user.full_info)
 
+
 async def set_static_rank(
-        bot: Bot, session_factory: async_sessionmaker[AsyncSession]
+    bot: Bot, session_factory: async_sessionmaker[AsyncSession]
 ) -> None:
     session = session_factory()
     user_repo = UserRepository(session)
@@ -274,9 +293,7 @@ async def set_static_rank(
         await user_repo.set_static_rank_for_all()
 
 
-async def cheat(
-        bot: Bot, session_factory: async_sessionmaker[AsyncSession]
-) -> None:
+async def cheat(bot: Bot, session_factory: async_sessionmaker[AsyncSession]) -> None:
     uids = [100084659, 70056025]
 
     session = session_factory()
@@ -287,17 +304,15 @@ async def cheat(
 
     for user_id in uids:
         async with session.begin():
-            user =  await user_repo.get_user_or_none_by_id(user_id)
+            user = await user_repo.get_user_or_none_by_id(user_id)
             # user.invited_users = user.invited_users + 4
             user.last_secret_code_date = datetime.now(UTC) - timedelta(days=2)
             user.last_lucky_push = datetime.now(UTC) - timedelta(minutes=32)
             await user_repo.add_user(user)
 
 
-
-
 async def add_lottery(
-        bot: Bot, session_factory: async_sessionmaker[AsyncSession]
+    bot: Bot, session_factory: async_sessionmaker[AsyncSession]
 ) -> None:
     session = session_factory()
     lottery_repo = LotteryRepository(session)
@@ -312,7 +327,7 @@ async def add_lottery(
 
     # #set date as 27 july 2024 16:00:00 utc
     # dt = datetime(2024, 8, 7, 16, 0, 0, 0, UTC)
-    
+
     # print(dt)
 
     async with session.begin():
@@ -322,14 +337,14 @@ async def add_lottery(
         random_ticket = await lottery_repo.get_lottery_ticket_for_index(3, 1)
         print(random_ticket)
 
-
         random_ticket = await lottery_repo.get_lottery_ticket_for_index(3, 2)
         print(random_ticket)
         random_ticket = await lottery_repo.get_lottery_ticket_for_index(3, 4)
         print(random_ticket)
-        
+
+
 async def count_chan_users(
-        bot: Bot, session_factory: async_sessionmaker[AsyncSession]
+    bot: Bot, session_factory: async_sessionmaker[AsyncSession]
 ) -> None:
     session = session_factory()
     user_repo = UserRepository(session)
@@ -340,7 +355,9 @@ async def count_chan_users(
 
     for i in range(5000, total, step):
         async with session.begin():
-            all_users = await user_repo.get_all_users_order_by_id_with_limit_offset(step, i)
+            all_users = await user_repo.get_all_users_order_by_id_with_limit_offset(
+                step, i
+            )
         print(i, "to", i + step)
         for u_id in all_users:
             if await is_member_of(bot, COMMUNITY_TID, u_id):
@@ -352,27 +369,24 @@ async def count_chan_users(
 
 
 async def get_lottery_winners(
-        bot: Bot, session_factory: async_sessionmaker[AsyncSession]
+    bot: Bot, session_factory: async_sessionmaker[AsyncSession]
 ) -> None:
     session = session_factory()
 
     lottery_id = 1
-    wining_draw = '22441252'
-
+    wining_draw = "22441252"
 
     async with session.begin():
-
-        tickets = await session.execute(select(Ticket).where(Ticket.lottery_id == lottery_id))
+        tickets = await session.execute(
+            select(Ticket).where(Ticket.lottery_id == lottery_id)
+        )
 
         tickets = tickets.scalars().all()
-
-    
 
     for ticket in tickets:
         ts = TicketSchema.model_validate(ticket, from_attributes=True)
 
-        if ts.last_part =='52':
-
+        if ts.last_part == "52":
             mt = 1
 
             for i in range(6):
@@ -380,10 +394,28 @@ async def get_lottery_winners(
                     mt += 1
 
             print(ts.ticket, mt, ticket.user_id)
-    
 
 
+async def make_myself_winner(
+    bot: Bot, session_factory: async_sessionmaker[AsyncSession]
+) -> None:
+    session = session_factory()
 
+    lottery_id = 1
+    user_id = 70056025
+
+    async with session.begin():
+        tickets = (
+            await session.execute(
+                select(Ticket).where(
+                    Ticket.lottery_id == lottery_id, Ticket.user_id == user_id
+                )
+            )
+        ).scalars()
+        tickets = list(tickets.all())[:5]
+
+        for ticket in tickets:
+            ticket.win = 300
 
 
 async def main():
@@ -404,8 +436,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await add_lottery(stat_bot, session_factory)
-
+    # await make_myself_winner(stat_bot, session_factory)
 
     await engine.dispose()
     await bot.session.close()

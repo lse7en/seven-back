@@ -25,6 +25,7 @@ class Ticket(BaseModel):
     """
     id: int
     ticket_number: int
+    win: int
 
     @property
     def ticket(self) -> str:
@@ -84,6 +85,7 @@ class Participant(BaseModel):
     lottery: Lottery
     activate_tickets_count: int
     tickets: list[Ticket] = []
+    wins: int
 
 
 
