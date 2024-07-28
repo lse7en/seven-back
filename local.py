@@ -307,7 +307,7 @@ async def cheat(bot: Bot, session_factory: async_sessionmaker[AsyncSession]) -> 
             user = await user_repo.get_user_or_none_by_id(user_id)
             # user.invited_users = user.invited_users + 4
             user.last_secret_code_date = datetime.now(UTC) - timedelta(days=2)
-            user.last_lucky_push = datetime.now(UTC) - timedelta(minutes=32)
+            user.last_ads_watch_for_points = datetime.now(UTC) - timedelta(minutes=32)
             await user_repo.add_user(user)
 
 
@@ -451,7 +451,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await get_lottery_winners(stat_bot, session_factory)
+    await cheat(stat_bot, session_factory)
 
     await engine.dispose()
     await bot.session.close()
