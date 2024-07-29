@@ -34,6 +34,7 @@ async def reduce_time(
 
         user.total_ads_watched_this_push += 1
         user.total_ads_watched += 1
+        user.total_ads_watched_for_points += 1
 
         await system_log_repository.add_log(SystemLog(user=user, command=f"🟡 ads 🟡: {user.total_ads_watched_this_push}, {rt}"))
 
