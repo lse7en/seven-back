@@ -56,7 +56,7 @@ async def ad_point(
 
 
 
-        if datetime.now(UTC) < user.next_ad_for_points.astimezone(UTC):
+        if datetime.now(UTC).timestamp() < user.next_ad_for_points.timestamp():
             return user
         
 

@@ -10,6 +10,10 @@ from src.core.model import Base
 from datetime import datetime, date, timedelta
 from aiogram.utils.payload import  encode_payload
 
+
+def one_month_age():
+    return datetime.utcnow() - timedelta(days=365)
+
 class User(Base):
     __tablename__ = "users"
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
@@ -43,7 +47,7 @@ class User(Base):
     total_ads_watched: Mapped[int] = mapped_column(default=0)
     total_ads_watched_this_push: Mapped[int] = mapped_column(default=0)
 
-    last_ads_watch_for_points: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.min)
+    last_ads_watch_for_points: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=one_month_age)
     total_ads_watched_for_points: Mapped[int] = mapped_column(default=0)
 
 
