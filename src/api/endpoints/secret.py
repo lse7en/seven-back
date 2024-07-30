@@ -25,6 +25,7 @@ SECRETS = {
     "2024-07-27": "the charm",
     "2024-07-28": "august 7",
     "2024-07-29": "whatever",
+    "2024-07-30": "whatever",
     
 }
 
