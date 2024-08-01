@@ -27,7 +27,7 @@ SECRETS = {
     "2024-07-29": "whatever",
     "2024-07-30": "whatever",
     "2024-07-31": "boost",
-    
+    "2024-08-01": "premium",
 }
 
 #body
