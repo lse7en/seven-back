@@ -70,3 +70,27 @@ async def ad_point(
         await user_repository.add_user(user)
 
         return user
+    
+
+@router.post("/double", response_model=User)
+async def double_point(
+    user_id: CurrentUserId,
+    session: DBSession,
+    user_repository: Annotated[UserRepository, Depends()],
+    system_log_repository: Annotated[SystemLogRepository, Depends()]
+):
+
+
+    async with session.begin():   
+        user = await user_repository.get_user_for_update(user_id)
+        
+
+        user.last_ads_watch_for_points = datetime.now(UTC)
+        user.points += 250
+        user.total_ads_watched_for_points += 1
+
+        await system_log_repository.add_log(SystemLog(user=user, command=f"🟠 ads 🟠: {user.total_ads_watched_for_points}"))
+
+        await user_repository.add_user(user)
+
+        return user
