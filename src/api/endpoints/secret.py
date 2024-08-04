@@ -30,6 +30,7 @@ SECRETS = {
     "2024-08-01": "premium",
     "2024-08-02": "premium",
     "2024-08-03": "unchain",
+    "2024-08-04": "surprise",
 }
 
 #body
