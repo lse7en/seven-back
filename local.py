@@ -316,30 +316,29 @@ async def add_lottery(
 ) -> None:
     session = session_factory()
     lottery_repo = LotteryRepository(session)
-    # import random
-    # tickets = random.sample(range(6**8), 6**8)
+    import random
+    # tickets = random.sample(range(6**7), 6**7)
 
     # print(len(tickets))
-    # print(6**8)
+    # print(6**7)
     # print(tickets[:10])
 
     # from datetime import datetime, UTC
 
-    # #set date as 27 july 2024 16:00:00 utc
-    # dt = datetime(2024, 8, 7, 16, 0, 0, 0, UTC)
-
+    # dt = datetime(2024, 8, 17, 16, 0, 0, 0, UTC)
+    lottery_id = 4
     # print(dt)
-
+    [267309, 22018, 120916, 22040, 213006, 16280, 179304, 242759, 41980, 278372]
     async with session.begin():
         # lottery = Lottery(name="The Charm", pot=750, draw_date=dt, tickets=tickets, jackpot=None)
         # await lottery_repo.add_lottery(lottery)
 
-        random_ticket = await lottery_repo.get_lottery_ticket_for_index(3, 1)
+        random_ticket = await lottery_repo.get_lottery_ticket_for_index(lottery_id, 1)
         print(random_ticket)
 
-        random_ticket = await lottery_repo.get_lottery_ticket_for_index(3, 2)
+        random_ticket = await lottery_repo.get_lottery_ticket_for_index(lottery_id, 2)
         print(random_ticket)
-        random_ticket = await lottery_repo.get_lottery_ticket_for_index(3, 4)
+        random_ticket = await lottery_repo.get_lottery_ticket_for_index(lottery_id, 4)
         print(random_ticket)
 
 
@@ -386,13 +385,13 @@ async def get_lottery_winners(
         for ticket in tickets:
             ts = TicketSchema.model_validate(ticket, from_attributes=True)
 
-            if ts.last_part == wining_draw[7:]:
+            if ts.ticket[6] == wining_draw[6]:
                 mt = 1
 
                 for i in range(7):
                     if ts.ticket[i] == wining_draw[i]:
                         mt += 1
-                if mt > 2:
+                if mt >= 5:
                     print(ts.ticket, mt, ticket.user_id)
 
 
@@ -451,7 +450,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await get_lottery_winners(stat_bot, session_factory)
+    await add_lottery(stat_bot, session_factory)
 
     await engine.dispose()
     await bot.session.close()

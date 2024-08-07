@@ -6,14 +6,14 @@ from datetime import datetime, date
 from src.schemas.user_schemas import User
 from pydantic import computed_field
 
-def decimal_to_base6(decimal_num):
+def decimal_to_base6(decimal_num, length=8):
     base6 = ""
     num = decimal_num 
     while num > 0:
         base6 = str(num % 6 + 1) + base6
         num //= 6
     # pad with 1s
-    base6 = "1" * (8 - len(base6)) + base6
+    base6 = "1" * (length - len(base6)) + base6
     return base6
 
 
@@ -26,10 +26,11 @@ class Ticket(BaseModel):
     id: int
     ticket_number: int
     win: int
+    lottery_id: int
 
     @property
     def ticket(self) -> str:
-        return decimal_to_base6(self.ticket_number)
+        return decimal_to_base6(self.ticket_number, 8 if self.lottery_id < 4 else 7)
 
     @computed_field
     @property
@@ -54,7 +55,7 @@ class Lottery(BaseModel):
     @property
     def ticket(self) -> str | None:
         if self.jackpot:
-            return decimal_to_base6(self.jackpot)
+            return decimal_to_base6(self.jackpot, 8 if self.id < 4 else 7)
 
     @computed_field
     @property
