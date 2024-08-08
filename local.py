@@ -98,38 +98,38 @@ async def send_contest_to_join(
     session = session_factory()
     user_repository = UserRepository(session)
 
-    total = 7300
-    step = 15
+    total = 21300
+    step = 20
     invalid_uids = {93890907, 25621237}
+    error_count = 0
 
-    for i in range(0, total, step):
+    for i in range(680, total, step):
         async with session.begin():
             all_users = (
                 await user_repository.get_all_users_order_by_id_with_limit_offset(
                     step, i
                 )
             )
-        print(i, "to", i + step)
-        for user in all_users:
-            if user.id in invalid_uids:
+        print(i, "to", i + step, "error_count", error_count)
+        for u_id in all_users:
+            if u_id in invalid_uids:
                 continue
 
             caption = formatting.as_list(
                 formatting.as_line(
-                    "Introducing our next Contest: Lottery!💰 🎲",
+                    "💰 $1000 Lottery! And 🎲 6 time higher chance of winning ...",
                     sep=" ",
                 ),
-                formatting.Url("https://t.me/the_lucky_7/54"),
+                formatting.Url("https://t.me/the_lucky_7/147"),
                 sep="\n\n",
             )
             try:
                 await bot.send_message(
-                    chat_id=user.id,
+                    chat_id=u_id,
                     text=caption.as_html(),
                 )
             except Exception as e:
-                print(e)
-                print(user.info)
+                error_count += 1
             # wait 3 seconds to avoid spamming
 
         await asyncio.sleep(1)
@@ -450,7 +450,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await add_lottery(stat_bot, session_factory)
+    await send_contest_to_join(bot, session_factory)
 
     await engine.dispose()
     await bot.session.close()

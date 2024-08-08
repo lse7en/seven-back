@@ -223,7 +223,7 @@ class UserRepository:
         :return: list of user instances.
         """
         raw_users = await self.session.execute(
-            select(User.id).order_by(User.id).limit(limit).offset(offset)
+            select(User.id).order_by(User.id.asc()).limit(limit).offset(offset)
         )
         return raw_users.scalars().all()
     
