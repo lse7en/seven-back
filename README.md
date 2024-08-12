@@ -2,9 +2,11 @@
 
 ## env variables
 
+copy .env.example to .env.rajab
+
 
 ## migrations
- source .env.local; alembic upgrade head 
+ source .env.rajab; alembic upgrade head 
 
 
 ## vscode
@@ -27,7 +29,7 @@ launch.json content
                 "4000"
             ],
             "justMyCode": false, // Set justMyCode to false
-            "envFile": "${workspaceFolder}/.env.local"
+            "envFile": "${workspaceFolder}/.env.rajab"
         },
     ]
 }

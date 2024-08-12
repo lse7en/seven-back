@@ -4,7 +4,7 @@
 ### dotenv ###
 .env
 .env.server
-.env.local
+.env.ehsan
 
 ### Linux ###
 *~
