@@ -10,7 +10,9 @@ from src.core.database import setup_db
 from src.bot.bot_app import start_application, end_application
 from src.bot.stat_app import start_application as start_stat_application, end_application as end_stat_application
 from fastapi.middleware.cors import CORSMiddleware
+from src.settings import get_settings
 
+settings = get_settings()
 
 
 
@@ -21,21 +23,24 @@ async def lifespan(_application: FastAPI) -> AsyncGenerator:
     _application.state.db_engine = engine
     _application.state.session_factory = session_factory
 
-    stat_dp, stat_bot = await start_stat_application(session_factory=session_factory)
-    dp, bot = await start_application(session_factory=session_factory, stat_bot=stat_bot)
+    if settings.run_tg_apps:
+        print("starting tg apps")
+        stat_dp, stat_bot = await start_stat_application(session_factory=session_factory)
+        dp, bot = await start_application(session_factory=session_factory, stat_bot=stat_bot)
 
-    _application.state.dp = dp
-    _application.state.bot = bot
-    _application.state.stat_dp = stat_dp
-    _application.state.stat_bot = stat_bot
+        _application.state.dp = dp
+        _application.state.bot = bot
+        _application.state.stat_dp = stat_dp
+        _application.state.stat_bot = stat_bot
 
-    asyncio.create_task(stat_task(stat_bot, session_factory))
+        asyncio.create_task(stat_task(stat_bot, session_factory))
     yield
     
 
     # Shutdown
-    await end_application(bot)
-    await end_stat_application(stat_bot)
+    if settings.run_tg_apps:
+        await end_application(bot)
+        await end_stat_application(stat_bot)
     await engine.dispose()
 
 

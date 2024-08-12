@@ -44,6 +44,7 @@ class Settings(BaseSettings):
     postgres_password: str
     postgres_connection_name: str | None = None
     postgres_echo: bool = False
+    run_tg_apps: bool = False
 
 
     # tg bot variables
