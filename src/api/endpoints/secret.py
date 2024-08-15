@@ -41,6 +41,7 @@ SECRETS = {
     "2024-08-12": "party",
     "2024-08-13": "sleeping",
     "2024-08-14": "sleeping",
+    "2024-08-15": "jackpot",
 }
 
 #body
