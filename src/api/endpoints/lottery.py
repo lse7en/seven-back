@@ -88,7 +88,7 @@ async def activate(
         if not participant:
             raise HTTPException(status_code=404, detail="Participant not found")
 
-        if participant.activate_tickets_count >= participant.user.invited_users + 1:
+        if participant.inactivate_tickets_count <= 0:
             return await participant_repository.get_participant(user_id, lottery_id)
         
         if participant.user.points < 2000:

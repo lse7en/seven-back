@@ -39,6 +39,11 @@ class Participant(Base):
 
     wins: Mapped[int] = mapped_column(Integer, default=0)
 
+
+    @property
+    def inactivate_tickets_count(self) -> int:
+        return 1 + self.user.invited_users - self.activate_tickets_count
+
     __table_args__ = (UniqueConstraint('lottery_id', 'user_id', name='participants_lottery_user_unx'),)
 
 

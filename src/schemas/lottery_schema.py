@@ -85,6 +85,7 @@ class Participant(BaseModel):
     user: User
     lottery: Lottery
     activate_tickets_count: int
+    inactivate_tickets_count: int
     tickets: list[Ticket] = []
     wins: int
 
