@@ -372,8 +372,8 @@ async def get_lottery_winners(
 ) -> None:
     session = session_factory()
 
-    lottery_id = 3
-    wining_draw = "43111433"
+    lottery_id = 4
+    wining_draw = "4622533"
 
     async with session.begin():
         tickets = await session.execute(
@@ -382,16 +382,17 @@ async def get_lottery_winners(
 
         tickets = tickets.scalars().all()
 
+        print(len(tickets))
+
         for ticket in tickets:
             ts = TicketSchema.model_validate(ticket, from_attributes=True)
 
             if ts.ticket[6] == wining_draw[6]:
-                mt = 1
-
+                mt = 0
                 for i in range(7):
                     if ts.ticket[i] == wining_draw[i]:
                         mt += 1
-                if mt >= 5:
+                if mt >= 4:
                     print(ts.ticket, mt, ticket.user_id)
 
 
@@ -450,7 +451,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await send_contest_to_join(bot, session_factory)
+    await get_lottery_winners(bot, session_factory)
 
     await engine.dispose()
     await bot.session.close()
