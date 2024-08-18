@@ -83,5 +83,10 @@ class User(Base):
     
 
     @property
+    def next_push_time(self) -> datetime:
+        return self.last_lucky_push + timedelta(minutes=self.push_waiting_time)
+    
+
+    @property
     def next_ad_for_points(self) -> datetime:
         return self.last_ads_watch_for_points + timedelta(minutes=10)

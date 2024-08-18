@@ -39,6 +39,7 @@ class User(UserBase):
     ads_reduce_time: int
     push_waiting_time: int
     next_ad_for_points: datetime
+    next_push_time: datetime
 
 
 class Rank(BaseModel):

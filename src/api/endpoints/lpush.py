@@ -26,11 +26,8 @@ async def lpush(
         user = await user_repository.get_user_for_update(user_id)
 
 
-        next_push = user.last_lucky_push + timedelta(minutes=user.push_waiting_time)
 
-        nn = datetime.now(UTC)
-
-        if nn < next_push:
+        if datetime.now(UTC) < user.next_push_time:
             return user
     
     
