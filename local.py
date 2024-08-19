@@ -317,29 +317,28 @@ async def add_lottery(
     session = session_factory()
     lottery_repo = LotteryRepository(session)
     import random
-    # tickets = random.sample(range(6**7), 6**7)
+    tickets = random.sample(range(6**7), 6**7)
 
-    # print(len(tickets))
-    # print(6**7)
-    # print(tickets[:10])
+    print(len(tickets))
+    print(6**7)
+    print(tickets[:10])
 
-    # from datetime import datetime, UTC
+    from datetime import datetime, UTC
 
-    # dt = datetime(2024, 8, 17, 16, 0, 0, 0, UTC)
-    lottery_id = 4
+    dt = datetime(2024, 8, 27, 16, 0, 0, 0, UTC)
+    # lottery_id = 5
     # print(dt)
-    [267309, 22018, 120916, 22040, 213006, 16280, 179304, 242759, 41980, 278372]
     async with session.begin():
-        # lottery = Lottery(name="The Charm", pot=750, draw_date=dt, tickets=tickets, jackpot=None)
-        # await lottery_repo.add_lottery(lottery)
+        lottery = Lottery(name="The fifth", pot=1000, draw_date=dt, tickets=tickets, jackpot=None)
+        await lottery_repo.add_lottery(lottery)
 
-        random_ticket = await lottery_repo.get_lottery_ticket_for_index(lottery_id, 1)
-        print(random_ticket)
+        # random_ticket = await lottery_repo.get_lottery_ticket_for_index(lottery_id, 1)
+        # print(random_ticket)
 
-        random_ticket = await lottery_repo.get_lottery_ticket_for_index(lottery_id, 2)
-        print(random_ticket)
-        random_ticket = await lottery_repo.get_lottery_ticket_for_index(lottery_id, 4)
-        print(random_ticket)
+        # random_ticket = await lottery_repo.get_lottery_ticket_for_index(lottery_id, 2)
+        # print(random_ticket)
+        # random_ticket = await lottery_repo.get_lottery_ticket_for_index(lottery_id, 4)
+        # print(random_ticket)
 
 
 async def count_chan_users(
@@ -451,7 +450,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await get_lottery_winners(bot, session_factory)
+    await add_lottery(bot, session_factory)
 
     await engine.dispose()
     await bot.session.close()
