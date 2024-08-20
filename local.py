@@ -450,7 +450,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await add_lottery(bot, session_factory)
+    await get_lottery_winners(bot, session_factory)
 
     await engine.dispose()
     await bot.session.close()
