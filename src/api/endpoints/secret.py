@@ -18,35 +18,8 @@ router = APIRouter(prefix="/secret", tags=["secret"])
 # utc date to secret
 SECRETS = {
 
-    "2024-07-23": "reduce",
-    "2024-07-24": "reduce",
-    "2024-07-25": "tickets",
-    "2024-07-26": "tomorrow",
-    "2024-07-27": "the charm",
-    "2024-07-28": "august 7",
-    "2024-07-29": "whatever",
-    "2024-07-30": "whatever",
-    "2024-07-31": "boost",
-    "2024-08-01": "premium",
-    "2024-08-02": "premium",
-    "2024-08-03": "unchain",
-    "2024-08-04": "surprise",
-    "2024-08-05": "pot",
-    "2024-08-06": "august",
-    "2024-08-07": "easy",
-    "2024-08-08": "find",
-    "2024-08-09": "find",
-    "2024-08-10": "friend",
-    "2024-08-11": "a lot",
-    "2024-08-12": "party",
-    "2024-08-13": "sleeping",
-    "2024-08-14": "sleeping",
-    "2024-08-15": "jackpot",
-    "2024-08-16": "jackpot",
-    "2024-08-17": "august 27",
-    "2024-08-18": "august 27",
-    "2024-08-19": "august 27",
-    "2024-08-20": "wait"
+    "2024-08-20": "wait",
+    "2024-08-21": "wait"
 }
 
 #body
