@@ -19,7 +19,8 @@ router = APIRouter(prefix="/secret", tags=["secret"])
 SECRETS = {
 
     "2024-08-20": "wait",
-    "2024-08-21": "wait"
+    "2024-08-21": "wait",
+    "2024-08-22": "wait",
 }
 
 #body
