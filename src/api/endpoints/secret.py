@@ -78,4 +78,5 @@ async def secret(
             await user_repository.add_user(user)
             return user
         else:
+            print(key, secret.lower(), SECRETS.get(str(key), ""))
             raise HTTPException(status_code=400, detail="invalid_secret_code")
