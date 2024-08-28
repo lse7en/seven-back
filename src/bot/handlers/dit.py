@@ -27,7 +27,7 @@ async def dit_handler(
         username = mem.user.username
         status = mem.status
 
-        await message.answer(f"User: {name}\nUsername: {username}\nStatus: {status}")
+        await message.answer(f"User: {name}\nUsername: @{username}\nStatus: {status}")
     except Exception as e:
         await message.answer(f"Error: {e}")
     
