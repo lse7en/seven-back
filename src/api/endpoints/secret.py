@@ -26,7 +26,7 @@ SECRETS = {
     "2024-08-25": "1000",
     "2024-08-26": "last-minute",
     "2024-08-27": "people",
-    "2024-08-28": "September 7th",    
+    "2024-08-28": "september 7th",    
 }
 
 #body
