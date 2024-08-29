@@ -11,6 +11,7 @@ from src.bot.handlers.stat import stat_handler
 from src.bot.handlers.lead import lead_handler
 from src.bot.handlers.dau import dau_handler
 from src.bot.handlers.dit import dit_handler
+from src.bot.handlers.ssc import ssc_handler
 from src.settings import get_settings
 
 settings = get_settings()
@@ -21,7 +22,7 @@ def register_handlers(router: Router) -> None:
     router.message.register(lead_handler, Command("lead"))
     router.message.register(dau_handler, Command("dau"))
     router.message.register(dit_handler, Command("dit"))
-
+    router.message.register(ssc_handler, Command("ssc"))
 
 
 async def start_application(

@@ -9,6 +9,7 @@ import random
 from datetime import datetime, UTC, timedelta, date, time
 from src.repositories.user_repository import UserRepository
 from src.repositories.system_log_repository import SystemLogRepository
+from src.repositories.secret_repository import SecretCodeRepository
 from src.models.system_log import SystemLog
 from src.core.schema import BaseModel
 
@@ -50,6 +51,7 @@ async def secret(
     secret_request: SecretRequest,
     session: DBSession,
     user_repository: Annotated[UserRepository, Depends()],
+    secret_code_repository: Annotated[SecretCodeRepository, Depends()],
     system_log_repository: Annotated[SystemLogRepository, Depends()]
 ):
     
