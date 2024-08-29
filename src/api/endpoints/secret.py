@@ -34,11 +34,6 @@ class SecretRequest(BaseModel):
     secret: str
 
 
-
-def get_secret_reset_datetime(date: date):
-    # create a date time in utc timezone with the given date and time 16:00:00
-    return datetime.combine(date, time(16, 0, 0), tzinfo=UTC) + timedelta(days=1)
-
 def get_now_key():
     now = datetime.now(UTC)
 
@@ -66,7 +61,7 @@ async def secret(
         user = await user_repository.get_user_for_update(user_id)
 
 
-        if datetime.now(UTC) < get_secret_reset_datetime(user.last_secret_code_date):
+        if datetime.now(UTC) < user.secret_reset_datetime:
             return user
         
         key = get_now_key()

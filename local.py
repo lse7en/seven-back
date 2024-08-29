@@ -5,7 +5,7 @@ from src.core.database import setup_db
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from sqlalchemy import delete, update, select, func
 from src.repositories.user_repository import UserRepository
-from src.repositories.lottery_repository import LotteryRepository
+from src.repositories.lottery_repository import LotteryRepository, ParticipantRepository
 from src.repositories.system_repository import SystemRepository
 from src.models.system_log import SystemLog
 from src.bot.validators import is_member_of
@@ -374,34 +374,45 @@ async def get_lottery_winners(
     lottery_id = 5
     wining_draw = "3511531"
 
-    async with session.begin():
-        tickets = await session.execute(
-            select(Ticket).where(Ticket.lottery_id == lottery_id)
-        )
-
-        tickets = tickets.scalars().all()
-
-        print(len(tickets))
-
-        for ticket in tickets:
-            ts = TicketSchema.model_validate(ticket, from_attributes=True)
-
-            if ts.ticket[6] == wining_draw[6]:
-                mt = 0
-                for i in range(7):
-                    if ts.ticket[i] == wining_draw[i]:
-                        mt += 1
-                if mt >= 5:
-                    print(ts.ticket, mt, ticket.user_id)
-
-
-    # u_ids = [1923991700, 902027729, 5480630871, 423843084]
     # async with session.begin():
-    #     ps = (await session.execute(select(Participant).where(Participant.lottery_id == 2, Participant.user_id.in_(u_ids)))).scalars().all()
-    #     for p in ps:
-    #         p.win = 2000
-    #         session.add(p)
-    #         print(p.user_id, p.win)
+        # tickets = await session.execute(
+        #     select(Ticket).where(Ticket.lottery_id == lottery_id)
+        # )
+
+        # tickets = tickets.scalars().all()
+
+        # print(len(tickets))
+
+        # for ticket in tickets:
+        #     ts = TicketSchema.model_validate(ticket, from_attributes=True)
+
+        #     if ts.ticket[6] == wining_draw[6]:
+        #         mt = 0
+        #         for i in range(7):
+        #             if ts.ticket[i] == wining_draw[i]:
+        #                 mt += 1
+        #         if mt >= 5:
+        #             print(ts.ticket, mt, ticket.user_id)
+
+
+    u_ids = [302503930, 1023145865]
+    tickets = [124476, 130944]
+
+    pr = ParticipantRepository(session)
+    async with session.begin():
+
+        for uid in u_ids:
+            p = await pr.get_participant(uid, lottery_id)
+            p.lottery.jackpot = 124572
+            print(p.user.info)
+            p.wins = 5000
+            for t in p.tickets:
+                if t.ticket_number in tickets:
+                    t.win = 5000
+                    t.matched = 5
+            session.add(p)
+            
+
 
 
 async def make_myself_winner(
@@ -450,7 +461,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await add_lottery(bot, session_factory)
+    await get_lottery_winners(bot, session_factory)
 
     await engine.dispose()
     await bot.session.close()

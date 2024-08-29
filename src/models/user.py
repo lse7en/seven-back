@@ -7,7 +7,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey
 from src.core.model import Base
-from datetime import datetime, date, timedelta
+from datetime import datetime, date, timedelta, time, UTC
 from aiogram.utils.payload import  encode_payload
 
 
@@ -90,3 +90,9 @@ class User(Base):
     @property
     def next_ad_for_points(self) -> datetime:
         return self.last_ads_watch_for_points + timedelta(minutes=10)
+    
+
+    @property
+    def secret_reset_datetime(self) -> datetime:
+        # create a date time in utc timezone with the given date and time 16:00:00
+        return datetime.combine(self.last_secret_code_date, time(16, 0, 0), tzinfo=UTC) + timedelta(days=1)

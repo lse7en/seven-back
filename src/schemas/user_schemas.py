@@ -40,6 +40,7 @@ class User(UserBase):
     push_waiting_time: int
     next_ad_for_points: datetime
     next_push_time: datetime
+    secret_reset_datetime: datetime
 
 
 class Rank(BaseModel):
