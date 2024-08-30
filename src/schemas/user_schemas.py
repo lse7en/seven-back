@@ -41,6 +41,7 @@ class User(UserBase):
     next_ad_for_points: datetime
     next_push_time: datetime
     secret_reset_datetime: datetime
+    join_reward: bool
 
 
 class Rank(BaseModel):

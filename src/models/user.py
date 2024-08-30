@@ -22,11 +22,12 @@ class User(Base):
     referrer_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
     referrer = relationship("User", back_populates="invitees", remote_side=id)
 
+    join_reward: Mapped[bool] = mapped_column(default=False, nullable=False)
 
     last_check_in: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
     last_lucky_push: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
     push_points: Mapped[int] = mapped_column(default=0)
-    points: Mapped[int] = mapped_column(default=1000, index=True)
+    points: Mapped[int] = mapped_column(default=0, index=True)
     push_count: Mapped[int] = mapped_column(default=0)
 
     language: Mapped[str] = mapped_column(default="en")

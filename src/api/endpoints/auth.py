@@ -87,7 +87,7 @@ async def upsert_user(
                     username=data.user.username,
                     joined=False,
                     last_lucky_push=datetime.now(UTC) - timedelta(days=1),
-                    last_check_in=datetime.now(UTC)
+                    last_check_in=datetime.now(UTC),
             )
             await user_repository.add_user(new_user)
         except Exception as e:

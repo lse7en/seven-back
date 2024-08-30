@@ -56,6 +56,10 @@ async def joined(
             current_user.referrer_score = True
             send_text_to_referrer = True
 
+        if joined and not current_user.join_reward:
+            current_user.points += 1000
+            current_user.join_reward = True
+
 
         await user_repository.add_user(current_user)
 

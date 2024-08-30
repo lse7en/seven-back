@@ -29,7 +29,7 @@ data_fake = [User(id=70056025, language="fa")]
 async def send_text_to_channel(
     bot: Bot, session_factory: async_sessionmaker[AsyncSession]
 ) -> None:
-    photo_file = BufferedInputFile.from_file("/Users/xhsvn/Downloads/P.mp4")
+    photo_file = BufferedInputFile.from_file("/Users/xhsvn/Downloads/Sep 7th.jpg")
 
     botkb = InlineKeyboardButton(text="play", url="http://t.me/the_lucky_7_bot/main")
     kb = InlineKeyboardMarkup(inline_keyboard=[[botkb]])
@@ -38,8 +38,8 @@ async def send_text_to_channel(
 caption
 """
 
-    await bot.send_animation(
-        animation=photo_file,
+    await bot.send_photo(
+        photo=photo_file,
         chat_id="@the_lucky_7",
         reply_markup=kb,
         caption=caption,
@@ -461,7 +461,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await get_lottery_winners(bot, session_factory)
+    await send_text_to_channel(bot, session_factory)
 
     await engine.dispose()
     await bot.session.close()
