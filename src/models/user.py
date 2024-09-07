@@ -60,7 +60,7 @@ class User(Base):
     @property
     def age(self) -> int:
         # age in days from created_at
-        return (datetime.utcnow() - self.created_at).days
+        return (datetime.now(UTC) - self.created_at).days
 
 
     @property
