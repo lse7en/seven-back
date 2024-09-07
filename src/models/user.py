@@ -55,11 +55,17 @@ class User(Base):
     @property
     def full_name(self) -> str:
         return f"{self.first_name} {self.last_name}" if self.last_name else self.first_name
+    
+
+    @property
+    def age(self) -> int:
+        # age in days from created_at
+        return (datetime.utcnow() - self.created_at).days
 
 
     @property
     def info(self) -> str:
-        return f"id({self.id}): {self.full_name} @{self.username}; jnd: {self.joined}; inv: {self.invited_users} pnts: {self.points} ref: {self.referrer_id}"
+        return f"id({self.id}): {self.full_name} @{self.username}; jnd: {self.joined}; inv: {self.invited_users} pnts: {self.points} age: {self.age} ref: {self.referrer_id}"
     
 
     @property
