@@ -52,6 +52,11 @@ class User(Base):
     total_ads_watched_for_points: Mapped[int] = mapped_column(default=0)
 
 
+    src: Mapped[str] = mapped_column(nullable=True, index=True, default=None)
+
+
+
+
     @property
     def full_name(self) -> str:
         return f"{self.first_name} {self.last_name}" if self.last_name else self.first_name
