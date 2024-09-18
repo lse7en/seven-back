@@ -47,10 +47,13 @@ async def ssc_handler(
         key = datetime.strptime(parts[0], "%Y-%m-%d").date()
         secret = ' '.join(parts[1:])
 
-
-        async with session.begin():
-            sc = SecretCode(key=key, secret=secret)
-            await secret_code_repository.add(sc)
+        try:
+            async with session.begin():
+                sc = SecretCode(key=key, secret=secret)
+                await secret_code_repository.add(sc)
+        except Exception as e:
+            await message.answer("Error: on setting")
+            return
 
         await message.answer(f"Secret code added: '{key}': '{secret}'")
     except Exception as e:
