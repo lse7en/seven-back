@@ -10,7 +10,7 @@ from src.models.lottery import Participant, Ticket
 from src.repositories.user_repository import UserRepository
 from src.repositories.lottery_repository import ParticipantRepository, LotteryRepository
 from src.repositories.system_log_repository import SystemLogRepository
-from src.models.system_log import SystemLog
+from src.models.system_log import SystemLog, LogTag
 
 router = APIRouter(prefix="/lotteries", tags=["lottery"])
 
@@ -105,7 +105,7 @@ async def activate(
 
         session.add(ticket)
         await session.flush()
-        await system_log_repository.add_log(SystemLog(user=participant.user, command=f"🟢 ticket 🟢: {ticket_index}"))
+        await system_log_repository.add_log(SystemLog(user=participant.user, command=f"🟢 ticket 🟢: {ticket_index}"), tag=LogTag.SCRATCH)
         await participant_repository.add_participant(participant)
 
 

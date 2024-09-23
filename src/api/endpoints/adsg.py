@@ -5,42 +5,42 @@ from fastapi import APIRouter, Depends
 from src.deps import  CurrentUserId
 from src.core.database import DBSession
 from src.schemas.user_schemas import User
-from datetime import datetime, UTC, timedelta
+from datetime import datetime, UTC
 from src.repositories.user_repository import UserRepository
 from src.repositories.system_log_repository import SystemLogRepository
-from src.models.system_log import SystemLog
+from src.models.system_log import SystemLog, LogTag
 router = APIRouter(prefix="/adsg", tags=["adsg"])
 
 
-@router.post("", response_model=User)
-async def reduce_time(
-    user_id: CurrentUserId,
-    session: DBSession,
-    user_repository: Annotated[UserRepository, Depends()],
-    system_log_repository: Annotated[SystemLogRepository, Depends()]
-):
+# @router.post("", response_model=User)
+# async def reduce_time(
+#     user_id: CurrentUserId,
+#     session: DBSession,
+#     user_repository: Annotated[UserRepository, Depends()],
+#     system_log_repository: Annotated[SystemLogRepository, Depends()]
+# ):
 
 
-    async with session.begin():   
-        user = await user_repository.get_user_for_update(user_id)
+#     async with session.begin():   
+#         user = await user_repository.get_user_for_update(user_id)
 
 
         
-        if user.ads_reduce_time == 0:
-            return user
+#         if user.ads_reduce_time == 0:
+#             return user
         
-        rt = user.ads_reduce_time
-        user.last_lucky_push = user.last_lucky_push - timedelta(minutes=rt)
+#         rt = user.ads_reduce_time
+#         user.last_lucky_push = user.last_lucky_push - timedelta(minutes=rt)
 
-        user.total_ads_watched_this_push += 1
-        user.total_ads_watched += 1
-        user.total_ads_watched_for_points += 1
+#         user.total_ads_watched_this_push += 1
+#         user.total_ads_watched += 1
+#         user.total_ads_watched_for_points += 1
 
-        await system_log_repository.add_log(SystemLog(user=user, command=f"🟡 ads 🟡: {user.total_ads_watched_this_push}, {rt}"))
+#         await system_log_repository.add_log(SystemLog(user=user, command=f"🟡 ads 🟡: {user.total_ads_watched_this_push}, {rt}"))
 
-        await user_repository.add_user(user)
+#         await user_repository.add_user(user)
 
-        return user
+#         return user
 
 
 @router.post("/point", response_model=User)
@@ -65,7 +65,7 @@ async def ad_point(
         user.points += 100
         user.total_ads_watched_for_points += 1
 
-        await system_log_repository.add_log(SystemLog(user=user, command=f"⚫ ads ⚫: {user.total_ads_watched_for_points}"))
+        await system_log_repository.add_log(SystemLog(user=user, command=f"⚫ ads ⚫: {user.total_ads_watched_for_points}"), tag=LogTag.ADS_POINT)
 
         await user_repository.add_user(user)
 
@@ -89,7 +89,7 @@ async def double_point(
         user.points += 250
         user.total_ads_watched_for_points += 1
 
-        await system_log_repository.add_log(SystemLog(user=user, command=f"🟠 ads 🟠: {user.total_ads_watched_for_points}"))
+        await system_log_repository.add_log(SystemLog(user=user, command=f"🟠 ads 🟠: {user.total_ads_watched_for_points}"), tag=LogTag.ADS_DOUBLE)
 
         await user_repository.add_user(user)
 

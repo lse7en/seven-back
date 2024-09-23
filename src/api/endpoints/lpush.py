@@ -5,10 +5,10 @@ from fastapi import APIRouter, Depends
 from src.deps import  CurrentUserId
 from src.core.database import DBSession
 from src.schemas.user_schemas import User
-from datetime import datetime, UTC, timedelta
+from datetime import datetime, UTC
 from src.repositories.user_repository import UserRepository
 from src.repositories.system_log_repository import SystemLogRepository
-from src.models.system_log import SystemLog
+from src.models.system_log import SystemLog, LogTag
 router = APIRouter(prefix="/lpush", tags=["lpush"])
 
 
@@ -31,7 +31,7 @@ async def lpush(
             return user
     
     
-        await system_log_repository.add_log(SystemLog(user=user, command=f"🔴 push 🔴: {user.points} + {r} -> {user.points + r}"))
+        await system_log_repository.add_log(SystemLog(user=user, command=f"🔴 push 🔴: {user.points} + {r} -> {user.points + r}"), tag=LogTag.PUSH)
         user.push_points += r
         user.points += r
         user.push_count += 1

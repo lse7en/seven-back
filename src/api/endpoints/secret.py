@@ -8,7 +8,7 @@ from datetime import datetime, UTC, timedelta
 from src.repositories.user_repository import UserRepository
 from src.repositories.system_log_repository import SystemLogRepository
 from src.repositories.secret_repository import SecretCodeRepository
-from src.models.system_log import SystemLog
+from src.models.system_log import SystemLog, LogTag
 from src.core.schema import BaseModel
 
 
@@ -53,6 +53,7 @@ async def secret(
                 SystemLog(
                     user=user,
                     command=f"🔵 secret 🔵:{secret} {user.points} -> {user.points + 1000}",
+                    tag=LogTag.SECRET,
                 )
             )
             user.points += 1000
