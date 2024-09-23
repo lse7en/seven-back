@@ -65,7 +65,7 @@ async def ad_point(
         user.points += 100
         user.total_ads_watched_for_points += 1
 
-        await system_log_repository.add_log(SystemLog(user=user, command=f"⚫ ads ⚫: {user.total_ads_watched_for_points}"), tag=LogTag.ADS_POINT)
+        await system_log_repository.add_log(SystemLog(user=user, command=f"⚫ ads ⚫: {user.total_ads_watched_for_points}", tag=LogTag.ADS_POINT))
 
         await user_repository.add_user(user)
 
@@ -89,7 +89,7 @@ async def double_point(
         user.points += 250
         user.total_ads_watched_for_points += 1
 
-        await system_log_repository.add_log(SystemLog(user=user, command=f"🟠 ads 🟠: {user.total_ads_watched_for_points}"), tag=LogTag.ADS_DOUBLE)
+        await system_log_repository.add_log(SystemLog(user=user, command=f"🟠 ads 🟠: {user.total_ads_watched_for_points}", tag=LogTag.ADS_DOUBLE))
 
         await user_repository.add_user(user)
 

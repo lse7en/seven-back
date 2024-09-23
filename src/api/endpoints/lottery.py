@@ -105,7 +105,7 @@ async def activate(
 
         session.add(ticket)
         await session.flush()
-        await system_log_repository.add_log(SystemLog(user=participant.user, command=f"🟢 ticket 🟢: {ticket_index}"), tag=LogTag.SCRATCH)
+        await system_log_repository.add_log(SystemLog(user=participant.user, command=f"🟢 ticket 🟢: {ticket_index}", tag=LogTag.SCRATCH))
         await participant_repository.add_participant(participant)
 
 
