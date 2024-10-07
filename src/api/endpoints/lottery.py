@@ -14,7 +14,7 @@ from src.models.system_log import SystemLog, LogTag
 
 router = APIRouter(prefix="/lotteries", tags=["lottery"])
 
-ACTIVE_LOTTERY_ID = 9
+ACTIVE_LOTTERY_ID = 10
 
 
 
