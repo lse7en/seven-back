@@ -21,6 +21,14 @@ class UserBase(BaseModel):
     username: Optional[str] = None
 
 
+    #tasks info
+    tasks_join_channel: bool
+    tasks_active_tickets: bool
+    tasks_refer_a_friend: bool
+    tasks_secret_code: bool
+    tasks_watch_ads: bool
+
+    invited_users: int
 
 
 

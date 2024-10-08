@@ -38,7 +38,6 @@ class User(Base):
 
     invitees = relationship("User", back_populates="referrer", remote_side=referrer_id)
 
-    referrer_score: Mapped[bool] = mapped_column(default=False, nullable=False)
 
     static_rank: Mapped[int] = mapped_column(default=1000, nullable=False, index=True)
 
@@ -53,6 +52,14 @@ class User(Base):
 
 
     src: Mapped[str] = mapped_column(nullable=True, index=True, default=None)
+
+    tasks_join_channel: Mapped[bool] = mapped_column(default=False, nullable=False)
+    tasks_active_tickets: Mapped[bool] = mapped_column(default=False)
+    tasks_refer_a_friend: Mapped[bool] = mapped_column(default=False)
+    tasks_secret_code: Mapped[bool] = mapped_column(default=False)
+    tasks_watch_ads: Mapped[bool] = mapped_column(default=False)
+
+
 
 
 
