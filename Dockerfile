@@ -7,4 +7,4 @@ ADD . /app
 WORKDIR /app
 RUN uv sync --no-cache --no-dev
 
-CMD ["/app/.venv/bin/uvicorn", "--factory", "--host", "0.0.0.0", "--port", "80", "src.main:create_application"]
+CMD ["/app/.venv/bin/uvicorn", "--factory", "--host", "0.0.0.0", "--port", "8080", "src.main:create_application"]
