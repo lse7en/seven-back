@@ -5,6 +5,8 @@
 # ]
 # ///
 import asyncio
+from aiogram.client.default import DefaultBotProperties
+
 from aiogram import Bot
 from aiogram.enums import ParseMode
 from src.core.database import setup_db
@@ -459,11 +461,11 @@ async def main():
         print("You are out")
         return
     bot = Bot(
-        "7047014378:AAFsQD5RJFgRUSQGIzRB2QKtGtliQH8_w5Q", parse_mode=ParseMode.HTML
+        "7047014378:AAFsQD5RJFgRUSQGIzRB2QKtGtliQH8_w5Q", default=DefaultBotProperties(parse_mode=ParseMode.HTML)
     )
 
     stat_bot = Bot(
-        "7120708074:AAHw_EKAlH1tJ0C_nJzubG9LvwSPZUZO7yU", parse_mode=ParseMode.HTML
+        "7120708074:AAHw_EKAlH1tJ0C_nJzubG9LvwSPZUZO7yU", default=DefaultBotProperties(parse_mode=ParseMode.HTML)
     )
     engine, session_factory = setup_db()
 

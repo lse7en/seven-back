@@ -1,6 +1,8 @@
 from aiogram import Bot, Dispatcher, Router
 from aiogram.enums import ParseMode
 from aiogram.filters import Command
+
+from aiogram.client.default import DefaultBotProperties
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
@@ -31,7 +33,8 @@ async def start_application(
     # ... and all other routers should be attached to Dispatcher
 
     # Register startup hook to initialize webhook
-    stat_bot = Bot(settings.stat_tg_token, parse_mode=ParseMode.HTML)
+    stat_bot = Bot(settings.stat_tg_token,
+                   default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     stat_dp = Dispatcher(session_factory=session_factory)
     router = Router()
     register_handlers(router)

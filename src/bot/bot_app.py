@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
 )
+from aiogram.client.default import DefaultBotProperties
 
 from src.bot.callbacks import JoinedCallback, LanguageCallback
 from src.bot.handlers.invite import invite_handler
@@ -39,7 +40,7 @@ async def start_application(
     # ... and all other routers should be attached to Dispatcher
 
     # Register startup hook to initialize webhook
-    bot = Bot(settings.tg_token, parse_mode=ParseMode.HTML)
+    bot = Bot(settings.tg_token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     dp = Dispatcher(session_factory=session_factory, stat_bot=stat_bot)
     router = Router()
     register_handlers(router)
