@@ -1,3 +1,9 @@
+# /// script
+# requires-python = ">=3.12"
+# dependencies = [
+#     "locals",
+# ]
+# ///
 import asyncio
 from aiogram import Bot
 from aiogram.enums import ParseMode
