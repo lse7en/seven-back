@@ -26,6 +26,6 @@ ADD . /app
 
 # Sync the project into a new environment, using the frozen lockfile
 WORKDIR /app
-RUN uv sync --frozen --no-cache --no-dev
+RUN uv sync --no-cache --no-dev
 
 CMD ["/app/.venv/bin/uvicorn", "--factory", "--host", "0.0.0.0", "--port", "8000", "src.main:create_application"]
