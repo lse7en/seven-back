@@ -12,8 +12,8 @@ help: ## Show this help
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-38s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 .PHONY: setup-dev
-setup-dev: ## setup dev environment: poetry and .env
-	poetry install --no-root
+setup-dev: ## setup dev environment: uv sync and .env
+	uv sync --frozen --dev
 	[ ! -e ".env" ] && cp ".env.example" ".env" || echo "file .env already exists"
 
 
