@@ -29,7 +29,7 @@ async def friends(
 ):
     friends = await user_repository.get_friends(user_id)
 
-    friends_with_incomplete_active_ticket_tasks = [friend for friend in friends if not friend.tasks_active_tickets]
+    friends_with_incomplete_active_ticket_tasks = [friend.id for friend in friends if not friend.tasks_active_tickets]
 
     friend_id_to_ticket_count = await ticket_repository.get_ticket_count_for_users(friends_with_incomplete_active_ticket_tasks)
 
