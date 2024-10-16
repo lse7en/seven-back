@@ -1,6 +1,8 @@
 
 
 from typing import Optional
+
+from pydantic import computed_field
 from src.core.schema import BaseModel
 from datetime import datetime, date
 
@@ -35,6 +37,20 @@ class UserFriend(UserBase):
     """DTO for User model."""
 
     active_tickets_count: int
+
+
+
+
+    @computed_field
+    @property
+    def number_of_done_tasks(self):
+        return sum([
+            self.tasks_join_channel,
+            self.tasks_active_tickets,
+            self.tasks_refer_a_friend,
+            self.tasks_secret_code,
+            self.tasks_watch_ads
+        ])
 
 
 class User(UserBase):
