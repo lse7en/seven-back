@@ -43,7 +43,7 @@ class UserFriend(UserBase):
 
     @computed_field
     @property
-    def number_of_done_tasks(self):
+    def number_of_done_tasks(self) -> int:
         return sum([
             self.tasks_join_channel,
             self.tasks_active_tickets,
