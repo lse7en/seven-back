@@ -3,8 +3,9 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Request
 
 from src.deps import CurrentUserId
-from src.schemas.user_schemas import User, UserBase
+from src.schemas.user_schemas import User, UserFriend
 from src.repositories.user_repository import UserRepository
+from src.repositories.lottery_repository import TicketRepository
 from src.bot.validators import is_member_of
 from src.bot.constants import COMMUNITY_TID, FRIEND_INVITE_FILE_ID
 from src.bot.text import get_text
@@ -19,13 +20,22 @@ async def profile(
     return await user_repository.get_user_or_none_by_id(user_id)
 
 
-@router.get("/friends", response_model=list[UserBase])
+@router.get("/friends", response_model=list[UserFriend])
 async def friends(
     user_id: CurrentUserId,
     user_repository: Annotated[UserRepository, Depends()],
+    ticket_repository: Annotated[TicketRepository, Depends()],
 
 ):
     friends = await user_repository.get_friends(user_id)
+
+    friends_with_incomplete_active_ticket_tasks = [friend for friend in friends if not friend.tasks_active_tickets]
+
+    friend_id_to_ticket_count = await ticket_repository.get_ticket_count_for_users(friends_with_incomplete_active_ticket_tasks)
+
+    for friend in friends:
+        friend.active_tickets_count = min(friend_id_to_ticket_count.get(friend.id, 0), 10)
+
     return friends
 
 

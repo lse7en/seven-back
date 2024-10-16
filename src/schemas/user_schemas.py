@@ -31,6 +31,11 @@ class UserBase(BaseModel):
     invited_users: int
 
 
+class UserFriend(UserBase):
+    """DTO for User model."""
+
+    active_tickets_count: int
+
 
 class User(UserBase):
     """DTO for User model."""

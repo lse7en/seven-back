@@ -116,3 +116,30 @@ class ParticipantRepository:
         """
         self.session.add(participant)
         await self.session.flush()
+
+
+class TicketRepository:
+
+    def __init__(self, session: DBSession):
+        self.session = session
+
+    async def get_ticket_count_for_users(
+        self, user_ids: list[int]) -> dict[int, int]:
+        """
+        Get ticket count for each user.
+
+        :param user_ids: list of user ids.
+        :return: dictionary where key is user id and value is ticket count.
+        """
+
+        query = (
+            select(
+                lottery.Ticket.user_id,
+                func.count(lottery.Ticket.id).label("ticket_count"),
+            )
+            .where(lottery.Ticket.user_id.in_(user_ids))
+            .group_by(lottery.Ticket.user_id)
+        )
+
+        raw_ticket_counts = await self.session.execute(query)
+        return {user_id: ticket_count for user_id, ticket_count in raw_ticket_counts.all()}
