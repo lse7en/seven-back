@@ -34,7 +34,7 @@ async def friends(
     friend_id_to_ticket_count = await ticket_repository.get_ticket_count_for_users(friends_with_incomplete_active_ticket_tasks)
 
     for friend in friends:
-        friend.active_tickets_count = min(friend_id_to_ticket_count.get(friend.id, 0), 10)
+        friend.active_tickets_count = min(friend_id_to_ticket_count.get(friend.id, 10), 10)
 
     return friends
 
