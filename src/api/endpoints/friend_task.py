@@ -73,6 +73,7 @@ async def next_task(
     res = []
 
     for friend in friends:
+        friend.active_tickets_count = 0
         res.append(
             ClaimResponse(
                 friend_id=friend.id,
