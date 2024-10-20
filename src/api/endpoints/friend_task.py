@@ -44,7 +44,7 @@ class ClaimResponse(ClaimRequest):
 
 
 
-@router.post("/claim", response_model=ClaimResponse)
+@router.post("/claim")
 async def claim(
     user_id: CurrentUserId,
     claim_request: ClaimRequest,
