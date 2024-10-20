@@ -45,11 +45,11 @@ class UserFriend(UserBase):
     @property
     def number_of_done_tasks(self) -> int:
         return sum([
-            self.tasks_join_channel == TaskStatus.DONE,
-            self.tasks_active_tickets == TaskStatus.DONE,
-            self.tasks_refer_a_friend == TaskStatus.DONE,
-            self.tasks_secret_code == TaskStatus.DONE,
-            self.tasks_watch_ads == TaskStatus.DONE,
+            self.tasks_join_channel == TaskStatus.CLAIMED,
+            self.tasks_active_tickets == TaskStatus.CLAIMED,
+            self.tasks_refer_a_friend == TaskStatus.CLAIMED,
+            self.tasks_secret_code == TaskStatus.CLAIMED,
+            self.tasks_watch_ads == TaskStatus.CLAIMED,
         ])
 
 
