@@ -24,6 +24,68 @@ class ClaimResponse(ClaimRequest):
     friend: UserFriend
 
 
+
+def get_first_task(user):
+    if user.tasks_watch_ads == TaskStatus.DONE:
+        return FriendsTask.WATCH_ADS
+    if user.tasks_secret_code == TaskStatus.DONE:
+        return FriendsTask.SECRET_CODE
+    if user.tasks_refer_a_friend == TaskStatus.DONE:
+        return FriendsTask.REFER_A_FRIEND
+    if user.tasks_active_tickets == TaskStatus.DONE:
+        return FriendsTask.ACTIVE_TICKETS
+    if user.tasks_join_channel == TaskStatus.DONE:
+        return FriendsTask.JOIN_CHANNEL
+    
+    if user.tasks_watch_ads == TaskStatus.NOT_DONE:
+        return FriendsTask.WATCH_ADS
+    if user.tasks_secret_code == TaskStatus.NOT_DONE:
+        return FriendsTask.SECRET_CODE
+    if user.tasks_refer_a_friend == TaskStatus.NOT_DONE:
+        return FriendsTask.REFER_A_FRIEND
+    if user.tasks_active_tickets == TaskStatus.NOT_DONE:
+        return FriendsTask.ACTIVE_TICKETS
+    if user.tasks_join_channel == TaskStatus.NOT_DONE:
+        return FriendsTask.JOIN_CHANNEL
+    
+
+    return None
+
+
+
+@router.get("/nexts", response_model=list[FriendsTask])
+async def next_task(
+    user_id: CurrentUserId,
+    user_repository: Annotated[UserRepository, Depends()],
+):
+    
+    total_tasks = 2
+    user = await user_repository.get_user_or_none_by_id(user_id)
+
+
+    friends = await user_repository.get_friends_with_task_status_and_limit(user_id, TaskStatus.DONE, total_tasks)
+
+
+    if len(friends) < total_tasks:
+        friends += await user_repository.get_friends_with_task_status_and_limit(user_id, TaskStatus.NOT_DONE, total_tasks - len(friends))
+
+    
+    res = []
+
+    for friend in friends:
+        res.append(
+            ClaimResponse(
+                friend_id=friend.id,
+                task=get_first_task(friend),
+                new_points=user.points,
+                new_tickets=user.invited_users + 1,
+                friend=UserFriend.model_validate(friend, from_attributes=True),
+            )
+        )
+
+
+
+
 @router.post("/claim")
 async def claim(
     user_id: CurrentUserId,
