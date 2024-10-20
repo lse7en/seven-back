@@ -102,4 +102,4 @@ async def claim(
             background_tasks.save_log(user_id=user_id, command=f"{claim_request.task.value}", tag=LogTag.CLAIM.value)
 
 
-    return ClaimResponse(friend_id=claim_request.friend_id, task=claim_request.task, new_points=user.points, new_tickets=user.invited_users + 1)
+    return ClaimResponse(friend_id=claim_request.friend_id, task=claim_request.task, new_points=user.points, new_tickets=user.invited_users + 1).model_dump()
