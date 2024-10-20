@@ -53,7 +53,7 @@ def get_first_task(user):
 
 
 
-@router.get("/nexts", response_model=list[FriendsTask])
+@router.get("/nexts", response_model=list[ClaimResponse])
 async def next_task(
     user_id: CurrentUserId,
     user_repository: Annotated[UserRepository, Depends()],
