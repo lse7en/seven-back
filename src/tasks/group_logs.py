@@ -5,6 +5,17 @@ from src.repositories.user_repository import UserRepository
 from src.repositories.system_repository import SystemRepository
 from src.repositories.system_log_repository import SystemLogRepository
 from src.bot.constants import STAT_CHAT_ID, JOIN_THREAD_ID, USER_LOG_THREAD_ID
+from src.models.enums import LogTag
+from src.models.system_log import SystemLog
+
+
+
+async def save_log(session_factory: async_sessionmaker[AsyncSession], user_id: int, command: str, tag: LogTag) -> None:
+    session = session_factory()
+    system_log_repository = SystemLogRepository(session)
+    async with session.begin():
+        await system_log_repository.add_log(SystemLog(user_id=user_id, command=command, tag=tag))
+ 
 
 
 async def stat_task(stat_bot: Bot, session_factory: async_sessionmaker[AsyncSession]) -> None:

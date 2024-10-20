@@ -2,15 +2,14 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends
 
-from src.deps import  CurrentUserId, BackgroundTasksWrapper
+from src.deps import  CurrentUserId
+from src.tasks.bg import BackgroundTasksWrapper
 from src.core.database import DBSession
 from src.schemas.user_schemas import User
 from datetime import datetime, UTC
 from src.repositories.user_repository import UserRepository
-from src.repositories.system_log_repository import SystemLogRepository
-from src.models.system_log import SystemLog, LogTag
+from src.models.enums import LogTag
 from src.constants import ActionPoints
-from src.tasks.frinds_tasks import friend_extra_check
 router = APIRouter(prefix="/lpush", tags=["lpush"])
 
 
@@ -19,7 +18,6 @@ async def lpush(
     user_id: CurrentUserId,
     session: DBSession,
     user_repository: Annotated[UserRepository, Depends()],
-    system_log_repository: Annotated[SystemLogRepository, Depends()],
     background_tasks: Annotated[BackgroundTasksWrapper, Depends()]
 ):
     # generate random  between 1 and 20
@@ -35,14 +33,13 @@ async def lpush(
             return user
     
     
-        await system_log_repository.add_log(SystemLog(user=user, command=f"🔴 push 🔴: {user.points} + {r} -> {user.points + r}", tag=LogTag.PUSH))
+        background_tasks.save_log(user_id=user_id, command=f"{user.points} + {r} -> {user.points + r}", tag=LogTag.PUSH)
         user.push_points += r
         user.points += r
         user.push_count += 1
         user.last_lucky_push = datetime.now(UTC)
         user.total_ads_watched_this_push = 0
         await user_repository.add_user(user)
-        background_tasks.add_task(friend_extra_check, user_id=user_id)
 
         return user
     

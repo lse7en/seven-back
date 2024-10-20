@@ -9,20 +9,12 @@ from sqlalchemy import ForeignKey, Enum
 from src.core.model import Base
 from datetime import datetime, date, timedelta, time, UTC
 from aiogram.utils.payload import  encode_payload
-import enum
+from src.models.enums import TaskStatus
 
 def one_month_age():
     return datetime.utcnow() - timedelta(days=365)
 
 
-class TaskStatus(enum.Enum):
-    NOT_DONE = "not_done"
-    DONE = "done"
-    CLAIMED = "claimed"
-
-
-    def is_todo(self) -> bool:
-        return self == TaskStatus.NOT_DONE
 
 
 

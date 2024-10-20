@@ -8,8 +8,10 @@ from datetime import datetime, UTC, timedelta
 from src.repositories.user_repository import UserRepository
 from src.repositories.system_log_repository import SystemLogRepository
 from src.repositories.secret_repository import SecretCodeRepository
-from src.models.system_log import SystemLog, LogTag
+from src.models.system_log import SystemLog
+from src.models.enums import LogTag, FriendsTask
 from src.core.schema import BaseModel
+from src.tasks.bg import BackgroundTasksWrapper
 from src.constants import ActionPoints
 
 router = APIRouter(prefix="/secret", tags=["secret"])
@@ -37,6 +39,7 @@ async def secret(
     user_repository: Annotated[UserRepository, Depends()],
     secret_code_repository: Annotated[SecretCodeRepository, Depends()],
     system_log_repository: Annotated[SystemLogRepository, Depends()],
+    background_tasks: Annotated[BackgroundTasksWrapper, Depends()],
 ):
     secret = secret_request.secret.lower().strip()
 
@@ -48,17 +51,21 @@ async def secret(
 
         key = get_now_key()
 
-        if await secret_code_repository.exists(key, secret):
-            await system_log_repository.add_log(
-                SystemLog(
-                    user=user,
-                    command=f"🔵 secret 🔵:{secret} {user.points} -> {user.points + ActionPoints.SECRET.value}",
-                    tag=LogTag.SECRET,
-                )
-            )
-            user.points += ActionPoints.SECRET.value
-            user.last_secret_code_date = key
-            await user_repository.add_user(user)
-            return user
-        else:
+        if not await secret_code_repository.exists(key, secret):
             raise HTTPException(status_code=400, detail="invalid_secret_code")
+        
+
+        await system_log_repository.add_log(
+            SystemLog(
+                user=user,
+                command=f"🔵 secret 🔵:{secret} {user.points} -> {user.points + ActionPoints.SECRET.value}",
+                tag=LogTag.SECRET,
+            )
+        )
+        user.points += ActionPoints.SECRET.value
+        user.last_secret_code_date = key
+        await user_repository.add_user(user)
+        background_tasks.friend_extra_check(user_id=user_id, current_status=user.tasks_secret_code, task=FriendsTask.SECRET_CODE)
+
+        return user
+

@@ -3,8 +3,6 @@ from typing import Annotated
 import jwt
 from fastapi import Depends, Header, HTTPException, status
 
-from fastapi import Request, BackgroundTasks
-
 from jwt.exceptions import InvalidTokenError
 
 from src.settings import Settings, get_settings
@@ -36,14 +34,4 @@ async def get_current_user_id(
 CurrentUserId = Annotated[int, Depends(get_current_user_id)]
 
 
-
-
-class BackgroundTasksWrapper:
-    def __init__(self, request: Request, background_tasks: BackgroundTasks):
-        self.session_factory = request.app.state.session_factory
-        self.background_tasks = background_tasks
-
-
-    def add_task(self, func, *args, **kwargs):
-        self.background_tasks.add_task(func, session_factory=self.session_factory, **kwargs)
 

@@ -8,7 +8,7 @@ from src.repositories.user_repository import UserRepository
 from src.repositories.lottery_repository import TicketRepository
 from src.bot.validators import is_member_of
 from src.bot.constants import COMMUNITY_TID, FRIEND_INVITE_FILE_ID
-from src.models.user import TaskStatus
+from src.models.enums import TaskStatus
 from src.bot.text import get_text
 from aiogram.utils import formatting
 from src.constants import ActionPoints

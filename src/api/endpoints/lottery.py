@@ -3,13 +3,15 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 
 from src.deps import  CurrentUserId
+from src.tasks.bg import BackgroundTasksWrapper
 from src.core.database import DBSession
 from src.schemas.lottery_schema import Participant as ParticipantSchema, LotteryList, Lottery as LotterySchema
 
 from src.models.lottery import Participant, Ticket
 from src.repositories.lottery_repository import ParticipantRepository, LotteryRepository
 from src.repositories.system_log_repository import SystemLogRepository
-from src.models.system_log import SystemLog, LogTag
+from src.models.system_log import SystemLog
+from src.models.enums import LogTag, FriendsTask
 from src.constants import ActionPoints
 
 router = APIRouter(prefix="/lotteries", tags=["lottery"])
@@ -74,7 +76,8 @@ async def activate(
     session: DBSession,
     lottery_repository: Annotated[LotteryRepository, Depends()],
     participant_repository: Annotated[ParticipantRepository, Depends()],
-    system_log_repository: Annotated[SystemLogRepository, Depends()]
+    system_log_repository: Annotated[SystemLogRepository, Depends()],
+    background_tasks: Annotated[BackgroundTasksWrapper, Depends()]
 ):
     
     lottery_id = ACTIVE_LOTTERY_ID
@@ -105,5 +108,6 @@ async def activate(
         await system_log_repository.add_log(SystemLog(user=participant.user, command=f"🟢 ticket 🟢: {ticket_index}", tag=LogTag.SCRATCH))
         await participant_repository.add_participant(participant)
 
+        background_tasks.friend_extra_check(user_id=user_id, current_status=participant.user.tasks_active_tickets, task=FriendsTask.ACTIVE_TICKETS)
 
     return await participant_repository.get_participant(user_id, lottery_id)
