@@ -6,9 +6,7 @@ from src.core.database import DBSession
 from src.schemas.user_schemas import User
 from datetime import datetime, UTC, timedelta
 from src.repositories.user_repository import UserRepository
-from src.repositories.system_log_repository import SystemLogRepository
 from src.repositories.secret_repository import SecretCodeRepository
-from src.models.system_log import SystemLog
 from src.models.enums import LogTag, FriendsTask
 from src.core.schema import BaseModel
 from src.tasks.bg import BackgroundTasksWrapper
@@ -38,7 +36,6 @@ async def secret(
     session: DBSession,
     user_repository: Annotated[UserRepository, Depends()],
     secret_code_repository: Annotated[SecretCodeRepository, Depends()],
-    system_log_repository: Annotated[SystemLogRepository, Depends()],
     background_tasks: Annotated[BackgroundTasksWrapper, Depends()],
 ):
     secret = secret_request.secret.lower().strip()
