@@ -1,13 +1,12 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import computed_field
 from src.core.schema import BaseModel
 from src.models.enums import FriendsTask, TaskStatus, LogTag
 from src.deps import CurrentUserId
 from src.repositories.user_repository import UserRepository
 from src.constants import ActionPoints
 from src.tasks.bg import BackgroundTasksWrapper
-
+from src.schemas.user_schemas import UserFriend
 router = APIRouter(prefix="/tasks/friends", tags=["tasks_friends"])
 
 
@@ -22,29 +21,11 @@ class ClaimResponse(ClaimRequest):
     new_points: int
     new_tickets: int
 
-    #tasks info
-    tasks_join_channel: TaskStatus
-    tasks_active_tickets: TaskStatus
-    tasks_refer_a_friend: TaskStatus
-    tasks_secret_code: TaskStatus
-    tasks_watch_ads: TaskStatus
+    friend: UserFriend
 
 
 
-    @computed_field
-    @property
-    def number_of_done_tasks(self) -> int:
-        return sum([
-            self.tasks_join_channel == TaskStatus.CLAIMED,
-            self.tasks_active_tickets == TaskStatus.CLAIMED,
-            self.tasks_refer_a_friend == TaskStatus.CLAIMED,
-            self.tasks_secret_code == TaskStatus.CLAIMED,
-            self.tasks_watch_ads == TaskStatus.CLAIMED,
-        ])
-
-
-
-@router.post("/claim")
+@router.post("/claim", response_model=ClaimResponse)
 async def claim(
     user_id: CurrentUserId,
     claim_request: ClaimRequest,
@@ -99,7 +80,11 @@ async def claim(
         if apply_claim:
             await user_repository.add_user(user)
             await user_repository.add_user(friend)
-            background_tasks.save_log(user_id=user_id, command=f"{claim_request.task.value}", tag=LogTag.CLAIM.value)
+            background_tasks.save_log(user_id=user_id, command=f"{claim_request.task.value}", tag=LogTag.CLAIM)
 
 
-    return ClaimResponse(friend_id=claim_request.friend_id, task=claim_request.task, new_points=user.points, new_tickets=user.invited_users + 1).model_dump()
+    claim_request.friend = friend
+    claim_request.new_points = user.points
+    claim_request.new_tickets = user.invited_users + 1
+
+    return claim_request
