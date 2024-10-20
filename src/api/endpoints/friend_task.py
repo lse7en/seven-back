@@ -84,6 +84,8 @@ async def next_task(
             )
         )
 
+    return res
+
 
 
 
