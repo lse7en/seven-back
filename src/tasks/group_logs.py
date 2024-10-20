@@ -17,6 +17,22 @@ async def save_log(session_factory: async_sessionmaker[AsyncSession], user_id: i
         await system_log_repository.add_log(SystemLog(user_id=user_id, command=command, tag=tag))
  
 
+def get_log_color(tag: LogTag) -> str:
+    if tag == LogTag.PUSH:
+        return "🔴"
+    elif tag == LogTag.SECRET:
+        return "🔵"
+    elif tag == LogTag.SCRATCH:
+        return "🟢"
+    elif tag == LogTag.ADS_DOUBLE:
+        return "🟡"
+    elif tag == LogTag.ADS_POINT:
+        return "⚫"
+        
+    else:
+        return "⚪"
+
+
 
 async def stat_task(stat_bot: Bot, session_factory: async_sessionmaker[AsyncSession]) -> None:
     while True:
@@ -47,7 +63,7 @@ async def stat_task(stat_bot: Bot, session_factory: async_sessionmaker[AsyncSess
                     print(e)
 
             if all_logs:
-                text = "\n\n".join([f"{log.id}. {log.created_at.time()}\nc: {log.command}\n {log.user.info}" for i, log in enumerate(all_logs)])
+                text = "\n\n".join([f"{log.id}. {log.created_at.time()}\n{get_log_color(log.tag)} {log.tag.value}- {log.command}\n {log.user.info}" for log in all_logs])
                 try:
                     await stat_bot.send_message(chat_id=STAT_CHAT_ID, message_thread_id=USER_LOG_THREAD_ID, text=text)
                 except Exception as e:
