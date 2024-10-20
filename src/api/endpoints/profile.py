@@ -8,7 +8,7 @@ from src.repositories.user_repository import UserRepository
 from src.repositories.lottery_repository import TicketRepository
 from src.bot.validators import is_member_of
 from src.bot.constants import COMMUNITY_TID
-from src.models.enums import FriendsTask
+from src.models.enums import FriendsTask, TaskStatus
 from src.tasks.bg import BackgroundTasksWrapper
 from src.constants import ActionPoints
 router = APIRouter(prefix="/profile", tags=["profile"])
@@ -30,7 +30,7 @@ async def friends(
 ):
     friends = await user_repository.get_friends(user_id)
 
-    friends_with_todo_active_ticket_tasks = [friend.id for friend in friends if friend.tasks_active_tickets.is_todo()]
+    friends_with_todo_active_ticket_tasks = [friend.id for friend in friends if friend.tasks_active_tickets == TaskStatus.NOT_DONE]
 
     friend_id_to_ticket_count = await ticket_repository.get_ticket_count_for_users(friends_with_todo_active_ticket_tasks)
 
@@ -38,7 +38,7 @@ async def friends(
         if friend.id in friend_id_to_ticket_count:
             friend.active_tickets_count = min(10, friend_id_to_ticket_count[friend.id])
         else:
-            friend.active_tickets_count = 20
+            friend.active_tickets_count = 0 if friend.tasks_active_tickets == TaskStatus.NOT_DONE else 10
 
     return friends
 
