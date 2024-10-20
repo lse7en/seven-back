@@ -83,7 +83,7 @@ async def claim(
             )
 
     friend.active_tickets_count = 0
-    friend_dump = UserFriend.model_validate(friend)
+    friend_dump = UserFriend.model_validate(friend, from_attributes=True)
     return ClaimResponse(
         friend_id=claim_request.friend_id,
         task=claim_request.task,
@@ -91,3 +91,23 @@ async def claim(
         new_tickets=user.invited_users + 1,
         friend=friend_dump,
     )
+
+curl 'https://seven.tma.quest/api/tasks/friends/claim' \
+  -H 'accept: */*' \
+  -H 'accept-language: en-US,en;q=0.9' \
+  -H 'access-control-allow-origin: *' \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/json' \
+  -H 'cookie: __cf_bm=0KZNRvnnD_4KQvzfjL6qMZujmBEDfv9rXmzFamPnVh4-1729441704-1.0.1.1-OmLRcw_jnGaKM4ss5WgGp9g2kQbGr396l4hWxrHsTu9.mTbacolO3t74xnyKosQcRwoM.KzolDrkAmd2jaH3OA' \
+  -H 'pragma: no-cache' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://localhost:5173/' \
+  -H 'sec-ch-ua: "Google Chrome";v="129", "Not=A?Brand";v="8", "Chromium";v="129"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: "macOS"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: cross-site' \
+  -H 'tg-data: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjcwMDU2MDI1LCJleHAiOjE3Mjk0NDkwNTZ9.Kie8U-pri-ZstI9xuJ9hM7GUuOjcRL-9KJA9yQIrKD8' \
+  -H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36' \
+  --data-raw '{"task":"active_tickets","friend_id":5824417928}'
