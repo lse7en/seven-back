@@ -8,8 +8,6 @@ from src.core.database import DBSession
 from src.schemas.user_schemas import User
 from datetime import datetime, UTC
 from src.repositories.user_repository import UserRepository
-from src.repositories.system_log_repository import SystemLogRepository
-from src.models.system_log import SystemLog
 from src.models.enums import LogTag, FriendsTask
 from src.constants import ActionPoints
 router = APIRouter(prefix="/adsg", tags=["adsg"])
@@ -22,7 +20,6 @@ async def ad_point(
     user_id: CurrentUserId,
     session: DBSession,
     user_repository: Annotated[UserRepository, Depends()],
-    system_log_repository: Annotated[SystemLogRepository, Depends()],
     background_tasks: Annotated[BackgroundTasksWrapper, Depends()]
 ):
 
@@ -40,12 +37,11 @@ async def ad_point(
         user.points += ActionPoints.AD.value
         user.total_ads_watched_for_points += 1
 
-        await system_log_repository.add_log(SystemLog(user=user, command=f"⚫ ads ⚫: {user.total_ads_watched_for_points}", tag=LogTag.ADS_POINT))
 
         await user_repository.add_user(user)
 
         background_tasks.friend_extra_check(user_id=user_id, current_status=user.tasks_watch_ads, task=FriendsTask.WATCH_ADS)
-
+        background_tasks.save_log(user_id=user_id, command=f"{user.total_ads_watched_for_points}", tag=LogTag.ADS_POINT)
         return user
     
 
@@ -54,7 +50,6 @@ async def double_point(
     user_id: CurrentUserId,
     session: DBSession,
     user_repository: Annotated[UserRepository, Depends()],
-    system_log_repository: Annotated[SystemLogRepository, Depends()],
     background_tasks: Annotated[BackgroundTasksWrapper, Depends()]
 ):
 
@@ -67,9 +62,10 @@ async def double_point(
         user.points += ActionPoints.DOUBLE.value
         user.total_ads_watched_for_points += 1
 
-        await system_log_repository.add_log(SystemLog(user=user, command=f"🟠 ads 🟠: {user.total_ads_watched_for_points}", tag=LogTag.ADS_DOUBLE))
 
         await user_repository.add_user(user)
 
         background_tasks.friend_extra_check(user_id=user_id, current_status=user.tasks_watch_ads, task=FriendsTask.WATCH_ADS)
+        background_tasks.save_log(user_id=user_id, command=f"{user.total_ads_watched_for_points}", tag=LogTag.ADS_DOUBLE)
+
         return user

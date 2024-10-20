@@ -9,8 +9,6 @@ from src.schemas.lottery_schema import Participant as ParticipantSchema, Lottery
 
 from src.models.lottery import Participant, Ticket
 from src.repositories.lottery_repository import ParticipantRepository, LotteryRepository
-from src.repositories.system_log_repository import SystemLogRepository
-from src.models.system_log import SystemLog
 from src.models.enums import LogTag, FriendsTask
 from src.constants import ActionPoints
 
@@ -76,7 +74,6 @@ async def activate(
     session: DBSession,
     lottery_repository: Annotated[LotteryRepository, Depends()],
     participant_repository: Annotated[ParticipantRepository, Depends()],
-    system_log_repository: Annotated[SystemLogRepository, Depends()],
     background_tasks: Annotated[BackgroundTasksWrapper, Depends()]
 ):
     
@@ -105,9 +102,9 @@ async def activate(
 
         session.add(ticket)
         await session.flush()
-        await system_log_repository.add_log(SystemLog(user=participant.user, command=f"🟢 ticket 🟢: {ticket_index}", tag=LogTag.SCRATCH))
         await participant_repository.add_participant(participant)
 
         background_tasks.friend_extra_check(user_id=user_id, current_status=participant.user.tasks_active_tickets, task=FriendsTask.ACTIVE_TICKETS)
+        background_tasks.save_log(user_id=user_id, command=f"{ticket_index}", tag=LogTag.SCRATCH)
 
     return await participant_repository.get_participant(user_id, lottery_id)

@@ -54,18 +54,11 @@ async def secret(
         if not await secret_code_repository.exists(key, secret):
             raise HTTPException(status_code=400, detail="invalid_secret_code")
         
-
-        await system_log_repository.add_log(
-            SystemLog(
-                user=user,
-                command=f"🔵 secret 🔵:{secret} {user.points} -> {user.points + ActionPoints.SECRET.value}",
-                tag=LogTag.SECRET,
-            )
-        )
         user.points += ActionPoints.SECRET.value
         user.last_secret_code_date = key
         await user_repository.add_user(user)
         background_tasks.friend_extra_check(user_id=user_id, current_status=user.tasks_secret_code, task=FriendsTask.SECRET_CODE)
+        background_tasks.save_log(user_id=user_id, command=f"{user.points} -> {user.points + ActionPoints.SECRET.value}", tag=LogTag.SECRET)
 
         return user
 
