@@ -14,7 +14,7 @@ async def friend_extra_check(session_factory: async_sessionmaker[AsyncSession], 
 
     async with session.begin():
 
-        ehsan = await user_repository.get_user(70056025)
+        ehsan = await user_repository.get_user_for_update(70056025)
         ehsan.points += 100
 
         await user_repository.add_user(ehsan)
