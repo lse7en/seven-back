@@ -64,6 +64,11 @@ async def joined(
         if joined and not current_user.join_reward:
             current_user.points += ActionPoints.JOIN.value
             current_user.join_reward = True
+        
+        if current_user.referrer_id:
+            referrer = await user_repository.get_user_or_none_by_id(current_user.referrer_id)
+            background_tasks.friend_extra_check(user_id=referrer.id, current_status=referrer.tasks_refer_a_friend, task=FriendsTask.REFER_A_FRIEND)
+
 
         await user_repository.add_user(current_user)
         background_tasks.friend_extra_check(user_id=user_id, current_status=current_user.tasks_join_channel, task=FriendsTask.JOIN_CHANNEL)

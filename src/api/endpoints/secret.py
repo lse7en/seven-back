@@ -55,7 +55,7 @@ async def secret(
         user.last_secret_code_date = key
         await user_repository.add_user(user)
         background_tasks.friend_extra_check(user_id=user_id, current_status=user.tasks_secret_code, task=FriendsTask.SECRET_CODE)
-        background_tasks.save_log(user_id=user_id, command=f"{user.points} -> {user.points + ActionPoints.SECRET.value}", tag=LogTag.SECRET)
+        background_tasks.save_log(user_id=user_id, command=f"{secret}", tag=LogTag.SECRET)
 
         return user
 

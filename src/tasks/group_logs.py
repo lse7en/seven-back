@@ -28,7 +28,8 @@ def get_log_color(tag: LogTag) -> str:
         return "🟡"
     elif tag == LogTag.ADS_POINT:
         return "⚫"
-        
+    elif tag == LogTag.CLAIM:
+        return "🟣"
     else:
         return "⚪"
 
