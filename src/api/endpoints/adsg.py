@@ -63,7 +63,7 @@ async def ad_point(
         
 
         user.last_ads_watch_for_points = datetime.now(UTC)
-        user.points += ActionPoints.AD
+        user.points += ActionPoints.AD.value
         user.total_ads_watched_for_points += 1
 
         await system_log_repository.add_log(SystemLog(user=user, command=f"⚫ ads ⚫: {user.total_ads_watched_for_points}", tag=LogTag.ADS_POINT))
@@ -87,7 +87,7 @@ async def double_point(
         
 
         user.last_ads_watch_for_points = datetime.now(UTC)
-        user.points += ActionPoints.DOUBLE
+        user.points += ActionPoints.DOUBLE.value
         user.total_ads_watched_for_points += 1
 
         await system_log_repository.add_log(SystemLog(user=user, command=f"🟠 ads 🟠: {user.total_ads_watched_for_points}", tag=LogTag.ADS_DOUBLE))

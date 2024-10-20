@@ -21,7 +21,7 @@ async def lpush(
     system_log_repository: Annotated[SystemLogRepository, Depends()]
 ):
     # generate random  between 1 and 20
-    r = ActionPoints.PUSH
+    r = ActionPoints.PUSH.value
 
 
     async with session.begin():   

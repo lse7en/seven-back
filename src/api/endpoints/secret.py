@@ -52,11 +52,11 @@ async def secret(
             await system_log_repository.add_log(
                 SystemLog(
                     user=user,
-                    command=f"🔵 secret 🔵:{secret} {user.points} -> {user.points + ActionPoints.SECRET}",
+                    command=f"🔵 secret 🔵:{secret} {user.points} -> {user.points + ActionPoints.SECRET.value}",
                     tag=LogTag.SECRET,
                 )
             )
-            user.points += ActionPoints.SECRET
+            user.points += ActionPoints.SECRET.value
             user.last_secret_code_date = key
             await user_repository.add_user(user)
             return user
