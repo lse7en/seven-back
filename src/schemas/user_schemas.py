@@ -5,7 +5,7 @@ from typing import Optional
 from pydantic import computed_field
 from src.core.schema import BaseModel
 from datetime import datetime, date
-
+from src.models.enums import TaskStatus
 
 
 class UserBase(BaseModel):
@@ -24,11 +24,11 @@ class UserBase(BaseModel):
 
 
     #tasks info
-    tasks_join_channel: str
-    tasks_active_tickets: str
-    tasks_refer_a_friend: str
-    tasks_secret_code: str
-    tasks_watch_ads: str
+    tasks_join_channel: TaskStatus
+    tasks_active_tickets: TaskStatus
+    tasks_refer_a_friend: TaskStatus
+    tasks_secret_code: TaskStatus
+    tasks_watch_ads: TaskStatus
 
     invited_users: int
 
