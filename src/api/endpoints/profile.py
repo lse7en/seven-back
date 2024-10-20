@@ -36,9 +36,9 @@ async def friends(
 
     for friend in friends:
         if friend.id in friend_id_to_ticket_count:
-            friend.active_tickets = min(10, friend_id_to_ticket_count[friend.id])
+            friend.active_tickets_count = min(10, friend_id_to_ticket_count[friend.id])
         else:
-            friend.active_tickets = 20
+            friend.active_tickets_count = 20
 
     return friends
 
