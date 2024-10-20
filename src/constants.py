@@ -14,3 +14,8 @@ class ActionPoints(Enum):
 
     #tasks
     
+    TASKS_WATCH_ADS = 200
+    TASKS_SECRET_CODE = 500
+    TASKS_REFER_A_FRIEND = 700
+    TASKS_JOIN_CHANNEL = 1000
+    TASKS_ACTIVE_TICKETS = 5000
