@@ -7,8 +7,8 @@ from src.repositories.user_repository import UserRepository
 from src.constants import ActionPoints
 from src.tasks.bg import BackgroundTasksWrapper
 from src.schemas.user_schemas import UserFriend
-router = APIRouter(prefix="/tasks/friends", tags=["tasks_friends"])
 
+router = APIRouter(prefix="/tasks/friends", tags=["tasks_friends"])
 
 
 # body
@@ -24,15 +24,13 @@ class ClaimResponse(ClaimRequest):
     friend: UserFriend
 
 
-
-@router.post("/claim", response_model=ClaimResponse)
+@router.post("/claim")
 async def claim(
     user_id: CurrentUserId,
     claim_request: ClaimRequest,
     user_repository: Annotated[UserRepository, Depends()],
     background_tasks: Annotated[BackgroundTasksWrapper, Depends()],
 ):
-    
     async with user_repository.session.begin():
         friend = await user_repository.get_user_for_update(claim_request.friend_id)
 
@@ -48,19 +46,19 @@ async def claim(
                 friend.tasks_watch_ads = TaskStatus.CLAIMED
                 user.points += ActionPoints.TASKS_WATCH_ADS.value
                 apply_claim = True
-        
+
         elif claim_request.task == FriendsTask.SECRET_CODE:
             if friend.tasks_secret_code == TaskStatus.DONE:
                 friend.tasks_secret_code = TaskStatus.CLAIMED
                 user.points += ActionPoints.TASKS_SECRET_CODE.value
                 apply_claim = True
-        
+
         elif claim_request.task == FriendsTask.REFER_A_FRIEND:
             if friend.tasks_refer_a_friend == TaskStatus.DONE:
                 friend.tasks_refer_a_friend = TaskStatus.CLAIMED
                 user.points += ActionPoints.TASKS_REFER_A_FRIEND.value
                 apply_claim = True
-        
+
         elif claim_request.task == FriendsTask.ACTIVE_TICKETS:
             if friend.tasks_active_tickets == TaskStatus.DONE:
                 friend.tasks_active_tickets = TaskStatus.CLAIMED
@@ -76,15 +74,19 @@ async def claim(
 
         else:
             raise HTTPException(status_code=400, detail="invalid_task")
-        
+
         if apply_claim:
             await user_repository.add_user(user)
             await user_repository.add_user(friend)
-            background_tasks.save_log(user_id=user_id, command=f"{claim_request.task.value}", tag=LogTag.CLAIM)
+            background_tasks.save_log(
+                user_id=user_id, command=f"{claim_request.task.value}", tag=LogTag.CLAIM
+            )
 
-
-    claim_request.friend = friend
-    claim_request.new_points = user.points
-    claim_request.new_tickets = user.invited_users + 1
-
-    return claim_request
+    friend.active_tickets_count = 0
+    return ClaimResponse(
+        friend_id=claim_request.friend_id,
+        task=claim_request.task,
+        new_points=claim_request.new_points,
+        new_tickets=claim_request.new_tickets,
+        friend=UserFriend.model_validate(friend),
+    )
