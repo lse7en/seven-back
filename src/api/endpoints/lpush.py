@@ -9,6 +9,7 @@ from datetime import datetime, UTC
 from src.repositories.user_repository import UserRepository
 from src.repositories.system_log_repository import SystemLogRepository
 from src.models.system_log import SystemLog, LogTag
+from src.constants import ActionPoints
 router = APIRouter(prefix="/lpush", tags=["lpush"])
 
 
@@ -20,7 +21,8 @@ async def lpush(
     system_log_repository: Annotated[SystemLogRepository, Depends()]
 ):
     # generate random  between 1 and 20
-    r = 250 #int(random.uniform(150.0, 300.0))
+    r = ActionPoints.PUSH
+
 
     async with session.begin():   
         user = await user_repository.get_user_for_update(user_id)

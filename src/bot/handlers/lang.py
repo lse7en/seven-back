@@ -1,12 +1,9 @@
-from aiogram.filters import CommandObject
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
-from aiogram.utils.deep_linking import decode_payload
 from aiogram.utils import formatting
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from src.models.user import User
 from src.bot import beans
-from src.bot.callbacks import community_callback, LanguageCallback
+from src.bot.callbacks import LanguageCallback
 from src.bot.constants import START_PHOTO_FILE_ID
 from src.bot.text import get_text
 

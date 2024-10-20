@@ -5,14 +5,26 @@ from sqlalchemy import (
     DATE
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, Enum
 from src.core.model import Base
 from datetime import datetime, date, timedelta, time, UTC
 from aiogram.utils.payload import  encode_payload
-
+import enum
 
 def one_month_age():
     return datetime.utcnow() - timedelta(days=365)
+
+
+class TaskStatus(enum.Enum):
+    NOT_DONE = "not_done"
+    DONE = "done"
+    CLAIMED = "claimed"
+
+
+    def is_todo(self) -> bool:
+        return self == TaskStatus.NOT_DONE
+
+
 
 class User(Base):
     __tablename__ = "users"
@@ -53,12 +65,11 @@ class User(Base):
 
     src: Mapped[str] = mapped_column(nullable=True, index=True, default=None)
 
-    tasks_join_channel: Mapped[bool] = mapped_column(default=False, nullable=False)
-    tasks_active_tickets: Mapped[bool] = mapped_column(default=False)
-    tasks_refer_a_friend: Mapped[bool] = mapped_column(default=False)
-    tasks_secret_code: Mapped[bool] = mapped_column(default=False)
-    tasks_watch_ads: Mapped[bool] = mapped_column(default=False)
-
+    tasks_join_channel: Mapped[TaskStatus] = mapped_column(Enum(TaskStatus), default=TaskStatus.NOT_DONE, nullable=False)
+    tasks_active_tickets: Mapped[TaskStatus] = mapped_column(Enum(TaskStatus), default=TaskStatus.NOT_DONE, nullable=False)
+    tasks_refer_a_friend: Mapped[TaskStatus] = mapped_column(Enum(TaskStatus), default=TaskStatus.NOT_DONE, nullable=False)
+    tasks_secret_code: Mapped[TaskStatus] = mapped_column(Enum(TaskStatus), default=TaskStatus.NOT_DONE, nullable=False)
+    tasks_watch_ads: Mapped[TaskStatus] = mapped_column(Enum(TaskStatus), default=TaskStatus.NOT_DONE, nullable=False)
 
 
 

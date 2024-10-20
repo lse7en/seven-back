@@ -1,13 +1,8 @@
 from aiogram.types import Message
-from aiogram.utils.markdown import hbold
-from src.bot.permissions import IsChannelMember
 from aiogram.filters import CommandObject
 
-from src.bot.constants import COMMUNITY_TID
-from aiogram.utils import formatting
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from src.bot import beans
-from src.bot.text import get_text
 from src.bot.permissions import HasPermissions
 
 

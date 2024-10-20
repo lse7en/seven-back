@@ -6,6 +6,11 @@ class ActionPoints(Enum):
     SECRET = 1000
     AD = 100
     DOUBLE = 250
+    SCRATCH = 2000
+
+    REFERRAL = 1000
+
+    JOIN = 1000
 
     #tasks
     

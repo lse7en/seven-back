@@ -9,6 +9,7 @@ from datetime import datetime, UTC
 from src.repositories.user_repository import UserRepository
 from src.repositories.system_log_repository import SystemLogRepository
 from src.models.system_log import SystemLog, LogTag
+from src.constants import ActionPoints
 router = APIRouter(prefix="/adsg", tags=["adsg"])
 
 
@@ -62,7 +63,7 @@ async def ad_point(
         
 
         user.last_ads_watch_for_points = datetime.now(UTC)
-        user.points += 100
+        user.points += ActionPoints.AD
         user.total_ads_watched_for_points += 1
 
         await system_log_repository.add_log(SystemLog(user=user, command=f"⚫ ads ⚫: {user.total_ads_watched_for_points}", tag=LogTag.ADS_POINT))
@@ -86,7 +87,7 @@ async def double_point(
         
 
         user.last_ads_watch_for_points = datetime.now(UTC)
-        user.points += 250
+        user.points += ActionPoints.DOUBLE
         user.total_ads_watched_for_points += 1
 
         await system_log_repository.add_log(SystemLog(user=user, command=f"🟠 ads 🟠: {user.total_ads_watched_for_points}", tag=LogTag.ADS_DOUBLE))

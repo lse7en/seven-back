@@ -24,11 +24,11 @@ class UserBase(BaseModel):
 
 
     #tasks info
-    tasks_join_channel: bool
-    tasks_active_tickets: bool
-    tasks_refer_a_friend: bool
-    tasks_secret_code: bool
-    tasks_watch_ads: bool
+    tasks_join_channel: str
+    tasks_active_tickets: str
+    tasks_refer_a_friend: str
+    tasks_secret_code: str
+    tasks_watch_ads: str
 
     invited_users: int
 
@@ -45,11 +45,11 @@ class UserFriend(UserBase):
     @property
     def number_of_done_tasks(self) -> int:
         return sum([
-            self.tasks_join_channel,
-            self.tasks_active_tickets,
-            self.tasks_refer_a_friend,
-            self.tasks_secret_code,
-            self.tasks_watch_ads
+            self.tasks_join_channel == "done",
+            self.tasks_active_tickets == "done",
+            self.tasks_refer_a_friend == "done",
+            self.tasks_secret_code == "done",
+            self.tasks_watch_ads == "done",
         ])
 
 

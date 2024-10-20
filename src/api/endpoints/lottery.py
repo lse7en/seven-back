@@ -7,17 +7,14 @@ from src.core.database import DBSession
 from src.schemas.lottery_schema import Participant as ParticipantSchema, LotteryList, Lottery as LotterySchema
 
 from src.models.lottery import Participant, Ticket
-from src.repositories.user_repository import UserRepository
 from src.repositories.lottery_repository import ParticipantRepository, LotteryRepository
 from src.repositories.system_log_repository import SystemLogRepository
 from src.models.system_log import SystemLog, LogTag
+from src.constants import ActionPoints
 
 router = APIRouter(prefix="/lotteries", tags=["lottery"])
 
 ACTIVE_LOTTERY_ID = 11
-
-
-
 
 
 
@@ -91,12 +88,12 @@ async def activate(
         if participant.inactivate_tickets_count <= 0:
             return await participant_repository.get_participant(user_id, lottery_id)
         
-        if participant.user.points < 2000:
+        if participant.user.points < ActionPoints.SCRATCH:
             return await participant_repository.get_participant(user_id, lottery_id)
         
 
         participant.activate_tickets_count += 1
-        participant.user.points -= 2000
+        participant.user.points -= ActionPoints.SCRATCH
         participant.lottery.last_ticket_index += 1
         ticket_index = participant.lottery.last_ticket_index
         ticket_number = await lottery_repository.get_lottery_ticket_for_index(lottery_id, ticket_index)

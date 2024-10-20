@@ -11,23 +11,20 @@ from aiogram import Bot
 from aiogram.enums import ParseMode
 from src.core.database import setup_db
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
-from sqlalchemy import delete, update, select, func
+from sqlalchemy import delete, update, select
 from src.repositories.user_repository import UserRepository
-from src.repositories.lottery_repository import LotteryRepository, ParticipantRepository
+from src.repositories.lottery_repository import LotteryRepository
 from src.repositories.system_repository import SystemRepository
 from src.models.system_log import SystemLog
 from src.bot.validators import is_member_of
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from src.bot.callbacks import community_callback
 from aiogram.utils import formatting
 from src.models.lottery import Ticket, Participant
-from src.bot.validators import is_member_of
 from src.bot.constants import COMMUNITY_TID
 from src.bot.text import get_text
 from src.models.user import User
 from src.models.lottery import Lottery
 from aiogram.types import BufferedInputFile
-from src.bot.validators import is_member_of
 from src.schemas.lottery_schema import Ticket as TicketSchema
 
 
@@ -69,11 +66,9 @@ async def send_text_to_not_joined(
         channel = InlineKeyboardButton(
             text="The lucky 7 Community", url="https://t.me/the_lucky_7"
         )
-        joined = InlineKeyboardButton(
-            text=get_text(lang, "Joined ✅"), callback_data=community_callback.pack()
-        )
 
-        kb = InlineKeyboardMarkup(inline_keyboard=[[channel], [joined]])
+
+        kb = InlineKeyboardMarkup(inline_keyboard=[[channel]])
 
         caption = formatting.as_list(
             formatting.as_line(

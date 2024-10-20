@@ -10,7 +10,7 @@ from src.repositories.system_log_repository import SystemLogRepository
 from src.repositories.secret_repository import SecretCodeRepository
 from src.models.system_log import SystemLog, LogTag
 from src.core.schema import BaseModel
-
+from src.constants import ActionPoints
 
 router = APIRouter(prefix="/secret", tags=["secret"])
 
@@ -52,11 +52,11 @@ async def secret(
             await system_log_repository.add_log(
                 SystemLog(
                     user=user,
-                    command=f"🔵 secret 🔵:{secret} {user.points} -> {user.points + 1000}",
+                    command=f"🔵 secret 🔵:{secret} {user.points} -> {user.points + ActionPoints.SECRET}",
                     tag=LogTag.SECRET,
                 )
             )
-            user.points += 1000
+            user.points += ActionPoints.SECRET
             user.last_secret_code_date = key
             await user_repository.add_user(user)
             return user

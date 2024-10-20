@@ -8,8 +8,10 @@ from src.repositories.user_repository import UserRepository
 from src.repositories.lottery_repository import TicketRepository
 from src.bot.validators import is_member_of
 from src.bot.constants import COMMUNITY_TID, FRIEND_INVITE_FILE_ID
+from src.models.user import TaskStatus
 from src.bot.text import get_text
 from aiogram.utils import formatting
+from src.constants import ActionPoints
 router = APIRouter(prefix="/profile", tags=["profile"])
 
 @router.get("", response_model=User)
@@ -29,9 +31,9 @@ async def friends(
 ):
     friends = await user_repository.get_friends(user_id)
 
-    friends_with_incomplete_active_ticket_tasks = [friend.id for friend in friends if not friend.tasks_active_tickets]
+    friends_with_todo_active_ticket_tasks = [friend.id for friend in friends if friend.tasks_active_tickets.is_todo()]
 
-    friend_id_to_ticket_count = await ticket_repository.get_ticket_count_for_users(friends_with_incomplete_active_ticket_tasks)
+    friend_id_to_ticket_count = await ticket_repository.get_ticket_count_for_users(friends_with_todo_active_ticket_tasks)
 
     for friend in friends:
         friend.active_tickets_count = min(friend_id_to_ticket_count.get(friend.id, 10), 10)
@@ -60,14 +62,14 @@ async def joined(
         if joined and current_user.referrer_id and not current_user.tasks_join_channel:
             referrer = await user_repository.get_user_for_update(current_user.referrer_id)
             referrer.invited_users += 1
-            referrer.points += 1000
+            referrer.points += ActionPoints.REFERRAL
             await user_repository.add_user(referrer)
 
-            current_user.tasks_join_channel = True
+            current_user.tasks_join_channel = TaskStatus.CLAIMED
             send_text_to_referrer = True
 
         if joined and not current_user.join_reward:
-            current_user.points += 1000
+            current_user.points += ActionPoints.JOIN
             current_user.join_reward = True
 
 
