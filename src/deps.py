@@ -45,5 +45,5 @@ class BackgroundTasksWrapper:
 
 
     def add_task(self, func, *args, **kwargs):
-        self.background_tasks.add_task(func, session_factory=self.session_factory, *args, **kwargs)
+        self.background_tasks.add_task(func, session_factory=self.session_factory, **kwargs)
 

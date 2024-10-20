@@ -42,7 +42,7 @@ async def lpush(
         user.last_lucky_push = datetime.now(UTC)
         user.total_ads_watched_this_push = 0
         await user_repository.add_user(user)
-        background_tasks.add_task(friend_extra_check, user_id)
+        background_tasks.add_task(friend_extra_check, user_id=user_id)
 
         return user
     
