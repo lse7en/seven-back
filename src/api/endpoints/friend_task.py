@@ -1,5 +1,6 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import computed_field
 from src.core.schema import BaseModel
 from src.models.enums import FriendsTask, TaskStatus, LogTag
 from src.deps import CurrentUserId
@@ -21,6 +22,25 @@ class ClaimResponse(ClaimRequest):
     new_points: int
     new_tickets: int
 
+    #tasks info
+    tasks_join_channel: TaskStatus
+    tasks_active_tickets: TaskStatus
+    tasks_refer_a_friend: TaskStatus
+    tasks_secret_code: TaskStatus
+    tasks_watch_ads: TaskStatus
+
+
+
+    @computed_field
+    @property
+    def number_of_done_tasks(self) -> int:
+        return sum([
+            self.tasks_join_channel == TaskStatus.CLAIMED,
+            self.tasks_active_tickets == TaskStatus.CLAIMED,
+            self.tasks_refer_a_friend == TaskStatus.CLAIMED,
+            self.tasks_secret_code == TaskStatus.CLAIMED,
+            self.tasks_watch_ads == TaskStatus.CLAIMED,
+        ])
 
 
 
