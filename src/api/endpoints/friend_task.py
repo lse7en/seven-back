@@ -83,10 +83,11 @@ async def claim(
             )
 
     friend.active_tickets_count = 0
+    friend_dump = UserFriend.model_validate(friend)
     return ClaimResponse(
         friend_id=claim_request.friend_id,
         task=claim_request.task,
         new_points=user.points,
         new_tickets=user.invited_users + 1,
-        friend=UserFriend.model_validate(friend),
+        friend=friend_dump,
     )
