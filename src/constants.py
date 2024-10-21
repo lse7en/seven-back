@@ -2,10 +2,10 @@ from enum import Enum
 
 
 class ActionPoints(Enum):
-    PUSH = 250
-    SECRET = 1000
+    PUSH = 100
+    SECRET = 500
     AD = 100
-    DOUBLE = 250
+    DOUBLE = 300
     SCRATCH = 2000
 
     REFERRAL = 1000
