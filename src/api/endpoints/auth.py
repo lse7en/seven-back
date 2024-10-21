@@ -94,7 +94,7 @@ async def upsert_user(
             )
             await user_repository.add_user(new_user)
         except Exception as e:
-            pass
+            print("error in join", e)
 
     async with session.begin():
         return await user_repository.get_user_or_none_by_id(data.user.id)
