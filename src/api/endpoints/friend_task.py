@@ -144,7 +144,7 @@ async def claim(
             await user_repository.add_user(user)
             await user_repository.add_user(friend)
             background_tasks.save_log(
-                user_id=user_id, command=f"claim {claim_request.task.value}", tag=LogTag.CLAIM
+                user_id=user_id, command=f"claim {claim_request.task.value} {claim_request.friend_id}", tag=LogTag.CLAIM
             )
 
     friend.active_tickets_count = 0
