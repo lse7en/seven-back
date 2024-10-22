@@ -5,7 +5,7 @@ class ActionPoints(Enum):
     PUSH = 100
     SECRET = 500
     AD = 100
-    DOUBLE = 300
+    DOUBLE = 200
     SCRATCH = 2000
 
     REFERRAL = 1000
