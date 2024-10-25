@@ -32,8 +32,8 @@ async def language(
     
     user = await user_repository.get_user_for_update(user_id)
     user.custom_lang = lang.lang
-    return await user_repository.add_user(user)
-    
+    await user_repository.add_user(user)
+    return user
 
 
 @router.get("/friends", response_model=list[UserFriend])
