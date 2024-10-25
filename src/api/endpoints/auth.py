@@ -92,7 +92,7 @@ async def upsert_user(
                     last_check_in=datetime.now(UTC),
                     src=src,
                     language=data.user.language_code or "en",
-                    custom_lang=data.user.language_code or "en",
+                    custom_lang="en",
             )
             await user_repository.add_user(new_user)
         except Exception as e:
