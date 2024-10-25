@@ -73,7 +73,14 @@ class User(UserBase):
     join_reward: bool
 
 
+
 class Rank(BaseModel):
     """DTO for User rank."""
 
     rank: int
+
+
+
+class Language(BaseModel):
+    """DTO for User language info."""
+    lang: str

@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Request
 
 from src.deps import CurrentUserId
-from src.schemas.user_schemas import User, UserFriend
+from src.schemas.user_schemas import User, UserFriend, Language
 from src.repositories.user_repository import UserRepository
 from src.repositories.lottery_repository import TicketRepository
 from src.bot.validators import is_member_of
@@ -19,6 +19,21 @@ async def profile(
     user_repository: Annotated[UserRepository, Depends()],
 ):
     return await user_repository.get_user_or_none_by_id(user_id)
+
+
+
+
+@router.put("/language", response_model=User)
+async def language(
+    user_id: CurrentUserId,
+    lang: Language,
+    user_repository: Annotated[UserRepository, Depends()],
+):
+    
+    user = await user_repository.get_user_for_update(user_id)
+    user.custom_lang = lang.lang
+    return await user_repository.add_user(user)
+    
 
 
 @router.get("/friends", response_model=list[UserFriend])

@@ -91,6 +91,8 @@ async def upsert_user(
                     last_lucky_push=datetime.now(UTC) - timedelta(days=1),
                     last_check_in=datetime.now(UTC),
                     src=src,
+                    language=data.user.language_code or "en",
+                    custom_lang=data.user.language_code or "en",
             )
             await user_repository.add_user(new_user)
         except Exception as e:
@@ -111,4 +113,4 @@ async def auth(
         secret_key=settings.jwt_secret,
         algorithm=settings.jwt_algorithm,
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, "token_type": "bearer", "init_data": {"custom_lang": user.custom_lang}}

@@ -39,6 +39,8 @@ class User(Base):
     last_name: Mapped[str] = mapped_column(nullable=True)
     username: Mapped[str] = mapped_column(nullable=True)
 
+    custom_lang: Mapped[str] = mapped_column(nullable=False, default="en")
+
 
     invitees = relationship("User", back_populates="referrer", remote_side=referrer_id)
 
