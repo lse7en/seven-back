@@ -14,7 +14,7 @@ from src.constants import ActionPoints
 
 router = APIRouter(prefix="/lotteries", tags=["lottery"])
 
-ACTIVE_LOTTERY_ID = 11
+ACTIVE_LOTTERY_ID = 12
 
 
 
@@ -26,7 +26,7 @@ async def get_lotteries(
     async with session.begin():
         lotteries = await lottery_repository.get_lotteries_with_id_less_than(ACTIVE_LOTTERY_ID + 1)
 
-        
+
         
 
     return LotteryList(

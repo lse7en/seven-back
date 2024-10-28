@@ -34,7 +34,7 @@ data_fake = [User(id=70056025, language="fa")]
 async def send_text_to_channel(
     bot: Bot, session_factory: async_sessionmaker[AsyncSession]
 ) -> None:
-    photo_file = BufferedInputFile.from_file("/Users/xhsvn/Downloads/Sep 7th.jpg")
+    photo_file = BufferedInputFile.from_file("/Users/xhsvn/Downloads/nov07b.png")
 
     botkb = InlineKeyboardButton(text="play", url="http://t.me/the_lucky_7_bot/main")
     kb = InlineKeyboardMarkup(inline_keyboard=[[botkb]])
@@ -328,7 +328,7 @@ async def add_lottery(
 
     from datetime import datetime, UTC
 
-    dt = datetime(2024, 10, 27, 16, 0, 0, 0, UTC)
+    dt = datetime(2024, 11, 7, 16, 0, 0, 0, UTC)
     # lottery_id = 6
     # print(dt)
     async with session.begin():
@@ -374,8 +374,8 @@ async def get_lottery_winners(
 ) -> None:
     session = session_factory()
 
-    lottery_id = 10
-    wining_draw = "2254546"
+    lottery_id = 11
+    wining_draw = "6531362"
 
     async with session.begin():
         tickets = await session.execute(
