@@ -3,7 +3,7 @@ from functools import lru_cache, cached_property
 from typing import Any
 import hmac
 import hashlib
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy.engine.url import URL
 import ssl
 
@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     These parameters can be configured
     with environment variables.
     """
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding='utf-8')
 
     # Application settings
     debug: bool = False
