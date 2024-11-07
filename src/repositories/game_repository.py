@@ -1,17 +1,18 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, and_
+from sqlalchemy import select, and_, or_
 from src.models.game import RpsGame, RpsGameStatus
 from src.models.user import User
 import random
+from src.core.database import DBSession
 
 
 class RpsGameRepository:
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: DBSession):
         self.session = session
 
     async def get_waiting_game(self):
         result = await self.session.execute(
-            select(RpsGame).where(RpsGame.status == RpsGameStatus.WAITING_FOR_PLAYER)
+            select(RpsGame).where(RpsGame.status == RpsGameStatus.WAITING_FOR_PLAYER).with_for_update()
         )
         return result.scalars().first()
 

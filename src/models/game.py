@@ -1,11 +1,7 @@
 from sqlalchemy import (
-    BigInteger,
-    Integer,
     DateTime,
-    String,
     ForeignKey,
     Enum as SQLEnum,
-    Boolean,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
@@ -29,7 +25,6 @@ class RpsChoice(PyEnum):
 class RpsGame(Base):
     __tablename__ = "rps_games"
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     player1_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
     player1: Mapped[User] = relationship(User, foreign_keys=[player1_id])
     player2_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
@@ -42,12 +37,6 @@ class RpsGame(Base):
         SQLEnum(RpsGameStatus), default=RpsGameStatus.WAITING_FOR_PLAYER, nullable=False
     )
 
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.utcnow
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow
-    )
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
     completed_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=True

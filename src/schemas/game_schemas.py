@@ -24,4 +24,4 @@ class RpsChoiceSchema(BaseModel):
 
 class RpsGameResultSchema(BaseModel):
     result: int | None  # 1 if player1 wins, 2 if player2 wins, 0 if tie
-    game: GameSchema
+    game: RpsGameSchema
