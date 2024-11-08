@@ -14,7 +14,7 @@ from src.constants import ActionPoints
 
 router = APIRouter(prefix="/lotteries", tags=["lottery"])
 
-ACTIVE_LOTTERY_ID = 12
+ACTIVE_LOTTERY_ID = 13
 
 
 
