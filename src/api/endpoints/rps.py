@@ -1,19 +1,19 @@
 # routers/game.py
 
-from typing import Annotated
-from fastapi import APIRouter, Depends, HTTPException
-from datetime import datetime, timedelta, UTC
-from src.deps import CurrentUserId, DBSession
-from src.repositories.user_repository import UserRepository
-from src.repositories.game_repository import RpsGameRepository
-from src.models.game import RpsGame, RpsGameStatus, Choice
-from src.schemas.game_schemas import RpsGameSchema, ChoiceSchema
 import random
+from datetime import UTC, datetime, timedelta
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, HTTPException
+
+from src.constants import WAITING_TIME_TO_MATCH_BOT, WAITING_TIME_TO_SUBMIT_CHOICES
+from src.deps import CurrentUserId, DBSession
+from src.models.game import Choice, RpsGame, RpsGameStatus
+from src.repositories.game_repository import RpsGameRepository
+from src.repositories.user_repository import UserRepository
+from src.schemas.game_schemas import ChoiceSchema, RpsGameSchema
 
 router = APIRouter(prefix="/game/rps", tags=["game"])
-
-WAITING_TIME_TO_MATCH_BOT = 10
-WAITING_TIME_TO_SUBMIT_CHOICES = 10
 
 
 async def get_playable_game(
@@ -24,7 +24,6 @@ async def get_playable_game(
     game_repository: Annotated[RpsGameRepository, Depends()],
 ) -> RpsGame | None:
     async with session.begin():
-
         if game_id:
             game = await game_repository.get_game_for_update(game_id)
             if not game:
@@ -32,13 +31,13 @@ async def get_playable_game(
         else:
             game = await game_repository.get_active_game_for_user(user_id)
 
-
         if not game:
             return None
 
         if game.status != RpsGameStatus.COMPLETED:
-            if datetime.now(UTC) >= game.started_at + timedelta(seconds=WAITING_TIME_TO_SUBMIT_CHOICES):
-                
+            if datetime.now(UTC) >= game.started_at + timedelta(
+                seconds=WAITING_TIME_TO_SUBMIT_CHOICES
+            ):
                 winner = game.winner
                 game.status = RpsGameStatus.COMPLETED
                 game.completed_at = datetime.now(UTC)
@@ -53,10 +52,9 @@ async def get_playable_game(
                     player2.points += 200
                     player1.points -= 200
 
-                await game_repository.update_game(game)
-                await user_repository.update_user(player1)
-                await user_repository.update_user(player2)
-
+                await game_repository.add_game(game)
+                await user_repository.add_user(player1)
+                await user_repository.add_user(player2)
 
 
 @router.post("/start", response_model=RpsGameSchema)
@@ -67,7 +65,6 @@ async def start_game(
     user_repository: Annotated[UserRepository, Depends()],
     game_repository: Annotated[RpsGameRepository, Depends()],
 ):
-    
     if game:
         return game
 
@@ -75,8 +72,9 @@ async def start_game(
         user = await user_repository.get_user_for_update(user_id)
 
         if user.points < 200:
-            raise HTTPException(status_code=400, detail="Not enough points to start a game.")
-
+            raise HTTPException(
+                status_code=400, detail="Not enough points to start a game."
+            )
 
         waiting_game = await game_repository.get_waiting_game()
 
@@ -84,7 +82,7 @@ async def start_game(
             waiting_game.player2_id = user_id
             waiting_game.status = RpsGameStatus.WAITING_FOR_CHOICES
             waiting_game.started_at = datetime.now(UTC)
-            await game_repository.update_game(waiting_game)
+            await game_repository.add_game(waiting_game)
             return waiting_game
         else:
             new_game = RpsGame(player1_id=user_id)
@@ -98,17 +96,18 @@ async def game_status(
     user_repository: Annotated[UserRepository, Depends()],
     game_repository: Annotated[RpsGameRepository, Depends()],
 ):
+    if game.status == RpsGameStatus.WAITING_FOR_PLAYER and datetime.now(
+        UTC
+    ) >= game.created_at + timedelta(seconds=WAITING_TIME_TO_MATCH_BOT):
+        bot_user = await user_repository.get_random_bot()
 
-        if game.status == RpsGameStatus.WAITING_FOR_PLAYER and datetime.now(UTC) >= game.created_at + timedelta(seconds=WAITING_TIME_TO_MATCH_BOT):
-                bot_user = await user_repository.get_random_bot()
+        game.player2_id = bot_user.id
+        game.status = RpsGameStatus.WAITING_FOR_CHOICES
+        game.started_at = datetime.now(UTC)
+        game.player2_choice = random.choice(list(Choice))
+        await game_repository.add_game(game)
 
-                game.player2_id = bot_user.id
-                game.status = RpsGameStatus.WAITING_FOR_CHOICES
-                game.started_at = datetime.now(UTC)
-                game.player2_choice = random.choice(list(Choice))
-                await game_repository.update_game(game)
-
-        return game
+    return game
 
 
 @router.post("/{game_id}/choice", response_model=RpsGameSchema)
@@ -118,7 +117,6 @@ async def submit_choice(
     choice: ChoiceSchema,
     game_repository: Annotated[RpsGameRepository, Depends()],
 ):
-
     if game.player1_id == user_id:
         if game.player1_choice is not None:
             raise HTTPException(status_code=400, detail="Choice already submitted.")
@@ -128,9 +126,6 @@ async def submit_choice(
             raise HTTPException(status_code=400, detail="Choice already submitted.")
         game.player2_choice = choice.choice
 
-    await game_repository.update_game(game)
+    await game_repository.add_game(game)
 
     return game
-
-
-
