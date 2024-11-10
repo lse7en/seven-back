@@ -447,6 +447,36 @@ async def make_myself_winner(
         session.add(p)
 
 
+import sqlalchemy as sa
+
+async def get_dummy_users(
+    bot: Bot, session_factory: async_sessionmaker[AsyncSession]
+) -> None:
+    session = session_factory()
+    user_repo = UserRepository(session)
+
+    async with session.begin():
+        fa_users = list((await session.scalars(
+            sa.select(User).where(User.language == 'fa').order_by(User.last_check_in.asc()).limit(10)
+        )).all())
+
+        en_users = list((await session.scalars(
+            sa.select(User).where(User.language == 'en').order_by(User.last_check_in.asc()).limit(15)
+        )).all())
+
+        ru_users = list((await session.scalars(
+            sa.select(User).where(User.language == 'ru').order_by(User.last_check_in.asc()).limit(15)
+        )).all())
+
+        print('fa users', len(fa_users), "en users", len(en_users), "ru users", len(ru_users))
+
+
+        for u in fa_users + en_users + ru_users:
+            print(f"User(id=-{u.id}, first_name={u.first_name}, last_name={u.last_name}, ),")
+
+
+
+
 async def main():
     print("This is a local script")
     print("It is not meant to be imported")
@@ -465,7 +495,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await add_lottery(bot, session_factory)
+    await get_dummy_users(bot, session_factory)
 
     await engine.dispose()
     await bot.session.close()
