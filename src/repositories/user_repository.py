@@ -60,6 +60,13 @@ class UserRepository:
         )
         return raw_user.scalar_one_or_none()
 
+    async def get_random_bot(self):
+        result = await self.session.execute(
+            select(User).where(User.is_bot == True).order_by(func.random()).limit(1)
+        )
+        bot = result.scalar_one_or_none()
+        return bot
+
     async def get_user_or_none_by_id(self, user_id: int) -> Optional[User]:
         """
         Get user by id.

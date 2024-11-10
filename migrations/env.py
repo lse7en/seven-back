@@ -27,6 +27,7 @@ from src.models.system import System  # noqa: E402, F401
 from src.models.system_log import SystemLog  # noqa: E402, F401
 from src.models.lottery import Lottery, Participant, Ticket  # noqa: E402, F401
 from src.models.secret import SecretCode  # noqa: E402, F401
+from src.models.game import RpsGame, RpsChoice, RpsGameStatus
 target_metadata = Base.metadata
 # target_metadata = User.metadata
 # other values from the config, defined by the needs of env.py,

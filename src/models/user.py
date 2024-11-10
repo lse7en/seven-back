@@ -2,7 +2,8 @@ from sqlalchemy import (
     BigInteger,
     Integer,
     DateTime,
-    DATE
+    DATE,
+    Boolean,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey, Enum
@@ -21,6 +22,7 @@ def one_month_age():
 class User(Base):
     __tablename__ = "users"
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    is_bot: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     invited_users: Mapped[int] = mapped_column(Integer, default=0)
     joined: Mapped[bool] = mapped_column(default=False, nullable=False)
     referrer_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)

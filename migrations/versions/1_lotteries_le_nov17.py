@@ -10,7 +10,7 @@ from typing import Sequence, Union
 from alembic import op
 import sqlalchemy as sa
 
-
+#TODO store adding lotteries with random seed
 
 # revision identifiers, used by Alembic.
 revision: str = 'fc552093fdc7'
