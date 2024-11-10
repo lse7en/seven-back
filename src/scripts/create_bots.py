@@ -38,7 +38,7 @@ def stylize_text(text):
 async def create_bots(session: AsyncSession):
     bots = []
     existing_usernames = set()
-    for _ in range(50):
+    for i in range(50):
         adjective = random.choice(adjectives)
         noun = random.choice(nouns)
         special_char = random.choice(special_chars)

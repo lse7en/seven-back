@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 6c05718ff26c
-Revises: 15ac1949356b
-Create Date: 2024-11-10 13:58:41.929346
+Revision ID: 5602979a9f94
+Revises: 6b3e5b36ccfe
+Create Date: 2024-11-10 17:18:16.521362
 
 """
 from typing import Sequence, Union
@@ -13,8 +13,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '6c05718ff26c'
-down_revision: Union[str, None] = '15ac1949356b'
+revision: str = '5602979a9f94'
+down_revision: Union[str, None] = '6b3e5b36ccfe'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -38,17 +38,12 @@ def upgrade() -> None:
     )
     op.create_index(op.f('ix_rps_games_created_at'), 'rps_games', ['created_at'], unique=False)
     op.create_index(op.f('ix_rps_games_updated_at'), 'rps_games', ['updated_at'], unique=False)
-
     op.add_column('users', sa.Column('is_bot', sa.Boolean(), nullable=True))
 
-    op.execute(
-        """
-        UPDATE users
-        SET is_bot = false
-        """
-    )
+    op.execute("update users set is_bot = false")
 
     op.alter_column('users', 'is_bot', nullable=False)
+
     # ### end Alembic commands ###
 
 
