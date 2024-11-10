@@ -1,5 +1,6 @@
 from sqlalchemy import select, and_, or_
 from src.models.game import RpsGame, RpsGameStatus
+from src.models.user import User
 from src.core.database import DBSession
 
 

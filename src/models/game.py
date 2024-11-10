@@ -26,9 +26,9 @@ class RpsGame(Base):
     __tablename__ = "rps_games"
 
     player1_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
-    player1: Mapped[User] = relationship(User, foreign_keys=[player1_id])
-    player2_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
-    player2: Mapped[User] = relationship(User, foreign_keys=[player2_id])
+    # player1: Mapped[User] = relationship(User, foreign_keys=[player1_id])
+    player2_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    # player2: Mapped[User | None] = relationship(User, foreign_keys=[player2_id])
 
     player1_choice: Mapped[RpsChoice] = mapped_column(SQLEnum(RpsChoice), nullable=True)
     player2_choice: Mapped[RpsChoice] = mapped_column(SQLEnum(RpsChoice), nullable=True)
