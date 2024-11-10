@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from api.endpoints import rps
 from src.api.endpoints import (
     stat_webhook,
     webhook,
@@ -11,7 +12,6 @@ from src.api.endpoints import (
     auth,
     adsg,
     friend_task,
-    game,
 )
 
 router = APIRouter()
@@ -26,7 +26,7 @@ routers_list = (
     auth.router,
     adsg.router,
     friend_task.router,
-    game.router,
+    rps.router,
 )
 
 for r in routers_list:

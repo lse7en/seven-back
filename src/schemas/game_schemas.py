@@ -13,6 +13,7 @@ class RpsGameSchema(BaseModel):
     created_at: datetime
     started_at: datetime | None
     completed_at: datetime | None
+    winner: int | None
 
     class Config:
         orm_mode = True
@@ -21,7 +22,3 @@ class RpsGameSchema(BaseModel):
 class RpsChoiceSchema(BaseModel):
     choice: Choice
 
-
-class RpsGameResultSchema(BaseModel):
-    result: int | None  # 1 if player1 wins, 2 if player2 wins, 0 if tie
-    game: RpsGameSchema

@@ -41,3 +41,29 @@ class RpsGame(Base):
     completed_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
+
+
+
+    @property
+    def winner(self):
+
+    # Returns 1 if player1 wins, 2 if player2 wins, 0 if tie
+
+        if self.player1_choice and not self.player2_choice:
+            return self.player1_id
+        elif not self.player1_choice and self.player2_choice:
+            return self.player2_id
+        elif not self.player1_choice and not self.player2_choice:
+            return 0
+        else:
+            rules = {
+                RpsChoice.ROCK: RpsChoice.SCISSORS,
+                RpsChoice.PAPER: RpsChoice.ROCK,
+                RpsChoice.SCISSORS: RpsChoice.PAPER,
+            }
+            if self.player1_choice == self.player2_choice:
+                return 0
+            elif rules[self.player1_choice] == self.player2_choice:
+                return self.player1_id
+            else:
+                return self.player2_id
