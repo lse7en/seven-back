@@ -35,8 +35,8 @@ def create_access_token(
 async def get_tg_data(tg_data: Annotated[str, Body(embed=True)], settings: SettingsDep) -> WebAppInitData:
     try:
         #TODO
-        data = parse_webapp_init_data(tg_data)
-        # data = safe_parse_webapp_init_data(token=settings.tg_token, init_data=tg_data)
+        # data = parse_webapp_init_data(tg_data)
+        data = safe_parse_webapp_init_data(token=settings.tg_token, init_data=tg_data)
     except ValueError:
         raise InvalidToken()
     
@@ -60,7 +60,7 @@ async def upsert_user(
             if (datetime.now(UTC).timestamp() - user.last_check_in.timestamp()) > 6000:
                 print("run last check join")
                 #TODO
-                # joined = await is_member_of(request.app.state.stat_bot, COMMUNITY_TID, user.id)
+                joined = await is_member_of(request.app.state.stat_bot, COMMUNITY_TID, user.id)
 
             last_check_in = data.auth_date.astimezone(UTC)
 
