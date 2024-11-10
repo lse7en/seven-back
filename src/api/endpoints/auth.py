@@ -2,6 +2,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Request, Body
 
 from src.core.database import DBSession
+from src.core.schema import BaseModel
 from src.deps import SettingsDep
 from src.models.user import User
 from src.repositories.user_repository import UserRepository
@@ -30,7 +31,7 @@ def create_access_token(
     return encoded_jwt
 
 
-class AuthData:
+class AuthData(BaseModel):
     tg_data: str
 
 
