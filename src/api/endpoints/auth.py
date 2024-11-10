@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, Body
 
 from src.core.database import DBSession
 from src.deps import SettingsDep
@@ -31,13 +31,12 @@ def create_access_token(
 
 
 
-async def get_tg_data(request: Request, settings: SettingsDep) -> WebAppInitData:
-        # get tg_data from the request body
-    tg_data = (await request.json()).get("tg_data")
 
+async def get_tg_data(tg_data: Annotated[str, Body(embed=True)], settings: SettingsDep) -> WebAppInitData:
     try:
-        # data = parse_webapp_init_data(tg_data)
-        data = safe_parse_webapp_init_data(token=settings.tg_token, init_data=tg_data)
+        #TODO
+        data = parse_webapp_init_data(tg_data)
+        # data = safe_parse_webapp_init_data(token=settings.tg_token, init_data=tg_data)
     except ValueError:
         raise InvalidToken()
     
@@ -60,7 +59,8 @@ async def upsert_user(
             joined = user.joined 
             if (datetime.now(UTC).timestamp() - user.last_check_in.timestamp()) > 6000:
                 print("run last check join")
-                joined = await is_member_of(request.app.state.stat_bot, COMMUNITY_TID, user.id)
+                #TODO
+                # joined = await is_member_of(request.app.state.stat_bot, COMMUNITY_TID, user.id)
 
             last_check_in = data.auth_date.astimezone(UTC)
 
