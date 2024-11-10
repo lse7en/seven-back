@@ -30,13 +30,15 @@ def create_access_token(
     return encoded_jwt
 
 
+class AuthData:
+    tg_data: str
 
 
-async def get_tg_data(tg_data: Annotated[str, Body(embed=True)], settings: SettingsDep) -> WebAppInitData:
+async def get_tg_data(auth_data: AuthData, settings: SettingsDep) -> WebAppInitData:
     try:
         #TODO
         # data = parse_webapp_init_data(tg_data)
-        data = safe_parse_webapp_init_data(token=settings.tg_token, init_data=tg_data)
+        data = safe_parse_webapp_init_data(token=settings.tg_token, init_data=auth_data.tg_data)
     except ValueError:
         raise InvalidToken()
     
