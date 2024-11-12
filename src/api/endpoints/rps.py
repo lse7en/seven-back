@@ -36,9 +36,8 @@ async def get_playable_game(
 
         print("Game found", game.id, game.status)
 
-        if (
-            game.status == RpsGameStatus.WAITING_FOR_CHOICES
-            and (
+        if game.status == RpsGameStatus.WAITING_FOR_CHOICES and (
+            (
                 datetime.now(UTC)
                 >= game.started_at + timedelta(seconds=WAITING_TIME_TO_SUBMIT_CHOICES)
             )
