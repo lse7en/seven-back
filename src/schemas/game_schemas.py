@@ -1,6 +1,7 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 from datetime import datetime
 from src.models.game import RpsGameStatus, RpsChoice
+from typing_extensions import Self
 
 
 class PlayerSchema(BaseModel):
@@ -22,9 +23,12 @@ class RpsGameSchema(BaseModel):
     completed_at: datetime | None
     winner: int | None
 
-    class Config:
-        orm_mode = True
-
+    @model_validator(mode='after')
+    def hide_choices_in_case_of_incomplete(self) -> Self:
+        if self.status != RpsGameStatus.COMPLETED:
+            self.player1_choice = None
+            self.player2_choice = None
+        return self
 
 class RpsChoiceSchema(BaseModel):
     choice: RpsChoice
