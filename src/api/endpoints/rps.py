@@ -33,7 +33,7 @@ async def get_playable_game(
         if not game:
             print("Game not found")
             return None
-        
+
         print("Game found", game.id, game.status)
 
         if (
@@ -42,7 +42,8 @@ async def get_playable_game(
                 datetime.now(UTC)
                 >= game.started_at + timedelta(seconds=WAITING_TIME_TO_SUBMIT_CHOICES)
             )
-        ) or (game.player1_choice and game.player2_choice):
+            or (game.player1_choice and game.player2_choice)
+        ):
             winner = game.winner
             game.status = RpsGameStatus.COMPLETED
             game.completed_at = datetime.now(UTC)
@@ -60,7 +61,6 @@ async def get_playable_game(
             await game_repository.add_game(game)
             await user_repository.add_user(player1)
             await user_repository.add_user(player2)
-        
 
         return game
 
@@ -86,16 +86,9 @@ async def start_game(
         user_repository=user_repository,
     )
 
-
-    
-    
-
-
     async with session.begin():
-
         if game:
             return await fetch_players(game, user_repository)
-
 
         user = await user_repository.get_user_for_update(user_id)
 
@@ -183,7 +176,7 @@ async def submit_choice(
         if game.player2_choice is not None:
             raise HTTPException(status_code=400, detail="Choice already submitted.")
         game.player2_choice = choice.choice
-    
+
     await game_repository.add_game(game)
     return await fetch_players(game, user_repository)
 
