@@ -71,6 +71,7 @@ class User(UserBase):
     next_push_time: datetime
     secret_reset_datetime: datetime
     join_reward: bool
+    current_rps_game_id: Optional[int] = None
 
 
 
