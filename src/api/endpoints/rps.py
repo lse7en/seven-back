@@ -111,10 +111,14 @@ async def start_game(
             waiting_game.status = RpsGameStatus.WAITING_FOR_CHOICES
             waiting_game.started_at = datetime.now(UTC)
             await game_repository.add_game(waiting_game)
+            user.current_rps_game_id = waiting_game.id
+            await user_repository.add_user(user)
             return await fetch_players(waiting_game, user_repository)
         else:
             new_game = RpsGame(player1_id=user_id)
             await game_repository.add_game(new_game)
+            user.current_rps_game_id = new_game.id
+            await user_repository.add_user(user)
             return await fetch_players(new_game, user_repository)
 
 
@@ -181,4 +185,32 @@ async def submit_choice(
         game.player2_choice = choice.choice
     
     await game_repository.add_game(game)
+    return await fetch_players(game, user_repository)
+
+
+@router.post("/{game_id}/remove", response_model=RpsGameSchema)
+async def remove(
+    game_id: int,
+    user_id: CurrentUserId,
+    session: DBSession,
+    game_repository: Annotated[RpsGameRepository, Depends()],
+    user_repository: Annotated[UserRepository, Depends()],
+):
+    game = await get_playable_game(
+        user_id=user_id,
+        game_id=game_id,
+        session=session,
+        user_repository=user_repository,
+        game_repository=game_repository,
+    )
+
+    if not game:
+        raise HTTPException(status_code=404, detail="Game not found.")
+
+    user = await user_repository.get_user_for_update(user_id)
+
+    if user.current_rps_game_id == game_id:
+        user.current_rps_game_id = None
+        await user_repository.add_user(user)
+
     return await fetch_players(game, user_repository)

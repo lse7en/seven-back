@@ -67,7 +67,7 @@ class User(Base):
     tasks_secret_code: Mapped[TaskStatus] = mapped_column(Enum(TaskStatus), default=TaskStatus.NOT_DONE, nullable=False)
     tasks_watch_ads: Mapped[TaskStatus] = mapped_column(Enum(TaskStatus), default=TaskStatus.NOT_DONE, nullable=False)
 
-
+    current_rps_game_id: Mapped[int] = mapped_column(BigInteger, nullable=True, default=None)
 
 
 
