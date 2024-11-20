@@ -69,6 +69,11 @@ async def get_playable_game(
             if opp < 0:
                 opp = "bot"
 
+            if winner < 0:
+                winner = "bot"
+
+
+
             background_tasks.save_log(user_id=user_id, command=f"g {game.id}: opp: {opp}, wnr: {winner}", tag=LogTag.RPS)
 
         return game
