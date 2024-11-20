@@ -17,7 +17,8 @@ async def dit_handler(
     try:
         uid = int(command.args)
 
-        user_repository = await beans.get_user_repository(session_factory)
+        session = session_factory()
+        user_repository = await beans.get_user_repository(session)
 
         mem = await message.bot.get_chat_member(COMMUNITY_TID, uid)
         name = mem.user.full_name
