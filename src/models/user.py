@@ -95,22 +95,11 @@ class User(Base):
     def ref_link(self) -> str:
         return f"https://t.me/the_lucky_7_bot/main?startapp={encode_payload(str(self.id))}"
 
-    @property
-    def push_waiting_time(self) -> int:
-        return (2 ** (3 - min(4, self.invited_users))) * 60
 
-    @property
-    def ads_reduce_time(self) -> int:
-
-        if self.total_ads_watched_this_push > 5:
-            return 0
-
-        return int(self.push_waiting_time // (self.total_ads_watched_this_push * 2 + 10))
-    
 
     @property
     def next_push_time(self) -> datetime:
-        return self.last_lucky_push + timedelta(minutes=self.push_waiting_time)
+        return self.last_lucky_push + timedelta(hours=8)
     
 
     @property

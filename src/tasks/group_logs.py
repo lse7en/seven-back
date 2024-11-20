@@ -30,8 +30,10 @@ def get_log_color(tag: LogTag) -> str:
         return "⚫"
     elif tag == LogTag.CLAIM:
         return "🟣"
-    else:
+    elif tag == LogTag.RPS:
         return "⚪"
+    else:
+        return "🟤"
 
 
 

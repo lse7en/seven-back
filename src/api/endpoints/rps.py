@@ -4,8 +4,9 @@ import random
 from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Path
+from fastapi import APIRouter, Depends, HTTPException
 
+from src.models.enums import LogTag
 from src.constants import WAITING_TIME_TO_MATCH_BOT, WAITING_TIME_TO_SUBMIT_CHOICES
 from src.core.database import DBSession
 from src.deps import CurrentUserId
@@ -13,6 +14,7 @@ from src.models.game import RpsChoice, RpsGame, RpsGameStatus
 from src.repositories.game_repository import RpsGameRepository
 from src.repositories.user_repository import UserRepository
 from src.schemas.game_schemas import RpsChoiceSchema, RpsGameSchema
+from src.tasks.bg import BackgroundTasksWrapper
 
 router = APIRouter(prefix="/game/rps", tags=["game"])
 
@@ -23,6 +25,8 @@ async def get_playable_game(
     session: DBSession,
     user_repository: Annotated[UserRepository, Depends()],
     game_repository: Annotated[RpsGameRepository, Depends()],
+    background_tasks: Annotated[BackgroundTasksWrapper, Depends()]
+
 ) -> RpsGame | None:
     async with session.begin():
         if game_id:
@@ -52,14 +56,19 @@ async def get_playable_game(
 
             if winner == player1.id:
                 player1.points += 200
-                player2.points -= 200
             elif winner == player2.id:
                 player2.points += 200
-                player1.points -= 200
+            else:
+                player1.points += 100
+                player2.points += 100
 
             await game_repository.add_game(game)
             await user_repository.add_user(player1)
             await user_repository.add_user(player2)
+
+            opp = player2.id if player1.id == user_id else player1.id
+
+            background_tasks.save_log(user_id=user_id, command=f"g {game.id}: opp: {opp}, wnr: {winner}", tag=LogTag.PUSH)
 
         return game
 
@@ -76,6 +85,8 @@ async def start_game(
     session: DBSession,
     user_repository: Annotated[UserRepository, Depends()],
     game_repository: Annotated[RpsGameRepository, Depends()],
+    background_tasks: Annotated[BackgroundTasksWrapper, Depends()]
+
 ):
     game = await get_playable_game(
         user_id=user_id,
@@ -83,6 +94,7 @@ async def start_game(
         session=session,
         game_repository=game_repository,
         user_repository=user_repository,
+        background_tasks=background_tasks
     )
 
     async with session.begin():
@@ -91,12 +103,14 @@ async def start_game(
 
         user = await user_repository.get_user_for_update(user_id)
 
-        if user.points < 200:
+        if user.points < 100:
             raise HTTPException(
                 status_code=400, detail="Not enough points to start a game."
             )
 
         waiting_game = await game_repository.get_waiting_game()
+
+        user.points -= 100
 
         if waiting_game:
             waiting_game.player2_id = user_id
@@ -121,6 +135,8 @@ async def game_status(
     user_id: CurrentUserId,
     user_repository: Annotated[UserRepository, Depends()],
     game_repository: Annotated[RpsGameRepository, Depends()],
+    background_tasks: Annotated[BackgroundTasksWrapper, Depends()]
+
 ):
     game = await get_playable_game(
         user_id=user_id,
@@ -128,6 +144,7 @@ async def game_status(
         session=session,
         user_repository=user_repository,
         game_repository=game_repository,
+        background_tasks=background_tasks
     )
 
     if not game:
@@ -135,7 +152,7 @@ async def game_status(
 
     if game.status == RpsGameStatus.WAITING_FOR_PLAYER and datetime.now(
         UTC
-    ) >= game.created_at + timedelta(seconds=WAITING_TIME_TO_MATCH_BOT):
+    ) >= game.created_at + timedelta(seconds=(WAITING_TIME_TO_MATCH_BOT + game.id % 4)):
         bot_user = await user_repository.get_random_bot()
 
         game.player2_id = bot_user.id
@@ -155,6 +172,8 @@ async def submit_choice(
     session: DBSession,
     game_repository: Annotated[RpsGameRepository, Depends()],
     user_repository: Annotated[UserRepository, Depends()],
+    background_tasks: Annotated[BackgroundTasksWrapper, Depends()]
+
 ):
     game = await get_playable_game(
         user_id=user_id,
@@ -162,6 +181,7 @@ async def submit_choice(
         session=session,
         user_repository=user_repository,
         game_repository=game_repository,
+        background_tasks=background_tasks
     )
 
     if not game:

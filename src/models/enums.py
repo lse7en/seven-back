@@ -24,4 +24,5 @@ class LogTag(enum.Enum):
     ADS_DOUBLE = "ads_double"
     ADS_POINT = "ads_point"
     CLAIM = "claim"
+    RPS = "rps"
 

@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class ActionPoints(Enum):
-    PUSH = 100
+    PUSH = 400
     SECRET = 500
     AD = 100
     DOUBLE = 200
@@ -21,5 +21,5 @@ class ActionPoints(Enum):
     TASKS_ACTIVE_TICKETS = 5000
 
 
-WAITING_TIME_TO_MATCH_BOT = 10
+WAITING_TIME_TO_MATCH_BOT = 5
 WAITING_TIME_TO_SUBMIT_CHOICES = 10
