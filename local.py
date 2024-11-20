@@ -320,6 +320,7 @@ async def add_lottery(
     session = session_factory()
     lottery_repo = LotteryRepository(session)
     import random
+    random.seed("14")
     tickets = random.sample(range(6**7), 6**7)
 
     print(len(tickets))
@@ -328,11 +329,11 @@ async def add_lottery(
 
     from datetime import datetime, UTC
 
-    dt = datetime(2024, 11, 17, 16, 0, 0, 0, UTC)
+    dt = datetime(2024, 11, 27, 16, 0, 0, 0, UTC)
     # lottery_id = 6
     # print(dt)
     async with session.begin():
-        lottery = Lottery(name="arc 1: 0", pot=1000, draw_date=dt, tickets=tickets, jackpot=None)
+        lottery = Lottery(name="arc 1: 1", pot=1000, draw_date=dt, tickets=tickets, jackpot=None)
         await lottery_repo.add_lottery(lottery)
 
         # random_ticket = await lottery_repo.get_lottery_ticket_for_index(lottery_id, 1)
@@ -495,7 +496,7 @@ async def main():
     )
     engine, session_factory = setup_db()
 
-    await get_lottery_winners(bot, session_factory)
+    await add_lottery(bot, session_factory)
 
     await engine.dispose()
     await bot.session.close()
