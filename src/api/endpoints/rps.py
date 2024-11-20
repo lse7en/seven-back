@@ -66,7 +66,7 @@ async def get_playable_game(
 
             opp = player2.id if player1.id == user_id else player1.id
 
-            background_tasks.save_log(user_id=user_id, command=f"g {game.id}: opp: {opp}, wnr: {winner}", tag=LogTag.PUSH)
+            background_tasks.save_log(user_id=user_id, command=f"g {game.id}: opp: {opp}, wnr: {winner}", tag=LogTag.RPS)
 
         return game
 
