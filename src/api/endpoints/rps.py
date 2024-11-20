@@ -35,10 +35,8 @@ async def get_playable_game(
             game = await game_repository.get_active_game_for_user(user_id)
 
         if not game:
-            print("Game not found")
             return None
 
-        print("Game found", game.id, game.status)
 
         if game.status == RpsGameStatus.WAITING_FOR_CHOICES and (
             (
@@ -207,6 +205,7 @@ async def remove(
     session: DBSession,
     game_repository: Annotated[RpsGameRepository, Depends()],
     user_repository: Annotated[UserRepository, Depends()],
+    background_tasks: Annotated[BackgroundTasksWrapper, Depends()]
 ):
     game = await get_playable_game(
         user_id=user_id,
@@ -214,6 +213,7 @@ async def remove(
         session=session,
         user_repository=user_repository,
         game_repository=game_repository,
+        background_tasks=background_tasks
     )
 
     if not game:
