@@ -99,7 +99,7 @@ class User(Base):
 
     @property
     def next_push_time(self) -> datetime:
-        return self.last_lucky_push + timedelta(hours=8)
+        return self.last_lucky_push + timedelta(hours=4)
     
 
     @property
